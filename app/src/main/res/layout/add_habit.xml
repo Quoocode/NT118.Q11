@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@drawable/drawable_shape"
+  android:gravity="left|top"
+  android:orientation="vertical">
+  
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/drawable_shape_1"
+    android:gravity="left|top"
+    android:orientation="vertical">
+    
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="@drawable/drawable_shape_2"
+      android:clipToPadding="false"
+      android:gravity="center_vertical"
+      android:orientation="horizontal"
+      android:paddingBottom="8dp"
+      android:paddingLeft="16dp"
+      android:paddingRight="16dp"
+      android:paddingTop="16dp">
+      
+      <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/drawable_image" />
+      
+      <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text="New Habit"
+        android:textColor="#FFFFFFFF"
+        android:textSize="18sp" />
+    </LinearLayout>
+    
+    <!-- Habit name row -->
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="56dp"
+      android:layout_marginLeft="16dp"
+      android:layout_marginRight="16dp"
+      android:layout_marginTop="12dp"
+      android:layout_marginBottom="12dp"
+      android:background="@drawable/drawable_shape_3"
+      android:clipToPadding="false"
+      android:gravity="left|center_vertical"
+      android:orientation="horizontal"
+      android:paddingBottom="16dp"
+      android:paddingLeft="16dp"
+      android:paddingRight="16dp"
+      android:paddingTop="16dp">
+      
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:gravity="left|center_vertical"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text="Habit  name"
+        android:textColor="#FF91ADC9"
+        android:textSize="16dp" />
+    </LinearLayout>
+    
+    <TextView
+      android:layout_width="match_parent"
+      android:layout_height="23dp"
+      android:layout_marginLeft="16dp"
+      android:layout_marginRight="16dp"
+      android:layout_marginTop="16dp"
+      android:layout_marginBottom="8dp"
+      android:gravity="left|center_vertical"
+      android:includeFontPadding="false"
+      android:maxLines="1"
+      android:singleLine="true"
+      android:text="Frequency"
+      android:textColor="#FFFFFFFF"
+      android:textSize="18dp" />
+    
+    <!-- Frequency buttons: Daily / Weekly / Monthly -->
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:gravity="left|top"
+      android:orientation="horizontal"
+      android:paddingBottom="16dp"
+      android:paddingLeft="16dp"
+      android:paddingRight="16dp"
+      android:paddingTop="16dp">
+      
+      <LinearLayout
+        android:id="@+id/btn_daily"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:background="@drawable/drawable_shape_4"
+        android:clipToPadding="false"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground">
+
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="21dp"
+          android:gravity="left|center_vertical"
+          android:includeFontPadding="false"
+          android:maxLines="1"
+          android:singleLine="true"
+          android:text="Daily"
+          android:textColor="#FFFFFFFF"
+          android:textSize="14dp" />
+      </LinearLayout>
+      
+      <LinearLayout
+        android:id="@+id/btn_weekly"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:layout_marginLeft="12dp"
+        android:background="@drawable/drawable_shape_5"
+        android:clipToPadding="false"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground">
+
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="21dp"
+          android:gravity="left|center_vertical"
+          android:includeFontPadding="false"
+          android:maxLines="1"
+          android:singleLine="true"
+          android:text="Weekly"
+          android:textColor="#FFFFFFFF"
+          android:textSize="14dp" />
+      </LinearLayout>
+      
+      <LinearLayout
+        android:id="@+id/btn_monthly"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:layout_marginLeft="12dp"
+        android:background="@drawable/drawable_shape_6"
+        android:clipToPadding="false"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground">
+
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="21dp"
+          android:gravity="left|center_vertical"
+          android:includeFontPadding="false"
+          android:maxLines="1"
+          android:singleLine="true"
+          android:text="Monthly"
+          android:textColor="#FFFFFFFF"
+          android:textSize="14dp" />
+      </LinearLayout>
+    </LinearLayout>
+    
+    <TextView
+      android:layout_width="match_parent"
+      android:layout_height="23dp"
+      android:layout_marginLeft="16dp"
+      android:layout_marginRight="16dp"
+      android:layout_marginTop="16dp"
+      android:layout_marginBottom="8dp"
+      android:gravity="left|center_vertical"
+      android:includeFontPadding="false"
+      android:maxLines="1"
+      android:singleLine="true"
+      android:text="Reminders"
+      android:textColor="#FFFFFFFF"
+      android:textSize="18dp" />
+    
+    <!-- Time row clickable -->
+    <LinearLayout
+      android:id="@+id/btn_time"
+      android:layout_width="match_parent"
+      android:layout_height="72dp"
+      android:background="@drawable/drawable_shape_7"
+      android:gravity="left|center_vertical"
+      android:orientation="horizontal"
+      android:paddingBottom="8dp"
+      android:paddingLeft="16dp"
+      android:paddingRight="16dp"
+      android:paddingTop="8dp"
+      android:clickable="true"
+      android:focusable="true"
+      android:foreground="?attr/selectableItemBackground">
+
+      <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="left|center_vertical"
+        android:orientation="vertical">
+        
+        <TextView
+          android:layout_width="48dp"
+          android:layout_height="24dp"
+          android:gravity="left|center_vertical"
+          android:includeFontPadding="false"
+          android:maxLines="1"
+          android:singleLine="true"
+          android:text="Time"
+          android:textColor="#FFFFFFFF"
+          android:textSize="16dp" />
+        
+        <TextView
+          android:layout_width="match_parent"
+          android:layout_height="21dp"
+          android:gravity="left|center_vertical"
+          android:includeFontPadding="false"
+          android:maxLines="1"
+          android:singleLine="true"
+          android:text="Not set"
+          android:textColor="#FF91ADC9"
+          android:textSize="14dp" />
+      </LinearLayout>
+      <!-- 102:873:space-view0 Depth 2, Frame 5_space_view0 space-view -->
+      <View
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:layout_weight="1" />
+      
+      <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/drawable_image_1" />
+    </LinearLayout>
+    
+    <!-- Days row clickable -->
+    <LinearLayout
+      android:id="@+id/btn_days"
+      android:layout_width="match_parent"
+      android:layout_height="72dp"
+      android:background="@drawable/drawable_shape_8"
+      android:gravity="left|center_vertical"
+      android:orientation="horizontal"
+      android:paddingBottom="8dp"
+      android:paddingLeft="16dp"
+      android:paddingRight="16dp"
+      android:paddingTop="8dp"
+      android:clickable="true"
+      android:focusable="true"
+      android:foreground="?attr/selectableItemBackground">
+
+      <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="left|center_vertical"
+        android:orientation="vertical">
+        
+        <TextView
+          android:layout_width="48dp"
+          android:layout_height="24dp"
+          android:gravity="left|center_vertical"
+          android:includeFontPadding="false"
+          android:maxLines="1"
+          android:singleLine="true"
+          android:text="Days"
+          android:textColor="#FFFFFFFF"
+          android:textSize="16dp" />
+        
+        <TextView
+          android:layout_width="match_parent"
+          android:layout_height="21dp"
+          android:gravity="left|center_vertical"
+          android:includeFontPadding="false"
+          android:maxLines="1"
+          android:singleLine="true"
+          android:text="Not set"
+          android:textColor="#FF91ADC9"
+          android:textSize="14dp" />
+      </LinearLayout>
+      <!-- 102:884:space-view0 Depth 2, Frame 6_space_view0 space-view -->
+      <View
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:layout_weight="1" />
+      
+      <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/drawable_image_2" />
+    </LinearLayout>
+    <!-- 102:849:space-view0 Add Habit_space_view0 space-view -->
+    <View
+      android:layout_width="390dp"
+      android:layout_height="0dp"
+      android:layout_weight="1" />
+    
+    <!-- Create Habit button row clickable -->
+    <LinearLayout
+      android:id="@+id/btn_create_habit"
+      android:layout_width="match_parent"
+      android:layout_height="48dp"
+      android:layout_marginLeft="16dp"
+      android:layout_marginRight="16dp"
+      android:layout_marginTop="12dp"
+      android:layout_marginBottom="12dp"
+      android:background="@drawable/drawable_shape_9"
+      android:clipToPadding="false"
+      android:gravity="center"
+      android:orientation="horizontal"
+      android:paddingLeft="20dp"
+      android:paddingRight="20dp"
+      android:clickable="true"
+      android:focusable="true"
+      android:foreground="?attr/selectableItemBackground">
+
+      <TextView
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:gravity="center_horizontal|center_vertical"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text="Create Habit"
+        android:textColor="#FFFFFFFF"
+        android:textSize="16dp" />
+    </LinearLayout>
+    
+    <ImageView
+      android:layout_width="match_parent"
+      android:layout_height="20dp"
+      android:background="@drawable/drawable_shape_10"
+      android:scaleType="centerCrop" />
+  </LinearLayout>
+</LinearLayout>
