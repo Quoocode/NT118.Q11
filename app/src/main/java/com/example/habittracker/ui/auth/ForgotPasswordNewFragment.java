@@ -10,18 +10,19 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+
 import com.example.habittracker.R;
-import com.example.habittracker.databinding.FragmentRegisterBinding; // Tạo từ fragment_register.xml
+import com.example.habittracker.databinding.FragmentForgotPasswordNewBinding; // Tạo từ fragment_forgot_password_new.xml
 
-public class RegisterFragment extends Fragment {
+public class ForgotPasswordNewFragment extends Fragment {
 
-    private FragmentRegisterBinding binding;
+    private FragmentForgotPasswordNewBinding binding;
     private NavController navController;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = FragmentRegisterBinding.inflate(inflater, container, false);
+        binding = FragmentForgotPasswordNewBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
@@ -32,22 +33,17 @@ public class RegisterFragment extends Fragment {
 
         // Nút "Back" (mũi tên)
         binding.btnBack.setOnClickListener(v -> {
-            navController.popBackStack(); // Quay lại màn hình trước đó
+            navController.popBackStack();
         });
 
-        // Nút "Sign Up" (ID: container_depth_frame15)
-        binding.containerDepthFrame15.setOnClickListener(v -> {
-            // TODO: Xử lý logic đăng ký
-            Toast.makeText(getContext(), "Đang đăng ký...", Toast.LENGTH_SHORT).show();
+        // Nút "Submit" (ID: container_submit)
+        binding.containerSubmit.setOnClickListener(v -> {
+            // TODO: Xử lý logic đổi mật khẩu
+            Toast.makeText(getContext(), "Đổi mật khẩu thành công", Toast.LENGTH_SHORT).show();
 
-            // Điều hướng về Login sau khi đăng ký thành công
-            navController.navigate(R.id.action_registerFragment_to_loginFragment);
-        });
-
-        // Chữ "Already have an account? Sign In" (ID: text_sign_in)
-        binding.textSignIn.setOnClickListener(v -> {
-            // Điều hướng về Login
-            navController.navigate(R.id.action_registerFragment_to_loginFragment);
+            // Quay về màn hình Login
+            // (Chúng ta điều hướng về loginFragment, popUpTo để xóa hết các màn hình Quên mật khẩu)
+            navController.popBackStack(R.id.loginFragment, false);
         });
     }
 

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@drawable/container_depth_frame1">
+    android:background="@drawable/container_login_2">
 
     <LinearLayout
         android:id="@+id/container_summary_depth_frame_19"
@@ -27,7 +27,7 @@
             android:layout_marginTop="11dp"
             android:layout_marginBottom="11dp"
             android:scaleType="centerInside"
-            android:src="@drawable/container_summary_depth_frame_21" />
+            android:src="@drawable/ic_left_back" />
 
         <TextView
             android:id="@+id/container_summary_depth_frame_23"
@@ -49,7 +49,7 @@
             android:layout_marginTop="11dp"
             android:layout_marginBottom="11dp"
             android:scaleType="centerInside"
-            android:src="@drawable/container_summary_depth_frame_25" />
+            android:src="@drawable/ic_right_back" />
     </LinearLayout>
 
     <LinearLayout
@@ -170,7 +170,6 @@
             android:id="@+id/container_summary_depth_frame_37"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_37"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -192,7 +191,6 @@
             android:id="@+id/container_summary_depth_frame_39"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_39"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -214,7 +212,6 @@
             android:id="@+id/container_summary_depth_frame_41"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_41"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -236,7 +233,6 @@
             android:id="@+id/container_summary_depth_frame_43"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_43"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -258,7 +254,7 @@
             android:id="@+id/container_summary_depth_frame_45"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_45"
+            android:background="@drawable/container_blue"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -280,7 +276,6 @@
             android:id="@+id/container_summary_depth_frame_47"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_47"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -302,7 +297,6 @@
             android:id="@+id/container_summary_depth_frame_49"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_49"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -335,7 +329,6 @@
             android:id="@+id/container_summary_depth_frame_52"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_52"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -357,7 +350,6 @@
             android:id="@+id/container_summary_depth_frame_54"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_54"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -379,7 +371,6 @@
             android:id="@+id/container_summary_depth_frame_56"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_56"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -401,7 +392,6 @@
             android:id="@+id/container_summary_depth_frame_58"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_58"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -423,7 +413,6 @@
             android:id="@+id/container_summary_depth_frame_60"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_60"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -445,7 +434,6 @@
             android:id="@+id/container_summary_depth_frame_62"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_62"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -467,7 +455,6 @@
             android:id="@+id/container_summary_depth_frame_64"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_64"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -500,7 +487,6 @@
             android:id="@+id/container_summary_depth_frame_67"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_67"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -522,7 +508,6 @@
             android:id="@+id/container_summary_depth_frame_69"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_69"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -544,7 +529,6 @@
             android:id="@+id/container_summary_depth_frame_71"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_71"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -566,7 +550,6 @@
             android:id="@+id/container_summary_depth_frame_73"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_73"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -588,7 +571,6 @@
             android:id="@+id/container_summary_depth_frame_75"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_75"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -610,7 +592,6 @@
             android:id="@+id/container_summary_depth_frame_77"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_77"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -632,7 +613,6 @@
             android:id="@+id/container_summary_depth_frame_79"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_79"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -665,7 +645,6 @@
             android:id="@+id/container_summary_depth_frame_82"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_82"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -687,7 +666,6 @@
             android:id="@+id/container_summary_depth_frame_84"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_84"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -709,7 +687,6 @@
             android:id="@+id/container_summary_depth_frame_86"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_86"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -731,7 +708,6 @@
             android:id="@+id/container_summary_depth_frame_88"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_88"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -753,7 +729,6 @@
             android:id="@+id/container_summary_depth_frame_90"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_90"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -775,7 +750,6 @@
             android:id="@+id/container_summary_depth_frame_92"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_92"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -797,7 +771,6 @@
             android:id="@+id/container_summary_depth_frame_94"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_94"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -831,7 +804,6 @@
             android:id="@+id/container_summary_depth_frame_97"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_97"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">
@@ -853,7 +825,6 @@
             android:id="@+id/container_summary_depth_frame_99"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/container_summary_depth_frame_99"
             android:clipToPadding="false"
             android:gravity="center"
             android:orientation="horizontal">

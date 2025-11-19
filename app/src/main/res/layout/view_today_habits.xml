@@ -4,14 +4,12 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <!-- Container for the first 3 habits (always visible) -->
     <LinearLayout
         android:id="@+id/layout_today_habits_collapsed"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" />
 
-    <!-- Container for the extra habits (visible only when expanded) -->
     <LinearLayout
         android:id="@+id/layout_today_habits_extra"
         android:layout_width="match_parent"
@@ -19,7 +17,6 @@
         android:orientation="vertical"
         android:visibility="gone" />
 
-    <!-- Show more / Show less button -->
     <TextView
         android:id="@+id/tv_toggle_today_habits"
         android:layout_width="wrap_content"
@@ -33,4 +30,3 @@
         android:textSize="14sp" />
 
 </LinearLayout>
-

@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:id="@+id/home_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/container_home_screen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/container_login_2"
+            android:gravity="left|top"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/container_home_screen1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left|top"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/container_depth_frame1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:gravity="left|center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingBottom="8dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingTop="16dp">
+
+                    <TextView
+                        android:id="@+id/container_depth_frame2"
+                        android:layout_width="match_parent"
+                        android:layout_height="23dp"
+                        android:layout_marginLeft="48dp"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:text="Dashboard"
+                        android:textColor="#FFFFFFFF"
+                        android:textSize="18dp" />
+
+                    <LinearLayout
+                        android:id="@+id/container_depth_frame3"
+                        android:layout_width="48dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="right|center_vertical"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:id="@+id/container_depth_frame5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="48dp"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:id="@+id/btn_add_habit_today"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:scaleType="centerInside"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:background="?attr/selectableItemBackgroundBorderless"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/container_depth_frame7"
+                    android:layout_width="match_parent"
+                    android:layout_height="28dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="12dp"
+                    android:gravity="left|center_vertical"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="Today"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="22dp" />
+                <include
+                    android:id="@+id/test_habit_item"
+                    layout="@layout/item_today_habit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"/>
+                <include
+                    android:id="@+id/include_today_habits"
+                    layout="@layout/view_today_habits" />
+
+                <TextView
+                    android:id="@+id/container_depth_frame35"
+                    android:layout_width="match_parent"
+                    android:layout_height="28dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="12dp"
+                    android:gravity="left|center_vertical"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="Progress"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="22dp" />
+
+                <LinearLayout
+                    android:id="@+id/container_depth_frame37"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="16dp"
+                    android:clipToPadding="false"
+                    android:gravity="left|top"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/container_depth_frame38"
+                        android:layout_width="match_parent"
+                        android:layout_height="24dp"
+                        android:layout_weight="1"
+                        android:gravity="left|center_vertical"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:text="Daily Habits"
+                        android:textColor="#FFFFFFFF"
+                        android:textSize="16dp" />
+
+                    <TextView
+                        android:id="@+id/container_depth_frame39"
+                        android:layout_width="match_parent"
+                        android:layout_height="24dp"
+                        android:layout_marginBottom="3dp"
+                        android:layout_weight="1"
+                        android:gravity="left|center_vertical"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:text="3/5"
+                        android:textColor="#FFFFFFFF"
+                        android:textSize="14dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/container_depth_frame40"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/container_navi"
+                    android:gravity="left|top"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/image_depth_frame7"
+                        android:layout_width="218dp"
+                        android:layout_height="8dp"
+                        android:background="@drawable/container_blue"
+                        android:scaleType="centerInside" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/container_depth_frame42"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="16dp"
+                    android:clipToPadding="false"
+                    android:gravity="left|top"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/container_depth_frame43"
+                        android:layout_width="match_parent"
+                        android:layout_height="24dp"
+                        android:layout_weight="1"
+                        android:gravity="left|center_vertical"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:text="Weekly Habits"
+                        android:textColor="#FFFFFFFF"
+                        android:textSize="16dp" />
+
+                    <TextView
+                        android:id="@+id/container_depth_frame44"
+                        android:layout_width="match_parent"
+                        android:layout_height="24dp"
+                        android:layout_marginBottom="3dp"
+                        android:layout_weight="1"
+                        android:gravity="left|center_vertical"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:text="8/10"
+                        android:textColor="#FFFFFFFF"
+                        android:textSize="14dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/container_depth_frame45"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/container_navi"
+                    android:gravity="left|top"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/image_depth_frame8"
+                        android:layout_width="286dp"
+                        android:layout_height="8dp"
+                        android:background="@drawable/container_blue"
+                        android:scaleType="centerInside" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/container_depth_frame46"
+                    android:layout_width="match_parent"
+                    android:layout_height="28dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="12dp"
+                    android:gravity="left|center_vertical"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="Streaks"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="22dp" />
+
+                <LinearLayout
+                    android:id="@+id/container_depth_frame47"
+                    android:layout_width="match_parent"
+                    android:layout_height="72dp"
+                    android:gravity="left|center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingBottom="8dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingTop="8dp">
+
+                    <LinearLayout
+                        android:id="@+id/container_depth_frame48"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@drawable/container_navi"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/container_depth_frame49"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_streak" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/container_depth_frame50"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:gravity="left|center_vertical"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/container_depth_frame51"
+                            android:layout_width="match_parent"
+                            android:layout_height="24dp"
+                            android:gravity="left|center_vertical"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:text="3 days"
+                            android:textColor="#FFFFFFFF"
+                            android:textSize="16dp" />
+
+                        <TextView
+                            android:id="@+id/container_depth_frame52"
+                            android:layout_width="match_parent"
+                            android:layout_height="21dp"
+                            android:gravity="left|center_vertical"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:text="Current"
+                            android:textColor="#FF91ADC9"
+                            android:textSize="14dp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/container_depth_frame53"
+                    android:layout_width="match_parent"
+                    android:layout_height="72dp"
+                    android:gravity="left|center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingBottom="8dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingTop="8dp">
+
+                    <LinearLayout
+                        android:id="@+id/container_depth_frame54"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@drawable/container_navi"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/container_depth_frame55"
+                            android:layout_width="19dp"
+                            android:layout_height="24dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_cup" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/container_depth_frame56"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:gravity="left|center_vertical"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/container_depth_frame57"
+                            android:layout_width="wrap_content"
+                            android:layout_height="24dp"
+                            android:gravity="left|center_vertical"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:text="7 days"
+                            android:textColor="#FFFFFFFF"
+                            android:textSize="16dp" />
+
+                        <TextView
+                            android:id="@+id/container_depth_frame58"
+                            android:layout_width="match_parent"
+                            android:layout_height="21dp"
+                            android:gravity="left|center_vertical"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:text="Longest"
+                            android:textColor="#FF91ADC9"
+                            android:textSize="14dp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

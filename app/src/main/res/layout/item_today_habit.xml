@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="72dp"
-    android:background="@drawable/container_depth_frame8"
+    android:background="@drawable/container_login_2"
     android:gravity="left|center_vertical"
     android:orientation="horizontal"
     android:paddingBottom="8dp"
@@ -14,7 +14,7 @@
         android:id="@+id/layout_icon_bg"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:background="@drawable/container_depth_frame10"
+        android:background="@drawable/container_navi"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -23,7 +23,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:scaleType="centerInside"
-            android:src="@drawable/container_depth_frame11" />
+            android:src="@drawable/ic_drink_water" />
     </LinearLayout>
 
     <LinearLayout
@@ -69,8 +69,7 @@
         android:layout_height="20dp"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
-        android:background="@drawable/container_depth_frame16"
+        android:background="@drawable/container_edge"
         android:scaleType="centerInside" />
 
 </LinearLayout>
-

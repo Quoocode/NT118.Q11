@@ -4,24 +4,23 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import com.example.habittracker.R;
-import com.example.habittracker.databinding.FragmentRegisterBinding; // Tạo từ fragment_register.xml
+import com.example.habittracker.databinding.FragmentForgotPasswordBinding; // Tạo từ fragment_forgot_password.xml
 
-public class RegisterFragment extends Fragment {
+public class ForgotPasswordFragment extends Fragment {
 
-    private FragmentRegisterBinding binding;
+    private FragmentForgotPasswordBinding binding;
     private NavController navController;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = FragmentRegisterBinding.inflate(inflater, container, false);
+        binding = FragmentForgotPasswordBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
@@ -32,22 +31,15 @@ public class RegisterFragment extends Fragment {
 
         // Nút "Back" (mũi tên)
         binding.btnBack.setOnClickListener(v -> {
-            navController.popBackStack(); // Quay lại màn hình trước đó
+            navController.popBackStack();
         });
 
-        // Nút "Sign Up" (ID: container_depth_frame15)
-        binding.containerDepthFrame15.setOnClickListener(v -> {
-            // TODO: Xử lý logic đăng ký
-            Toast.makeText(getContext(), "Đang đăng ký...", Toast.LENGTH_SHORT).show();
+        // Nút "Send verification code" (ID: container_send_code)
+        binding.containerSendCode.setOnClickListener(v -> {
+            // TODO: Xử lý logic gửi email
 
-            // Điều hướng về Login sau khi đăng ký thành công
-            navController.navigate(R.id.action_registerFragment_to_loginFragment);
-        });
-
-        // Chữ "Already have an account? Sign In" (ID: text_sign_in)
-        binding.textSignIn.setOnClickListener(v -> {
-            // Điều hướng về Login
-            navController.navigate(R.id.action_registerFragment_to_loginFragment);
+            // Điều hướng đến màn hình nhập mật khẩu mới
+            navController.navigate(R.id.action_forgotPasswordFragment_to_forgotPasswordNewFragment);
         });
     }
 

@@ -1,4 +1,4 @@
-package com.example.habittracker.ui.achievements;
+package com.example.habittracker.ui.settings;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,19 +9,17 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
-import com.example.habittracker.databinding.FragmentAchievementsBinding; // Tạo từ fragment_achievements.xml
+import com.example.habittracker.databinding.FragmentSettingsBinding; // Tạo từ fragment_settings.xml
 
-public class AchievementsFragment extends Fragment {
+public class SettingsFragment extends Fragment {
 
-    private FragmentAchievementsBinding binding;
+    private FragmentSettingsBinding binding;
     private NavController navController;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // LƯU Ý: Bạn chưa cung cấp file 'fragment_achievements.xml'
-        // Hãy đảm bảo bạn đã tạo nó.
-        binding = FragmentAchievementsBinding.inflate(inflater, container, false);
+        binding = FragmentSettingsBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
@@ -30,7 +28,13 @@ public class AchievementsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         navController = NavHostFragment.findNavController(this);
 
-        // TODO: Thêm sự kiện click cho nút "Back" nếu layout của bạn có
+        // Nút "Back" (mũi tên)
+        binding.btnBack.setOnClickListener(v -> {
+            navController.popBackStack();
+        });
+
+        // TODO: Thêm click listener cho các mục Settings khác
+        // binding.containerDepthFrame6.setOnClickListener(v -> { ... });
     }
 
     @Override
