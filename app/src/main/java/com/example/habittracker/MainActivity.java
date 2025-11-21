@@ -1,7 +1,10 @@
 package com.example.habittracker;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -39,6 +42,22 @@ public class MainActivity extends AppCompatActivity {
             // 4. Gọi hàm để quản lý ẩn/hiện thanh điều hướng
             setupBottomNavVisibility();
         }
+
+        HabitRepository repo = new HabitRepository();
+        // Create a new habit
+        Habit newHabit = new Habit("Run", "Morning Jog", 5, "km");
+        repo.addHabit(newHabit, new HabitRepository.DataCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean data) {
+                Toast.makeText(MainActivity.this, "Habit Added!", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e("Firestore", "Error adding habit", e);
+            }
+        });
+
     }
 
     private void setupBottomNavVisibility() {
@@ -68,19 +87,6 @@ public class MainActivity extends AppCompatActivity {
         return navController.navigateUp() || super.onSupportNavigateUp();
     }
 
-    HabitRepository repo = new HabitRepository();
-    // Create a new habit
-    Habit newHabit = new Habit("Run", "Morning Jog", 5, "km");
-    repo.addHabit(newHabit, new HabitRepository.DataCallback<Boolean>() {
-        @Override
-        public void onSuccess(Boolean data) {
-            Toast.makeText(MainActivity.this, "Habit Added!", Toast.LENGTH_SHORT).show();
-        }
 
-        @Override
-        public void onError(Exception e) {
-            Log.e("Firestore", "Error adding habit", e);
-        }
-    });
 
 }

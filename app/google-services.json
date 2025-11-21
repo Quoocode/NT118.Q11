@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "392391623569",
+    "project_id": "nt118-q11",
+    "storage_bucket": "nt118-q11.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:392391623569:android:350e7647b3f297c7e25030",
+        "android_client_info": {
+          "package_name": "com.example.habittracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "392391623569-cu50g8bhfh23ds2h54iojdh1hghvu0ge.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.habittracker",
+            "certificate_hash": "0fc9c57aa3943d9d05cdda39340ebbe653e62679"
+          }
+        },
+        {
+          "client_id": "392391623569-dootefjgroer4isdof8hk6u760upkbcb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCkyxGElgGXzW39V0BUnbt_8n3zbyLJDw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "392391623569-dootefjgroer4isdof8hk6u760upkbcb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
