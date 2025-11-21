@@ -8,6 +8,8 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 import com.example.habittracker.R;
 import com.example.habittracker.databinding.ActivityMainBinding; // <-- Tạo từ "activity_main.xml"
+import com.example.habittracker.DatabaseStructure.HabitRepository;
+import com.example.habittracker.DatabaseStructure.Habit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -65,4 +67,20 @@ public class MainActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         return navController.navigateUp() || super.onSupportNavigateUp();
     }
+
+    HabitRepository repo = new HabitRepository();
+    // Create a new habit
+    Habit newHabit = new Habit("Run", "Morning Jog", 5, "km");
+    repo.addHabit(newHabit, new HabitRepository.DataCallback<Boolean>() {
+        @Override
+        public void onSuccess(Boolean data) {
+            Toast.makeText(MainActivity.this, "Habit Added!", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onError(Exception e) {
+            Log.e("Firestore", "Error adding habit", e);
+        }
+    });
+
 }
