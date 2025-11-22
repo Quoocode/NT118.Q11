@@ -22,8 +22,8 @@
             android:id="@+id/img_icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_drink_water" />
+            android:scaleType="centerInside"></ImageView>
+<!--            android:src="@drawable/ic_drink_water" />-->
     </LinearLayout>
 
     <LinearLayout
@@ -41,9 +41,10 @@
             android:includeFontPadding="false"
             android:maxLines="1"
             android:singleLine="true"
-            android:text="Drink Water"
             android:textColor="#FFFFFFFF"
             android:textSize="16dp" />
+        <!--            android:text="Drink water"-->
+
 
         <TextView
             android:id="@+id/tv_time"
@@ -53,9 +54,9 @@
             android:includeFontPadding="false"
             android:maxLines="1"
             android:singleLine="true"
-            android:text="Morning"
+
             android:textColor="#FF91ADC9"
-            android:textSize="14dp" />
+            android:textSize="14dp" /> <!--            android:text="10:37"-->
     </LinearLayout>
 
     <View
@@ -69,7 +70,7 @@
         android:layout_height="20dp"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
-        android:background="@drawable/container_edge"
+        android:src="@drawable/ic_ellipsis"
         android:scaleType="centerInside" />
 
 </LinearLayout>
