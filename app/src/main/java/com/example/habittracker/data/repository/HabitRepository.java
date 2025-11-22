@@ -37,13 +37,10 @@ public class HabitRepository {
     private final CollectionReference historyRef;
 
     public HabitRepository(String userId) {
-        // Tự động dùng ID test nếu chưa đăng nhập (Tránh crash)
         if (userId == null || userId.isEmpty()) {
-            Log.w(TAG, "⚠️ Chưa có User ID. Sử dụng 'test_user_001' để test.");
-            this.userId = "ML1NNiZM0XO2TPPtnUOoKi0nMHN2";
-        } else {
-            this.userId = userId;
+            throw new IllegalArgumentException("User ID must not be null or empty. Authentication required.");
         }
+        this.userId = userId;
 
         this.db = FirebaseFirestore.getInstance();
         String userPath = "users/" + this.userId;
