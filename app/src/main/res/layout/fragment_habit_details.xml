@@ -25,205 +25,145 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/container_summary_depth_frame_2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                android:gravity="left|center_vertical"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingBottom="8dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="16dp">
+                android:padding="16dp">
 
                 <ImageView
                     android:id="@+id/btn_back"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="12dp"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_left_back" />
+                    android:src="@drawable/ic_left_back"
+                    app:tint="@color/white"
+                    android:background="?attr/selectableItemBackgroundBorderless"/>
 
                 <TextView
-                    android:id="@+id/container_summary_depth_frame_5"
-                    android:layout_width="match_parent"
-                    android:layout_height="23dp"
-                    android:layout_marginRight="48dp"
+                    android:id="@+id/tv_detail_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="center_horizontal|center_vertical"
-                    android:includeFontPadding="false"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:text="Morning Run"
-                    android:textColor="#FFFFFFFF"
-                    android:textSize="18dp" />
+                    android:gravity="center"
+                    tools:text="Morning Run"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+
+                <View android:layout_width="24dp" android:layout_height="24dp"/>
             </LinearLayout>
 
+            <!-- Stats Row -->
             <LinearLayout
-                android:id="@+id/container_summary_depth_frame_6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="left|top"
                 android:orientation="horizontal"
-                android:paddingBottom="16dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="16dp">
+                android:padding="16dp">
 
+                <!-- Current Streak -->
                 <LinearLayout
-                    android:id="@+id/container_summary_depth_frame_7"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@drawable/container_edge"
-                    android:gravity="left|top"
+                    android:background="@drawable/container_navi"
                     android:orientation="vertical"
-                    android:paddingBottom="24dp"
-                    android:paddingLeft="24dp"
-                    android:paddingRight="24dp"
-                    android:paddingTop="24dp">
+                    android:padding="16dp"
+                    android:layout_marginEnd="8dp">
 
                     <TextView
-                        android:id="@+id/container_summary_depth_frame_8"
-                        android:layout_width="match_parent"
-                        android:layout_height="24dp"
-                        android:gravity="left|center_vertical"
-                        android:includeFontPadding="false"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:text="Current Streak"
-                        android:textColor="#FFFFFFFF"
-                        android:textSize="16dp" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Current\nStreak"
+                        android:textColor="#B0B0B0"
+                        android:textSize="12sp" />
 
                     <TextView
-                        android:id="@+id/container_summary_depth_frame_9"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
+                        android:id="@+id/tv_detail_current_streak"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:gravity="left|center_vertical"
-                        android:includeFontPadding="false"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:text="5 days"
-                        android:textColor="#FFFFFFFF"
-                        android:textSize="24dp" />
+                        tools:text="5"
+                        android:textColor="#FFFFFF"
+                        android:textSize="24sp"
+                        android:textStyle="bold"/>
                 </LinearLayout>
 
+                <!-- Longest Streak -->
                 <LinearLayout
-                    android:id="@+id/container_summary_depth_frame_10"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
                     android:layout_weight="1"
-                    android:background="@drawable/container_edge"
-                    android:gravity="left|top"
+                    android:background="@drawable/container_navi"
                     android:orientation="vertical"
-                    android:paddingBottom="24dp"
-                    android:paddingLeft="24dp"
-                    android:paddingRight="24dp"
-                    android:paddingTop="24dp">
+                    android:padding="16dp"
+                    android:layout_marginHorizontal="4dp">
 
                     <TextView
-                        android:id="@+id/container_summary_depth_frame_11"
-                        android:layout_width="match_parent"
-                        android:layout_height="24dp"
-                        android:gravity="left|center_vertical"
-                        android:includeFontPadding="false"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:text="Longest Streak"
-                        android:textColor="#FFFFFFFF"
-                        android:textSize="16dp" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Longest\nStreak"
+                        android:textColor="#B0B0B0"
+                        android:textSize="12sp" />
 
                     <TextView
-                        android:id="@+id/container_summary_depth_frame_12"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
+                        android:id="@+id/tv_detail_longest_streak"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:gravity="left|center_vertical"
-                        android:includeFontPadding="false"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:text="12 days"
-                        android:textColor="#FFFFFFFF"
-                        android:textSize="24dp" />
+                        tools:text="12"
+                        android:textColor="#FFFFFF"
+                        android:textSize="24sp"
+                        android:textStyle="bold"/>
                 </LinearLayout>
 
+                <!-- Total -->
                 <LinearLayout
-                    android:id="@+id/container_summary_depth_frame_13"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
                     android:layout_weight="1"
-                    android:background="@drawable/container_edge"
-                    android:gravity="left|top"
+                    android:background="@drawable/container_navi"
                     android:orientation="vertical"
-                    android:paddingBottom="24dp"
-                    android:paddingLeft="24dp"
-                    android:paddingRight="24dp"
-                    android:paddingTop="24dp">
+                    android:padding="16dp"
+                    android:layout_marginStart="8dp">
 
                     <TextView
-                        android:id="@+id/container_summary_depth_frame_14"
-                        android:layout_width="match_parent"
-                        android:layout_height="24dp"
-                        android:gravity="left|center_vertical"
-                        android:includeFontPadding="false"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:text="Total Completions"
-                        android:textColor="#FFFFFFFF"
-                        android:textSize="16dp" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Total\nDone"
+                        android:textColor="#B0B0B0"
+                        android:textSize="12sp" />
 
                     <TextView
-                        android:id="@+id/container_summary_depth_frame_15"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
+                        android:id="@+id/tv_detail_total_done"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:gravity="left|center_vertical"
-                        android:includeFontPadding="false"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:text="35"
-                        android:textColor="#FFFFFFFF"
-                        android:textSize="24dp" />
+                        tools:text="35"
+                        android:textColor="#FFFFFF"
+                        android:textSize="24sp"
+                        android:textStyle="bold"/>
                 </LinearLayout>
             </LinearLayout>
 
             <TextView
-                android:id="@+id/container_summary_depth_frame_16"
                 android:layout_width="match_parent"
-                android:layout_height="28dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="12dp"
-                android:gravity="left|center_vertical"
-                android:includeFontPadding="false"
-                android:maxLines="1"
-                android:singleLine="true"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
                 android:text="Completion History"
-                android:textColor="#FFFFFFFF"
-                android:textSize="22dp" />
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
 
             <include layout="@layout/calendar_view" />
 
             <TextView
-                android:id="@+id/container_summary_depth_frame_101"
                 android:layout_width="match_parent"
-                android:layout_height="28dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginBottom="12dp"
-                android:gravity="left|center_vertical"
-                android:includeFontPadding="false"
-                android:maxLines="1"
-                android:singleLine="true"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
                 android:text="Statistics"
-                android:textColor="#FFFFFFFF"
-                android:textSize="22dp" />
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
 
             <View
                 android:layout_width="390dp"
@@ -359,64 +299,53 @@
                 android:layout_height="0dp"
                 android:layout_weight="1" />
 
+            <!-- Action Buttons Row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="left|top"
                 android:orientation="horizontal"
-                android:paddingBottom="12dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="12dp">
+                android:padding="16dp">
 
+                <!-- Edit Button -->
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:background="@drawable/container_navi"
-                    android:gravity="left|top"
-                    android:orientation="vertical"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp">
-
-                    <TextView
-                        android:id="@+id/btn_edit_habit"
-                        android:layout_width="match_parent"
-                        android:layout_height="21dp"
-                        android:ellipsize="end"
-                        android:gravity="center_horizontal|center_vertical"
-                        android:includeFontPadding="false"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:text="Edit Habit"
-                        android:textColor="#FFFFFFFF"
-                        android:textSize="14dp" />
-                </LinearLayout>
-                <View
+                    android:id="@+id/btn_edit_habit"
                     android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:background="@drawable/container_navi"
-                    android:gravity="left|top"
-                    android:orientation="vertical"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp">
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/container_blue"
+                    android:gravity="center"
+                    android:layout_marginEnd="8dp"
+                    android:clickable="true"
+                    android:focusable="true">
 
                     <TextView
-                        android:id="@+id/btn_delete_habit"
-                        android:layout_width="match_parent"
-                        android:layout_height="21dp"
-                        android:ellipsize="end"
-                        android:gravity="center_horizontal|center_vertical"
-                        android:includeFontPadding="false"
-                        android:maxLines="1"
-                        android:singleLine="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Edit Habit"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- Delete Button -->
+                <LinearLayout
+                    android:id="@+id/btn_delete_habit"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_btn_delete"
+                    android:gravity="center"
+                    android:layout_marginStart="8dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:text="Delete Habit"
-                        android:textColor="#FFFFFFFF"
-                        android:textSize="14dp" />
+                        android:textColor="#FF5252"
+                        android:textSize="16sp"
+                        android:textStyle="bold"/>
                 </LinearLayout>
             </LinearLayout>
 
