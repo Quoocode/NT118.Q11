@@ -32,7 +32,7 @@ com.example.habittracker
 │   ├── model                // Các đối tượng dữ liệu (POJO/Data Class)
 │   │   ├── User.java        // (Lưu thông tin người dùng: email, tên...)
 │   │   ├── Habit.java       // (Lưu thông tin thói quen: tên, icon, màu, tần suất...)
-│   │   ├── HabitEntry.java  // (Lưu 1 lần thực hiện thói quen: habitId, ngày, trạng thái...)
+│   │   ├── HabitHistory.java  // (Lưu 1 lần thực hiện thói quen: habitId, ngày, trạng thái...)
 │   │   └── Achievement.java // (Lưu thông tin thành tựu: tên, điều kiện, icon...)
 │   │
 │   ├── repository           // Nơi quản lý dữ liệu (Single Source of Truth)
