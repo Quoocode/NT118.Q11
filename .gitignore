@@ -1,15 +1,41 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+# ---- Android / Gradle build output ----
+.gradle/
+**/build/
+**/captures/
+.cxx/
+.externalNativeBuild/
+
+# Local configuration (kept outside of VCS)
+# Contains local SDK paths / machine-specific settings
 local.properties
+
+# ---- IDE files ----
+# Android Studio / IntelliJ
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# ---- OS-specific files ----
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ---- Misc ----
+# Log / temp files
+*.log
+*.tmp
+*.temp
+
