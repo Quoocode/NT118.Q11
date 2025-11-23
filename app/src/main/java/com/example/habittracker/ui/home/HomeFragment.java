@@ -1,5 +1,6 @@
 package com.example.habittracker.ui.home;
 
+import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -71,6 +72,7 @@ public class HomeFragment extends Fragment {
             });
         }
         loadStreakData();
+        loadDailyProgress();
     }
 
     private void setupRecyclerView() {
@@ -207,12 +209,62 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+    // Hàm này gọi trong onResume() hoặc onViewCreated()
+    private void loadDailyProgress() {
+        Calendar today = Calendar.getInstance();
+
+        // Gọi Repository lấy danh sách thói quen hôm nay
+        habitRepository.getHabitsAndHistoryForDate(today, new HabitQueryCallback() {
+            @Override
+            public void onSuccess(List<?> result) {
+                if (binding == null) return;
+
+                // 1. Tính toán
+                int totalHabits = result.size();
+                int completedHabits = 0;
+
+                // SỬA LẠI ĐOẠN VÒNG LẶP NÀY:
+                // 1. Chạy vòng lặp với kiểu Object (vì List<?> trả về Object)
+                for (Object item : result) {
+
+                    // 2. Kiểm tra và Ép kiểu nó về HabitDailyView
+                    if (item instanceof HabitDailyView) {
+                        HabitDailyView habit = (HabitDailyView) item;
+
+                        // 3. Giờ thì code kiểm tra trạng thái sẽ hoạt động bình thường
+                        if ("DONE".equalsIgnoreCase(habit.getStatus()) ||
+                                "COMPLETED".equalsIgnoreCase(habit.getStatus())) {
+                            completedHabits++;
+                        }
+                    }
+                }
+
+                // 2. Cập nhật UI Text (Ví dụ: 3/5)
+                String progressText = completedHabits + "/" + totalHabits;
+                binding.tvProgressCount.setText(progressText);
+
+                // 3. Cập nhật Thanh Progress Bar
+                binding.progressBarDaily.setMax(totalHabits); // Đặt mốc tối đa là tổng số
+
+                // Hiệu ứng chạy mượt mà (Animation)
+                ObjectAnimator.ofInt(binding.progressBarDaily, "progress", completedHabits)
+                        .setDuration(500) // Chạy trong 0.5 giây
+                        .start();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Log.e("ProgressError", "Lỗi tính progress: " + e.getMessage());
+            }
+        });
+    }
 
     @Override
     public void onResume() {
         super.onResume();
         // Tải lại dữ liệu mỗi khi quay lại màn hình này (ví dụ từ màn hình Add/Edit hoặc Dialog tắt)
         loadHabitsForToday();
+        loadDailyProgress();
     }
 
     @Override

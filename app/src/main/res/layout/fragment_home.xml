@@ -158,7 +158,7 @@
                         android:textSize="16dp" />
 
                     <TextView
-                        android:id="@+id/container_depth_frame39"
+                        android:id="@+id/tv_progress_count"
                         android:layout_width="match_parent"
                         android:layout_height="24dp"
                         android:layout_marginBottom="3dp"
@@ -167,30 +167,23 @@
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="3/5"
+                        tools:text="3/5"
                         android:textColor="#FFFFFFFF"
                         android:textSize="14dp" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/container_depth_frame40"
+                <ProgressBar
+                    android:id="@+id/progress_bar_daily"
+                    style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="12dp"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:layout_marginTop="12dp"
                     android:layout_marginBottom="16dp"
-                    android:background="@drawable/container_navi"
-                    android:gravity="left|top"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/image_depth_frame7"
-                        android:layout_width="218dp"
-                        android:layout_height="8dp"
-                        android:background="@drawable/container_blue"
-                        android:scaleType="centerInside" />
-                </LinearLayout>
+                    android:max="100"
+                    android:progress="60"
+                    android:progressDrawable="@drawable/custom_progress_bar" />
 
 <!--                <LinearLayout-->
 <!--                    android:id="@+id/container_depth_frame42"-->
