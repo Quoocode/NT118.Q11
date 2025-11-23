@@ -21,6 +21,7 @@ public class CalendarDayAdapter extends RecyclerView.Adapter<CalendarDayAdapter.
     private final List<CalendarDay> days = new ArrayList<>();
     private final Listener listener;
     private Date today = new Date();
+    private Date selectedDate;
 
     public CalendarDayAdapter(Listener listener) {
         this.listener = listener;
@@ -37,6 +38,11 @@ public class CalendarDayAdapter extends RecyclerView.Adapter<CalendarDayAdapter.
         notifyDataSetChanged();
     }
 
+    public void setSelectedDate(Date date) {
+        this.selectedDate = date;
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public DayViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -47,7 +53,9 @@ public class CalendarDayAdapter extends RecyclerView.Adapter<CalendarDayAdapter.
     @Override
     public void onBindViewHolder(@NonNull DayViewHolder holder, int position) {
         CalendarDay calendarDay = days.get(position);
-        holder.bind(calendarDay, calendarDay.getDate().equals(today));
+        boolean isToday = isSameDay(calendarDay.getDate(), today);
+        boolean isSelected = isSameDay(calendarDay.getDate(), selectedDate);
+        holder.bind(calendarDay, isToday, isSelected);
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onDaySelected(calendarDay.getDate());
@@ -63,21 +71,39 @@ public class CalendarDayAdapter extends RecyclerView.Adapter<CalendarDayAdapter.
     static class DayViewHolder extends RecyclerView.ViewHolder {
         private final TextView dayNumber;
         private final View todayIndicator;
+        private final View dayContainer;
 
         DayViewHolder(@NonNull View itemView) {
             super(itemView);
             dayNumber = itemView.findViewById(R.id.day_number);
             todayIndicator = itemView.findViewById(R.id.today_indicator);
+            dayContainer = itemView.findViewById(R.id.day_container);
         }
 
-        void bind(CalendarDay calendarDay, boolean isToday) {
+        void bind(CalendarDay calendarDay, boolean isToday, boolean isSelected) {
             Calendar cal = Calendar.getInstance();
             cal.setTime(calendarDay.getDate());
             dayNumber.setText(String.valueOf(cal.get(Calendar.DAY_OF_MONTH)));
-            todayIndicator.setVisibility(isToday ? View.VISIBLE : View.GONE);
+
+            boolean highlight = isToday || isSelected;
+            dayContainer.setBackgroundResource(highlight ? R.drawable.container_blue : R.drawable.container_login_2);
+            todayIndicator.setVisibility(View.GONE);
+
             float alpha = calendarDay.isInCurrentMonth() ? 1f : 0.3f;
-            dayNumber.setAlpha(alpha);
-            todayIndicator.setAlpha(alpha);
+            dayContainer.setAlpha(alpha);
+            dayNumber.setAlpha(1f);
         }
+    }
+
+    private boolean isSameDay(Date first, Date second) {
+        if (first == null || second == null) {
+            return false;
+        }
+        Calendar cal1 = Calendar.getInstance();
+        Calendar cal2 = Calendar.getInstance();
+        cal1.setTime(first);
+        cal2.setTime(second);
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)
+                && cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
     }
 }

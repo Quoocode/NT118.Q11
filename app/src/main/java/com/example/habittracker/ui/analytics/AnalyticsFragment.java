@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -16,6 +17,10 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import com.example.habittracker.R;
 import com.example.habittracker.databinding.FragmentCalendarBinding; // Tạo từ fragment_calendar.xml
+import com.example.habittracker.data.repository.HabitRepository;
+import com.example.habittracker.data.model.HabitDailyView;
+import com.example.habittracker.data.repository.callback.HabitQueryCallback;
+import com.google.firebase.auth.FirebaseAuth;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,6 +39,8 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
     private static final int HABIT_BATCH_SIZE = 3;
     private final SimpleDateFormat monthFormatter = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
     private final Calendar currentMonth = Calendar.getInstance();
+    private final Calendar selectedDate = Calendar.getInstance();
+    private HabitRepository habitRepository;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -47,6 +54,13 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         super.onViewCreated(view, savedInstanceState);
         navController = NavHostFragment.findNavController(this);
 
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid != null) {
+            habitRepository = new HabitRepository(uid);
+        } else {
+            Toast.makeText(requireContext(), R.string.error_auth_required, Toast.LENGTH_SHORT).show();
+        }
+
         calendarAdapter = new CalendarDayAdapter(this);
         GridLayoutManager layoutManager = new GridLayoutManager(requireContext(), 7);
         binding.calendarDaysRecycler.setLayoutManager(layoutManager);
@@ -57,13 +71,19 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         binding.btnBack.setOnClickListener(v -> navController.popBackStack());
 
         setupHabitList();
-        seedSampleHabits();
         updateMonth();
+        loadHabitsForDate(selectedDate);
     }
 
     private void setupHabitList() {
+        if (binding == null || binding.habitCompletionSection == null) {
+            return;
+        }
         ScrollView scrollView = binding.habitCompletionSection.habitCompletionScroll;
         scrollView.getViewTreeObserver().addOnScrollChangedListener(() -> {
+            if (binding == null || binding.habitCompletionSection == null) {
+                return;
+            }
             if (!scrollView.canScrollVertically(1)) {
                 appendMoreHabits();
             }
@@ -72,7 +92,10 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
 
     private void moveMonth(int offset) {
         currentMonth.add(Calendar.MONTH, offset);
+        currentMonth.set(Calendar.DAY_OF_MONTH, 1);
+        selectedDate.setTime(currentMonth.getTime());
         updateMonth();
+        loadHabitsForDate(selectedDate);
     }
 
     private void updateMonth() {
@@ -80,6 +103,7 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         List<CalendarDay> days = buildMonthDays();
         calendarAdapter.submitDays(days);
         calendarAdapter.setToday(Calendar.getInstance().getTime());
+        calendarAdapter.setSelectedDate(selectedDate.getTime());
     }
 
     private List<CalendarDay> buildMonthDays() {
@@ -98,19 +122,83 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         return days;
     }
 
-    private void seedSampleHabits() {
+    private void loadHabitsForDate(Calendar date) {
+        if (habitRepository == null) {
+            seedSampleHabits();
+            return;
+        }
+        Calendar target = (Calendar) date.clone();
+        habitRepository.getHabitsAndHistoryForDate(target, new HabitQueryCallback() {
+            @Override
+            public void onSuccess(List<?> result) {
+                List<HabitCompletion> mapped = new ArrayList<>();
+                for (Object item : result) {
+                    if (item instanceof HabitDailyView) {
+                        mapped.add(mapToCompletion((HabitDailyView) item));
+                    }
+                }
+                applyHabitData(mapped);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                if (getContext() != null) {
+                    Toast.makeText(getContext(), getString(R.string.error_load_habits, e.getMessage()), Toast.LENGTH_SHORT).show();
+                }
+                seedSampleHabits();
+            }
+        });
+    }
+
+    private HabitCompletion mapToCompletion(HabitDailyView view) {
+        HabitCompletion.Status status = resolveStatus(view);
+        return new HabitCompletion(view.getTitle(), status);
+    }
+
+    private HabitCompletion.Status resolveStatus(HabitDailyView view) {
+        String status = view.getStatus();
+        if (status != null) {
+            String normalized = status.toUpperCase(Locale.US);
+            if ("DONE".equals(normalized) || "COMPLETED".equals(normalized)) {
+                return HabitCompletion.Status.COMPLETED;
+            }
+            if ("MISSED".equals(normalized) || "SKIPPED".equals(normalized)) {
+                return HabitCompletion.Status.MISSED;
+            }
+        }
+        if (view.getTargetValue() > 0 && view.getCurrentValue() >= view.getTargetValue()) {
+            return HabitCompletion.Status.COMPLETED;
+        }
+        return HabitCompletion.Status.PENDING;
+    }
+
+    private void applyHabitData(List<HabitCompletion> completions) {
         allHabits.clear();
-        allHabits.add(new HabitCompletion("Exercise", HabitCompletion.Status.COMPLETED));
-        allHabits.add(new HabitCompletion("Read", HabitCompletion.Status.MISSED));
-        allHabits.add(new HabitCompletion("Meditate", HabitCompletion.Status.PENDING));
-        allHabits.add(new HabitCompletion("Drink Water", HabitCompletion.Status.COMPLETED));
-        allHabits.add(new HabitCompletion("Sleep Early", HabitCompletion.Status.MISSED));
-        allHabits.add(new HabitCompletion("Journal", HabitCompletion.Status.PENDING));
+        allHabits.addAll(completions);
         habitsLoaded = 0;
+        if (binding == null || binding.habitCompletionSection == null) {
+            return;
+        }
+        LinearLayout container = binding.habitCompletionSection.habitCompletionListContainer;
+        container.removeAllViews();
         appendMoreHabits();
     }
 
+    private void seedSampleHabits() {
+        List<HabitCompletion> samples = new ArrayList<>();
+        samples.add(new HabitCompletion("Exercise", HabitCompletion.Status.COMPLETED));
+        samples.add(new HabitCompletion("Read", HabitCompletion.Status.MISSED));
+        samples.add(new HabitCompletion("Meditate", HabitCompletion.Status.PENDING));
+        samples.add(new HabitCompletion("Drink Water", HabitCompletion.Status.COMPLETED));
+        samples.add(new HabitCompletion("Sleep Early", HabitCompletion.Status.MISSED));
+        samples.add(new HabitCompletion("Journal", HabitCompletion.Status.PENDING));
+        applyHabitData(samples);
+    }
+
     private void appendMoreHabits() {
+        if (binding == null || binding.habitCompletionSection == null) {
+            return;
+        }
         LinearLayout container = binding.habitCompletionSection.habitCompletionListContainer;
         int nextLimit = Math.min(allHabits.size(), habitsLoaded + HABIT_BATCH_SIZE);
         LayoutInflater inflater = LayoutInflater.from(requireContext());
@@ -127,7 +215,9 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
             container.addView(item);
         }
         habitsLoaded = nextLimit;
-        binding.habitCompletionSection.habitFooterMessage.setVisibility(habitsLoaded >= allHabits.size() ? View.GONE : View.VISIBLE);
+        binding.habitCompletionSection.habitFooterMessage.setVisibility(
+                habitsLoaded >= allHabits.size() ? View.GONE : View.VISIBLE
+        );
     }
 
     private void updateStatusIcon(HabitCompletion.Status status, View imageView, TextView pendingMarker) {
@@ -155,7 +245,9 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
 
     @Override
     public void onDaySelected(Date date) {
-        // hook để xử lý khi chọn ngày
+        selectedDate.setTime(date);
+        calendarAdapter.setSelectedDate(date);
+        loadHabitsForDate(selectedDate);
     }
 
     @Override
