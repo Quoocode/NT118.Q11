@@ -5,6 +5,7 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/loginFragment">
 
+    <!-- AUTHENTICATION FLOW -->
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.habittracker.ui.auth.LoginFragment"
@@ -22,6 +23,7 @@
             android:id="@+id/action_loginFragment_to_forgotPasswordFragment"
             app:destination="@id/forgotPasswordFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/registerFragment"
         android:name="com.example.habittracker.ui.auth.RegisterFragment"
@@ -33,6 +35,7 @@
             app:popUpTo="@id/loginFragment"
             app:popUpToInclusive="true" />
     </fragment>
+
     <fragment
         android:id="@+id/forgotPasswordFragment"
         android:name="com.example.habittracker.ui.auth.ForgotPasswordFragment"
@@ -42,23 +45,31 @@
             android:id="@+id/action_forgotPasswordFragment_to_forgotPasswordNewFragment"
             app:destination="@id/forgotPasswordNewFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/forgotPasswordNewFragment"
         android:name="com.example.habittracker.ui.auth.ForgotPasswordNewFragment"
         android:label="fragment_forgot_password_new"
         tools:layout="@layout/fragment_forgot_password_new" />
 
+
+    <!-- MAIN APP FLOW -->
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.habittracker.ui.home.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home">
+
+        <!-- Đi đến màn hình Thêm mới (Add) -->
         <action
             android:id="@+id/action_homeFragment_to_addEditHabitFragment"
             app:destination="@id/addEditHabitFragment" />
+
+        <!-- Đi đến màn hình Chi tiết (Detail) -->
         <action
             android:id="@+id/action_homeFragment_to_habitDetailsFragment"
             app:destination="@id/habitDetailsFragment" />
+
         <action
             android:id="@+id/action_homeFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
@@ -70,17 +81,40 @@
         android:label="fragment_calendar"
         tools:layout="@layout/fragment_calendar" />
 
+    <!-- Màn hình Thêm/Sửa -->
     <fragment
         android:id="@+id/addEditHabitFragment"
         android:name="com.example.habittracker.ui.habit.AddEditHabitFragment"
         android:label="fragment_add_edit_habit"
-        tools:layout="@layout/fragment_add_edit_habit" />
+        tools:layout="@layout/fragment_add_edit_habit">
 
+        <!-- Khai báo Argument để nhận ID (dùng cho Edit Mode) -->
+        <argument
+            android:name="EXTRA_HABIT_ID"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+
+    <!-- Màn hình Chi tiết -->
     <fragment
         android:id="@+id/habitDetailsFragment"
         android:name="com.example.habittracker.ui.habit.HabitDetailsFragment"
         android:label="fragment_habit_details"
-        tools:layout="@layout/fragment_habit_details" />
+        tools:layout="@layout/fragment_habit_details">
+
+        <!-- Argument nhận ID từ Home -->
+        <argument
+            android:name="EXTRA_HABIT_ID"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+
+        <!-- Action từ Detail sang Edit (Quan trọng) -->
+        <action
+            android:id="@+id/action_habitDetailsFragment_to_addEditHabitFragment"
+            app:destination="@id/addEditHabitFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/achievementsFragment"

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
-    id("com.google.gms.google-services")
+    alias(libs.plugins.google.gms.google.services)
+
 }
 
 android {
@@ -29,6 +30,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
     }
     buildFeatures {
         viewBinding = true
@@ -36,31 +38,33 @@ android {
 }
 
 dependencies {
-    // Các thư viện giao diện có sẵn của bạn (Giữ nguyên)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
+    implementation(libs.recyclerview)
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
 
-    // --- PHẦN SỬA ĐỔI FIREBASE (QUAN TRỌNG) ---
+    // Import the BoM for the Firebase platform
+    implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
 
-    // 1. Thêm Firebase BoM (Bill of Materials)
-    // Nó đóng vai trò là "Trọng tài", quy định phiên bản chung cho cả nhóm Firebase
-    implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
-
-    // 2. Thêm Auth (KHÔNG CẦN version number nữa)
-    // Lưu ý: Tạm thời comment dòng libs.firebase.auth lại để tránh xung đột
-    // implementation(libs.firebase.auth)
+    // Add the dependency for the Firebase Authentication library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation("com.google.firebase:firebase-auth")
 
-    // 3. Thêm Firestore (KHÔNG CẦN version number)
-    // Lưu ý: Google đã gộp KTX vào bản chính, nên dùng "firebase-firestore" thay vì "-ktx"
-    implementation("com.google.firebase:firebase-firestore")
-
-    // --- KẾT THÚC PHẦN FIREBASE ---
-
+    // Also add the dependencies for the Credential Manager libraries and specify their versions
+    implementation("androidx.credentials:credentials:1.3.0")
+    implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+    //implementation(libs.firebase.firestore)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    implementation("com.google.firebase:firebase-analytics")
+    implementation ("com.google.firebase:firebase-firestore")
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
 }

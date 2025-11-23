@@ -4,9 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context="com.example.habittracker.ui.home.HomeFragment">
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/home_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -40,7 +41,7 @@
                     android:paddingTop="16dp">
 
                     <TextView
-                        android:id="@+id/container_depth_frame2"
+                        android:id="@+id/tv_dashboard"
                         android:layout_width="match_parent"
                         android:layout_height="23dp"
                         android:layout_marginLeft="48dp"
@@ -50,8 +51,10 @@
                         android:maxLines="1"
                         android:singleLine="true"
                         android:text="Dashboard"
+                        android:textStyle="bold"
+                        android:textAllCaps="false"
                         android:textColor="#FFFFFFFF"
-                        android:textSize="18dp" />
+                        android:textSize="24dp" />
 
                     <LinearLayout
                         android:id="@+id/container_depth_frame3"
@@ -69,18 +72,19 @@
 
                             <ImageView
                                 android:id="@+id/btn_add_habit_today"
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
                                 android:scaleType="centerInside"
                                 android:clickable="true"
                                 android:focusable="true"
+                                android:src="@drawable/ic_plus"
                                 android:background="?attr/selectableItemBackgroundBorderless"/>
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
 
                 <TextView
-                    android:id="@+id/container_depth_frame7"
+                    android:id="@+id/tv_today"
                     android:layout_width="match_parent"
                     android:layout_height="28dp"
                     android:layout_marginLeft="16dp"
@@ -90,20 +94,28 @@
                     android:gravity="left|center_vertical"
                     android:includeFontPadding="false"
                     android:maxLines="1"
+                    android:textStyle="bold"
                     android:singleLine="true"
                     android:text="Today"
                     android:textColor="#FFFFFFFF"
                     android:textSize="22dp" />
-                <include
-                    android:id="@+id/test_habit_item"
-                    layout="@layout/item_today_habit"
+<!--                <include-->
+<!--                    android:id="@+id/test_habit_item"-->
+<!--                    layout="@layout/item_today_habit"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginLeft="16dp"-->
+<!--                    android:layout_marginRight="16dp"/>-->
+<!--                <include-->
+<!--                    android:id="@+id/include_today_habits"-->
+<!--                    layout="@layout/view_today_habits" />-->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view_habits"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"/>
-                <include
-                    android:id="@+id/include_today_habits"
-                    layout="@layout/view_today_habits" />
+                    android:nestedScrollingEnabled="false"
+                    android:layout_marginTop="16dp"
+                    tools:listitem="@layout/item_today_habit" />
 
                 <TextView
                     android:id="@+id/container_depth_frame35"
@@ -146,7 +158,7 @@
                         android:textSize="16dp" />
 
                     <TextView
-                        android:id="@+id/container_depth_frame39"
+                        android:id="@+id/tv_progress_count"
                         android:layout_width="match_parent"
                         android:layout_height="24dp"
                         android:layout_marginBottom="3dp"
@@ -155,89 +167,80 @@
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="3/5"
+                        tools:text="3/5"
                         android:textColor="#FFFFFFFF"
                         android:textSize="14dp" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/container_depth_frame40"
+                <ProgressBar
+                    android:id="@+id/progress_bar_daily"
+                    style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="12dp"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:layout_marginTop="12dp"
                     android:layout_marginBottom="16dp"
-                    android:background="@drawable/container_navi"
-                    android:gravity="left|top"
-                    android:orientation="vertical">
+                    android:progressDrawable="@drawable/custom_progress_bar" />
 
-                    <ImageView
-                        android:id="@+id/image_depth_frame7"
-                        android:layout_width="218dp"
-                        android:layout_height="8dp"
-                        android:background="@drawable/container_blue"
-                        android:scaleType="centerInside" />
-                </LinearLayout>
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/container_depth_frame42"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginLeft="16dp"-->
+<!--                    android:layout_marginRight="16dp"-->
+<!--                    android:layout_marginTop="16dp"-->
+<!--                    android:clipToPadding="false"-->
+<!--                    android:gravity="left|top"-->
+<!--                    android:orientation="horizontal">-->
 
-                <LinearLayout
-                    android:id="@+id/container_depth_frame42"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginTop="16dp"
-                    android:clipToPadding="false"
-                    android:gravity="left|top"
-                    android:orientation="horizontal">
+<!--                    <TextView-->
+<!--                        android:id="@+id/container_depth_frame43"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="24dp"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:gravity="left|center_vertical"-->
+<!--                        android:includeFontPadding="false"-->
+<!--                        android:maxLines="1"-->
+<!--                        android:singleLine="true"-->
+<!--                        android:text="Weekly Habits"-->
+<!--                        android:textColor="#FFFFFFFF"-->
+<!--                        android:textSize="16dp" />-->
 
-                    <TextView
-                        android:id="@+id/container_depth_frame43"
-                        android:layout_width="match_parent"
-                        android:layout_height="24dp"
-                        android:layout_weight="1"
-                        android:gravity="left|center_vertical"
-                        android:includeFontPadding="false"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:text="Weekly Habits"
-                        android:textColor="#FFFFFFFF"
-                        android:textSize="16dp" />
+<!--                    <TextView-->
+<!--                        android:id="@+id/container_depth_frame44"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="24dp"-->
+<!--                        android:layout_marginBottom="3dp"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:gravity="left|center_vertical"-->
+<!--                        android:includeFontPadding="false"-->
+<!--                        android:maxLines="1"-->
+<!--                        android:singleLine="true"-->
+<!--                        android:text="8/10"-->
+<!--                        android:textColor="#FFFFFFFF"-->
+<!--                        android:textSize="14dp" />-->
+<!--                </LinearLayout>-->
 
-                    <TextView
-                        android:id="@+id/container_depth_frame44"
-                        android:layout_width="match_parent"
-                        android:layout_height="24dp"
-                        android:layout_marginBottom="3dp"
-                        android:layout_weight="1"
-                        android:gravity="left|center_vertical"
-                        android:includeFontPadding="false"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:text="8/10"
-                        android:textColor="#FFFFFFFF"
-                        android:textSize="14dp" />
-                </LinearLayout>
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/container_depth_frame45"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginLeft="16dp"-->
+<!--                    android:layout_marginRight="16dp"-->
+<!--                    android:layout_marginTop="12dp"-->
+<!--                    android:layout_marginBottom="16dp"-->
+<!--                    android:background="@drawable/container_navi"-->
+<!--                    android:gravity="left|top"-->
+<!--                    android:orientation="vertical">-->
 
-                <LinearLayout
-                    android:id="@+id/container_depth_frame45"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="16dp"
-                    android:background="@drawable/container_navi"
-                    android:gravity="left|top"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/image_depth_frame8"
-                        android:layout_width="286dp"
-                        android:layout_height="8dp"
-                        android:background="@drawable/container_blue"
-                        android:scaleType="centerInside" />
-                </LinearLayout>
+<!--                    <ImageView-->
+<!--                        android:id="@+id/image_depth_frame8"-->
+<!--                        android:layout_width="286dp"-->
+<!--                        android:layout_height="8dp"-->
+<!--                        android:background="@drawable/container_blue"-->
+<!--                        android:scaleType="centerInside" />-->
+<!--                </LinearLayout>-->
 
                 <TextView
                     android:id="@+id/container_depth_frame46"
@@ -291,14 +294,14 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/container_depth_frame51"
+                            android:id="@+id/tv_detail_current_streak"
                             android:layout_width="match_parent"
                             android:layout_height="24dp"
                             android:gravity="left|center_vertical"
                             android:includeFontPadding="false"
+                            android:text="0 days"
                             android:maxLines="1"
                             android:singleLine="true"
-                            android:text="3 days"
                             android:textColor="#FFFFFFFF"
                             android:textSize="16dp" />
 
@@ -352,20 +355,20 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/container_depth_frame57"
+                            android:id="@+id/tv_detail_longest_streak"
                             android:layout_width="wrap_content"
                             android:layout_height="24dp"
                             android:gravity="left|center_vertical"
                             android:includeFontPadding="false"
                             android:maxLines="1"
                             android:singleLine="true"
-                            android:text="7 days"
+                            tools:text="0 days"
                             android:textColor="#FFFFFFFF"
                             android:textSize="16dp" />
 
                         <TextView
                             android:id="@+id/container_depth_frame58"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="21dp"
                             android:gravity="left|center_vertical"
                             android:includeFontPadding="false"
@@ -373,12 +376,12 @@
                             android:singleLine="true"
                             android:text="Longest"
                             android:textColor="#FF91ADC9"
-                            android:textSize="14dp" />
+                            android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
 
             </LinearLayout>
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 </RelativeLayout>

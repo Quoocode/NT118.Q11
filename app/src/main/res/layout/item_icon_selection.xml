@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="4dp">
+    <!-- padding để tạo khoảng cách giữa các ô -->
+
+    <!-- Container để hiển thị viền chọn -->
+    <FrameLayout
+        android:id="@+id/container_icon"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_icon_selector"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <!-- layout_constraintDimensionRatio="1:1" giúp ô luôn VUÔNG -->
+
+        <ImageView
+            android:id="@+id/img_icon_item"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:src="@android:drawable/ic_menu_camera"
+            app:tint="#FFFFFF"/>
+
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
