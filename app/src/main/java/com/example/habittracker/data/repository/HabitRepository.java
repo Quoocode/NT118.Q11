@@ -3,6 +3,7 @@ package com.example.habittracker.data.repository;
 import android.util.Log;
 import android.widget.Toast;
 
+
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -26,6 +27,7 @@ import com.example.habittracker.data.model.HabitDailyView;
 // Import Callbacks
 import com.example.habittracker.data.repository.callback.HabitQueryCallback;
 import com.example.habittracker.data.repository.callback.SimpleCallback;
+import com.example.habittracker.data.repository.callback.StatsCallback;
 
 public class HabitRepository {
 
@@ -292,5 +294,66 @@ public class HabitRepository {
                 return false;
         }
     }
+    // =================================================================
+    // 5. STATISTICS
+    // =================================================================
 
+
+
+    /**
+     * Lấy thống kê: Số lần hoàn thành trong Tuần này, Tháng này, và Tổng cộng.
+     */
+    public void getHabitStatistics(String habitId, StatsCallback callback) {
+        // Lấy tất cả lịch sử đã hoàn thành của thói quen này
+        historyRef.whereEqualTo("habitId", habitId)
+                .whereEqualTo("status", "DONE") // Chỉ đếm những cái đã hoàn thành
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    int weekCount = 0;
+                    int monthCount = 0;
+                    int totalCount = querySnapshot.size();
+
+                    // Mốc thời gian để so sánh
+                    Calendar now = Calendar.getInstance();
+
+                    // Đầu tuần (Thứ 2)
+                    Calendar startOfWeek = (Calendar) now.clone();
+                    startOfWeek.setFirstDayOfWeek(Calendar.MONDAY);
+                    startOfWeek.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+                    startOfWeek.set(Calendar.HOUR_OF_DAY, 0);
+                    startOfWeek.set(Calendar.MINUTE, 0);
+                    startOfWeek.set(Calendar.SECOND, 0);
+
+                    // Đầu tháng (Ngày 1)
+                    Calendar startOfMonth = (Calendar) now.clone();
+                    startOfMonth.set(Calendar.DAY_OF_MONTH, 1);
+                    startOfMonth.set(Calendar.HOUR_OF_DAY, 0);
+                    startOfMonth.set(Calendar.MINUTE, 0);
+                    startOfMonth.set(Calendar.SECOND, 0);
+
+                    long weekMillis = startOfWeek.getTimeInMillis();
+                    long monthMillis = startOfMonth.getTimeInMillis();
+
+                    // Duyệt qua từng bản ghi để đếm
+                    for (DocumentSnapshot doc : querySnapshot) {
+                        Timestamp ts = doc.getTimestamp("date");
+                        if (ts != null) {
+                            long recordMillis = ts.toDate().getTime();
+
+                            // Nếu ngày ghi nhận >= đầu tuần -> +1 cho tuần
+                            if (recordMillis >= weekMillis) {
+                                weekCount++;
+                            }
+
+                            // Nếu ngày ghi nhận >= đầu tháng -> +1 cho tháng
+                            if (recordMillis >= monthMillis) {
+                                monthCount++;
+                            }
+                        }
+                    }
+
+                    callback.onStatsLoaded(weekCount, monthCount, totalCount);
+                })
+                .addOnFailureListener(callback::onError);
+    }
 }

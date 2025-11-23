@@ -13,11 +13,16 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.example.habittracker.data.model.Habit;
+import com.example.habittracker.data.repository.callback.HabitQueryCallback;
 import com.example.habittracker.data.repository.callback.SimpleCallback;
 import com.example.habittracker.data.repository.HabitRepository;
 import com.example.habittracker.R;
+import com.example.habittracker.data.repository.callback.StatsCallback;
 import com.example.habittracker.databinding.FragmentHabitDetailsBinding;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.List;
 
 public class HabitDetailsFragment extends Fragment {
 
@@ -71,7 +76,55 @@ public class HabitDetailsFragment extends Fragment {
             showDeleteConfirmationDialog();
         });
 
-        // TODO: Bạn có thể gọi thêm hàm loadData() ở đây để hiển thị thông tin chi tiết lên giao diện
+        if (habitId != null) {
+            loadHabitInfo();       // Tải tên, mô tả
+            loadHabitStatistics(); // Tải số liệu (Tuần, Tháng, Tổng)
+        } else {
+            Toast.makeText(getContext(), "Lỗi: Không tìm thấy ID", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void loadHabitInfo() {
+        habitRepository.getHabitById(habitId, new HabitQueryCallback() {
+            @Override
+            public void onSuccess(List<?> result) {
+                if (!result.isEmpty()) {
+                    Habit habit = (Habit) result.get(0);
+                    // Gán tên thói quen vào TextView title
+                    binding.tvDetailTitle.setText(habit.getTitle());
+
+                    // Nếu bạn có TextView mô tả, gán ở đây:
+                    // binding.tvDescription.setText(habit.getDescription());
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(getContext(), "Lỗi tải thông tin: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // Hàm 2: Tải thống kê (Tuần, Tháng, Tổng)
+    private void loadHabitStatistics() {
+        habitRepository.getHabitStatistics(habitId, new StatsCallback() {
+            @Override
+            public void onStatsLoaded(int week, int month, int total) {
+                // Đảm bảo cập nhật UI
+                if (binding != null) {
+                    binding.tvDetailThisWeek.setText(String.valueOf(week));
+                    binding.tvDetailThisMonth.setText(String.valueOf(month));
+                    binding.tvDetailTotalDone.setText(String.valueOf(total));
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+                if (getContext() != null) {
+                    Toast.makeText(getContext(), "Lỗi tải thống kê", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private void showDeleteConfirmationDialog() {
