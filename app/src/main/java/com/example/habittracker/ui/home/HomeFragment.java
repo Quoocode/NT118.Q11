@@ -15,6 +15,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.habittracker.R;
+import com.example.habittracker.data.repository.callback.StreakCallback;
 import com.example.habittracker.databinding.FragmentHomeBinding;
 
 // Import các thành phần chúng ta đã làm
@@ -69,6 +70,7 @@ public class HomeFragment extends Fragment {
                 navController.navigate(com.example.habittracker.R.id.action_homeFragment_to_addEditHabitFragment);
             });
         }
+        loadStreakData();
     }
 
     private void setupRecyclerView() {
@@ -180,6 +182,28 @@ public class HomeFragment extends Fragment {
                 if (getContext() != null) {
                     Toast.makeText(getContext(), "Lỗi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+    }
+
+    private void loadStreakData() {
+        // Gọi hàm tính User Streak (Không cần ID thói quen)
+        habitRepository.calculateUserStreaks(new StreakCallback() {
+            @Override
+            public void onStreakCalculated(int currentStreak, int longestStreak) {
+                if (binding != null) {
+                    String currentText = currentStreak + " days";
+                    String longestText = longestStreak + " days";
+                    // Cập nhật UI
+                    // Giả sử bạn có TextView hiển thị Streak của User
+                    binding.tvDetailCurrentStreak.setText(String.valueOf(currentText));
+                    binding.tvDetailLongestStreak.setText(String.valueOf(longestText));
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Log.e("StreakError", "Lỗi: " + e.getMessage());
             }
         });
     }

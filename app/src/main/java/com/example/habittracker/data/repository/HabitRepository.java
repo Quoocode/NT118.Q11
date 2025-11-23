@@ -4,6 +4,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 
+import com.example.habittracker.data.repository.callback.StreakCallback;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -13,7 +14,9 @@ import com.google.firebase.firestore.SetOptions;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -385,5 +388,97 @@ public class HabitRepository {
                     callback.onSuccess(historyList);
                 })
                 .addOnFailureListener(e -> callback.onFailure(e));
+    }
+
+    // =================================================================
+    // 7. USER STREAK (GLOBAL STREAK)
+    // Tính toán dựa trên TOÀN BỘ lịch sử hoạt động của User
+    // =================================================================
+    public void calculateUserStreaks(StreakCallback callback) {
+        // CHÚ Ý: Không lọc theo habitId nữa, chỉ lấy status = DONE
+        historyRef.whereEqualTo("status", "DONE")
+                .orderBy("date") // Sắp xếp tăng dần
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+
+                    // 1. Lấy danh sách ngày ĐỘC NHẤT (Unique Dates)
+                    // Dùng HashSet để tự động loại bỏ các ngày trùng nhau
+                    // Ví dụ: Làm 3 habit trong 1 ngày -> Set chỉ lưu 1 ngày đó thôi
+                    HashSet<String> uniqueDates = new HashSet<>();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+
+                    for (DocumentSnapshot doc : querySnapshot) {
+                        Timestamp ts = doc.getTimestamp("date");
+                        if (ts != null) {
+                            String dateStr = sdf.format(ts.toDate());
+                            uniqueDates.add(dateStr);
+                        }
+                    }
+
+                    // Chuyển Set sang List và SẮP XẾP LẠI (Quan trọng vì HashSet không có thứ tự)
+                    List<String> sortedDateList = new ArrayList<>(uniqueDates);
+                    Collections.sort(sortedDateList);
+
+                    // 2. Thuật toán tính Streak (Giữ nguyên như trước)
+                    int currentStreak = 0;
+                    int longestStreak = 0;
+                    int tempStreak = 0;
+
+                    // A. Tính Longest Streak
+                    for (int i = 0; i < sortedDateList.size(); i++) {
+                        if (i == 0) {
+                            tempStreak = 1;
+                        } else {
+                            long diff = getDayDifference(sortedDateList.get(i - 1), sortedDateList.get(i));
+                            if (diff == 1) {
+                                tempStreak++;
+                            } else {
+                                tempStreak = 1;
+                            }
+                        }
+                        if (tempStreak > longestStreak) {
+                            longestStreak = tempStreak;
+                        }
+                    }
+
+                    // B. Tính Current Streak
+                    if (!sortedDateList.isEmpty()) {
+                        String lastDateStr = sortedDateList.get(sortedDateList.size() - 1);
+                        String todayStr = sdf.format(new java.util.Date());
+
+                        long diffFromToday = getDayDifference(lastDateStr, todayStr);
+
+                        // Nếu ngày cuối cùng làm là Hôm nay (0) hoặc Hôm qua (1) -> Chuỗi còn sống
+                        if (diffFromToday <= 1) {
+                            currentStreak = 1;
+                            for (int i = sortedDateList.size() - 1; i > 0; i--) {
+                                long diff = getDayDifference(sortedDateList.get(i - 1), sortedDateList.get(i));
+                                if (diff == 1) {
+                                    currentStreak++;
+                                } else {
+                                    break;
+                                }
+                            }
+                        } else {
+                            currentStreak = 0; // Đã lười quá 1 ngày -> Mất chuỗi
+                        }
+                    }
+
+                    callback.onStreakCalculated(currentStreak, longestStreak);
+                })
+                .addOnFailureListener(callback::onFailure);
+    }
+    // Hàm phụ: Tính khoảng cách giữa 2 ngày (dạng String yyyy-MM-dd)
+    private long getDayDifference(String date1, String date2) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        try {
+            java.util.Date d1 = sdf.parse(date1);
+            java.util.Date d2 = sdf.parse(date2);
+            long diffInMillies = Math.abs(d2.getTime() - d1.getTime());
+            return TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
     }
 }

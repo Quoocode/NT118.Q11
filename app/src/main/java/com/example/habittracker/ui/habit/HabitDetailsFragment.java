@@ -20,6 +20,7 @@ import com.example.habittracker.data.repository.callback.SimpleCallback;
 import com.example.habittracker.data.repository.HabitRepository;
 import com.example.habittracker.R;
 import com.example.habittracker.data.repository.callback.StatsCallback;
+import com.example.habittracker.data.repository.callback.StreakCallback;
 import com.example.habittracker.databinding.FragmentHabitDetailsBinding;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -295,6 +296,8 @@ public class HabitDetailsFragment extends Fragment {
             }
         });
     }
+
+
 
     @Override
     public void onDestroyView() {
