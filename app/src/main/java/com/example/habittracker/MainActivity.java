@@ -1,13 +1,21 @@
 package com.example.habittracker;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 import com.example.habittracker.R;
 import com.example.habittracker.databinding.ActivityMainBinding; // <-- Tạo từ "activity_main.xml"
+import com.example.habittracker.DatabaseStructure.HabitRepository;
+import com.example.habittracker.DatabaseStructure.Habit;
+import com.example.habittracker.DatabaseStructure.DataSeeder;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,6 +45,11 @@ public class MainActivity extends AppCompatActivity {
             // 4. Gọi hàm để quản lý ẩn/hiện thanh điều hướng
             setupBottomNavVisibility();
         }
+
+        String user1_ID = "ML1NNiZM0XO2TPPtnUOoKi0nMHN2"; // <-- PASTE FULL UID VÀO ĐÂY
+        DataSeeder seeder1 = new DataSeeder(user1_ID);
+        seeder1.seedData();
+
     }
 
     private void setupBottomNavVisibility() {
