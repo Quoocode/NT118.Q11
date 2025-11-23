@@ -131,6 +131,10 @@ public class HomeFragment extends Fragment {
             public void onCheckInCompleted() {
                 Log.d(TAG, "Check-in hoàn tất, tải lại danh sách...");
                 loadHabitsForToday();
+                loadDailyProgress();
+
+                // 3. Tải lại Streak (để cập nhật chuỗi ngay lập tức)
+                loadStreakData();
             }
         });
 
@@ -264,7 +268,7 @@ public class HomeFragment extends Fragment {
         super.onResume();
         // Tải lại dữ liệu mỗi khi quay lại màn hình này (ví dụ từ màn hình Add/Edit hoặc Dialog tắt)
         loadHabitsForToday();
-        loadDailyProgress();
+        //loadDailyProgress();
     }
 
     @Override

@@ -301,7 +301,7 @@
                             android:layout_height="24dp"
                             android:gravity="left|center_vertical"
                             android:includeFontPadding="false"
-                            android:text="7 days"
+                            android:text="0 days"
                             android:maxLines="1"
                             android:singleLine="true"
                             android:textColor="#FFFFFFFF"
@@ -364,7 +364,7 @@
                             android:includeFontPadding="false"
                             android:maxLines="1"
                             android:singleLine="true"
-                            tools:text="1 days"
+                            tools:text="0 days"
                             android:textColor="#FFFFFFFF"
                             android:textSize="16dp" />
 
