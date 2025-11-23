@@ -13,6 +13,9 @@ import com.example.habittracker.R;
 import com.example.habittracker.databinding.ActivityMainBinding; // <-- Tạo từ "activity_main.xml"
 import com.example.habittracker.DatabaseStructure.HabitRepository;
 import com.example.habittracker.DatabaseStructure.Habit;
+import com.example.habittracker.DatabaseStructure.DataSeeder;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,20 +46,9 @@ public class MainActivity extends AppCompatActivity {
             setupBottomNavVisibility();
         }
 
-        HabitRepository repo = new HabitRepository();
-        // Create a new habit
-        Habit newHabit = new Habit("Run", "Morning Jog", 5, "km");
-        repo.addHabit(newHabit, new HabitRepository.DataCallback<Boolean>() {
-            @Override
-            public void onSuccess(Boolean data) {
-                Toast.makeText(MainActivity.this, "Habit Added!", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onError(Exception e) {
-                Log.e("Firestore", "Error adding habit", e);
-            }
-        });
+        String user1_ID = "ML1NNiZM0XO2TPPtnUOoKi0nMHN2"; // <-- PASTE FULL UID VÀO ĐÂY
+        DataSeeder seeder1 = new DataSeeder(user1_ID);
+        seeder1.seedData();
 
     }
 
@@ -86,7 +78,4 @@ public class MainActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         return navController.navigateUp() || super.onSupportNavigateUp();
     }
-
-
-
 }

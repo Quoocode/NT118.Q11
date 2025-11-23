@@ -28,9 +28,6 @@ public class HabitRepository {
     public HabitRepository() {
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        } else {
-            // THÊM DÒNG NÀY ĐỂ TEST
-            currentUid = "TEST_USER_ID_123";
         }
     }
 

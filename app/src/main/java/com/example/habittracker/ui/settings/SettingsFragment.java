@@ -9,7 +9,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
-import com.example.habittracker.databinding.FragmentSettingsBinding; // Tạo từ fragment_settings.xml
+import com.example.habittracker.R;
+import com.example.habittracker.databinding.FragmentSettingsBinding;
 
 public class SettingsFragment extends Fragment {
 
@@ -28,13 +29,15 @@ public class SettingsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         navController = NavHostFragment.findNavController(this);
 
-        // Nút "Back" (mũi tên)
-        binding.btnBack.setOnClickListener(v -> {
-            navController.popBackStack();
+        binding.btnBack.setOnClickListener(v -> navController.popBackStack());
+
+        binding.btnProfileSettings.setOnClickListener(v -> {
+            navController.navigate(R.id.action_settingsFragment_to_settingsProfileFragment);
         });
 
-        // TODO: Thêm click listener cho các mục Settings khác
-        // binding.containerDepthFrame6.setOnClickListener(v -> { ... });
+        binding.btnRemindersSettings.setOnClickListener(v -> {
+            navController.navigate(R.id.action_settingsFragment_to_settingsReminderFragment);
+        });
     }
 
     @Override

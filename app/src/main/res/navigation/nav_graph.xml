@@ -92,6 +92,25 @@
         android:id="@+id/settingsFragment"
         android:name="com.example.habittracker.ui.settings.SettingsFragment"
         android:label="fragment_settings"
-        tools:layout="@layout/fragment_settings" />
+        tools:layout="@layout/fragment_settings">
+        <action
+            android:id="@+id/action_settingsFragment_to_settingsProfileFragment"
+            app:destination="@id/settingsProfileFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_settingsReminderFragment"
+            app:destination="@id/settingsReminderFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/settingsProfileFragment"
+        android:name="com.example.habittracker.ui.settings.SettingsProfileFragment"
+        android:label="fragment_settings_profile"
+        tools:layout="@layout/fragment_settings_profile" />
+
+    <fragment
+        android:id="@+id/settingsReminderFragment"
+        android:name="com.example.habittracker.ui.settings.SettingsReminderFragment"
+        android:label="fragment_settings_reminder"
+        tools:layout="@layout/fragment_settings_reminder" />
 
 </navigation>
