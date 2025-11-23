@@ -356,4 +356,34 @@ public class HabitRepository {
                 })
                 .addOnFailureListener(callback::onError);
     }
+
+    // =================================================================
+    // 6. CHART DATA (MỚI THÊM)
+    // =================================================================
+
+    // Lấy danh sách lịch sử hoàn thành từ ngày startDate đến nay
+    public void getHistoryForChart(String habitId, long startDateMillis, HabitQueryCallback callback) {
+        // Chuyển long thành Timestamp của Firestore
+        Timestamp startTs = new Timestamp(new java.util.Date(startDateMillis));
+
+        historyRef.whereEqualTo("habitId", habitId)
+                .whereGreaterThanOrEqualTo("date", startTs) // Lấy từ ngày bắt đầu
+                .orderBy("date") // Sắp xếp ngày tăng dần để vẽ cho đúng
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<HabitHistory> historyList = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot) {
+                        // Lọc những cái đã hoàn thành
+                        String status = doc.getString("status");
+                        if (status != null && (status.equalsIgnoreCase("DONE") || status.equalsIgnoreCase("COMPLETED"))) {
+                            HabitHistory history = doc.toObject(HabitHistory.class);
+                            if (history != null) {
+                                historyList.add(history);
+                            }
+                        }
+                    }
+                    callback.onSuccess(historyList);
+                })
+                .addOnFailureListener(e -> callback.onFailure(e));
+    }
 }
