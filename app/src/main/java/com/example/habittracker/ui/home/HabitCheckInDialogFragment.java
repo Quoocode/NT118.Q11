@@ -22,6 +22,7 @@ import androidx.fragment.app.DialogFragment;
 import com.example.habittracker.R;
 import com.example.habittracker.data.repository.HabitRepository; // Sửa lại package import cho đúng với dự án của bạn
 import com.google.firebase.auth.FirebaseAuth;
+import com.example.habittracker.data.repository.callback.SimpleCallback;
 
 import java.util.Calendar;
 
@@ -35,6 +36,7 @@ public class HabitCheckInDialogFragment extends DialogFragment {
     private static final String ARG_STATUS = "ARG_STATUS";
 
     private HabitRepository habitRepository;
+
     private OnCheckInListener listener;
 
     // Biến cờ để tránh vòng lặp vô tận giữa TextWatcher và RadioListener
@@ -195,6 +197,8 @@ public class HabitCheckInDialogFragment extends DialogFragment {
             );
         });
     }
+
+
 
     @Override
     public void onStart() {
