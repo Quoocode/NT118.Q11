@@ -49,7 +49,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:scaleType="centerInside"
-                        android:src="@drawable/ic_left_back"
+                        android:src="@drawable/ic_arrow_left"
                         android:clickable="true"
                         android:focusable="true"
                         android:background="?attr/selectableItemBackgroundBorderless"/>
@@ -91,7 +91,7 @@
                         android:layout_marginTop="11dp"
                         android:layout_marginBottom="11dp"
                         android:scaleType="centerInside"
-                        android:src="@drawable/ic_left_back" />
+                        android:src="@drawable/ic_arrow_left" />
 
                     <TextView
                         android:id="@+id/container_depth_frame14"
@@ -113,7 +113,7 @@
                         android:layout_marginTop="11dp"
                         android:layout_marginBottom="11dp"
                         android:scaleType="centerInside"
-                        android:src="@drawable/ic_right_back" />
+                        android:src="@drawable/ic_chevron_right" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -245,7 +245,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:scaleType="centerInside"
-                            android:src="@drawable/ic_completed" />
+                            android:src="@drawable/ic_circle_check" />
                     </LinearLayout>
 
                     <TextView
@@ -300,7 +300,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:scaleType="centerInside"
-                            android:src="@drawable/ic_missed" />
+                            android:src="@drawable/ic_close_circle" />
                     </LinearLayout>
 
                     <TextView
