@@ -104,19 +104,33 @@ public class RegisterFragment extends Fragment {
                             user.sendEmailVerification()
                                     .addOnCompleteListener(verifyTask -> {
                                         if (verifyTask.isSuccessful()) {
-                                            Toast.makeText(getContext(), "Verification email sent! Please check your inbox.", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(
+                                                    getContext(),
+                                                    "Verification email sent! Please check your inbox.",
+                                                    Toast.LENGTH_LONG
+                                            ).show();
                                         } else {
-                                            Toast.makeText(getContext(), "Failed to send verification email: " + verifyTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(
+                                                    getContext(),
+                                                    "Failed to send verification email: " + verifyTask.getException().getMessage(),
+                                                    Toast.LENGTH_SHORT
+                                            ).show();
                                         }
-                                        // Điều hướng về Login
+
+                                        // 🔥 BẮT BUỘC
+                                        firebaseAuth.signOut();
+
+                                        // Quay về Login
                                         navController.navigate(R.id.action_registerFragment_to_loginFragment);
                                     });
+
                         }
                     }
                     else {
                         if (task.getException() instanceof FirebaseAuthUserCollisionException) {
                             Toast.makeText(getContext(), "This email is already registered.", Toast.LENGTH_SHORT).show();
-                        } else {
+                        }
+                        else {
                             Toast.makeText(getContext(), "Registration failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
