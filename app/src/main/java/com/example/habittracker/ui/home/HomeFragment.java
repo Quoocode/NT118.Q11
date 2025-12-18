@@ -1,10 +1,6 @@
 package com.example.habittracker.ui.home;
 
 import android.animation.ObjectAnimator;
-import android.graphics.drawable.Drawable;
-import android.graphics.RenderEffect;
-import android.graphics.Shader;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,8 +20,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import eightbitlab.com.blurview.BlurTarget;
-import eightbitlab.com.blurview.BlurView;
 import com.example.habittracker.R;
 import com.example.habittracker.data.repository.callback.StreakCallback;
 import com.example.habittracker.databinding.FragmentHomeBinding;
@@ -38,6 +35,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import android.widget.GridLayout;
 
 public class HomeFragment extends Fragment {
 
@@ -63,40 +62,20 @@ public class HomeFragment extends Fragment {
         View achievementsRoot = binding.getRoot().findViewById(R.id.include_achievements);
         if (achievementsRoot == null) return;
 
+        // dummy placeholder
+        DummyBadgeForTesting(achievementsRoot);
+
         View horizontalContainer = achievementsRoot.findViewById(R.id.badges_list_container);
         View gridContainer = achievementsRoot.findViewById(R.id.badge_grid_container);
         ImageButton expandButton = achievementsRoot.findViewById(R.id.btn_badge_expand);
         Button collapseButton = achievementsRoot.findViewById(R.id.btn_badge_collapse);
-        View fadeOverlay = achievementsRoot.findViewById(R.id.badge_fade_overlay);
 
         if (horizontalContainer == null || gridContainer == null || expandButton == null || collapseButton == null) {
             return;
         }
 
-        if (fadeOverlay != null) {
-            applyBadgeOverlayBlur(fadeOverlay);
-        }
-
         collapseButton.setOnClickListener(v -> collapseBadges(horizontalContainer, gridContainer, expandButton));
         expandButton.setOnClickListener(v -> expandBadges(horizontalContainer, gridContainer, expandButton));
-    }
-
-    private void applyBadgeOverlayBlur(View overlay) {
-        if (overlay instanceof BlurView && getContext() != null && getActivity() != null) {
-            BlurView blurView = (BlurView) overlay;
-            BlurTarget target = getView() != null ? getView().findViewById(R.id.badge_blur_target) : null;
-            if (target != null) {
-                Drawable windowBackground = requireActivity().getWindow().getDecorView().getBackground();
-                float radius = 20f;
-                blurView.setupWith(target)
-                        .setFrameClearDrawable(windowBackground)
-                        .setBlurRadius(radius);
-                return;
-            }
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            overlay.setRenderEffect(RenderEffect.createBlurEffect(12f, 12f, Shader.TileMode.CLAMP));
-        }
     }
 
     private void expandBadges(View horizontalContainer, View gridContainer, ImageButton expandButton) {
@@ -296,5 +275,72 @@ public class HomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    private void DummyBadgeForTesting(View achievementsRoot) {
+        LinearLayout list = achievementsRoot.findViewById(R.id.badges_horizontal_list);
+        if (list == null || getContext() == null) return;
+
+        list.removeAllViews();
+
+        int[] icons = new int[]{
+                R.drawable.ic_cup,
+                R.drawable.ic_streak,
+                R.drawable.ic_plus,
+                R.drawable.ic_cup,
+                R.drawable.ic_streak,
+                R.drawable.ic_plus,
+                R.drawable.ic_cup,
+                R.drawable.ic_streak,
+                R.drawable.ic_plus
+        };
+        String[] titles = new String[]{
+                "Starter",
+                "3-day",
+                "Creator",
+                "Consistency",
+                "7-day",
+                "Upgrader",
+                "Milestone",
+                "Streaker",
+                "Collector"
+        };
+
+        LayoutInflater inflater = LayoutInflater.from(requireContext());
+        for (int i = 0; i < titles.length; i++) {
+            View item = inflater.inflate(R.layout.item_badge_placeholder, list, false);
+
+            ImageView icon = item.findViewById(R.id.badge_icon);
+            TextView title = item.findViewById(R.id.badge_title);
+
+            if (icon != null) icon.setImageResource(icons[i % icons.length]);
+            if (title != null) title.setText(titles[i]);
+
+            list.addView(item);
+        }
+
+        GridLayout grid = achievementsRoot.findViewById(R.id.badges_grid);
+        if (grid != null) {
+            grid.removeAllViews();
+
+            for (int i = 0; i < titles.length; i++) {
+                View gridItem = inflater.inflate(R.layout.item_badge_placeholder, grid, false);
+
+                ImageView icon = gridItem.findViewById(R.id.badge_icon);
+                TextView title = gridItem.findViewById(R.id.badge_title);
+
+                if (icon != null) icon.setImageResource(icons[i % icons.length]);
+                if (title != null) title.setText(titles[i]);
+
+                GridLayout.LayoutParams lp = new GridLayout.LayoutParams();
+                lp.width = 0;
+                lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                lp.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
+                lp.setMargins(8, 8, 8, 8);
+                gridItem.setLayoutParams(lp);
+
+                grid.addView(gridItem);
+            }
+        }
     }
 }
