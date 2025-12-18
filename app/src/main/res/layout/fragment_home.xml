@@ -380,6 +380,10 @@
                     </LinearLayout>
                 </LinearLayout>
 
+                <include
+                    android:id="@+id/include_achievements"
+                    layout="@layout/fragment_achievements" />
+
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
