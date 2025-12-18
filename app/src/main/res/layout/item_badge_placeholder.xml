@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="72dp"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="6dp">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:background="@drawable/container_navi">
+
+        <ImageView
+            android:id="@+id/badge_icon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:contentDescription="Badge placeholder"
+            android:padding="6dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_cup" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/badge_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:maxLines="1"
+        android:text="Badge title"
+        android:textColor="#FFFFFFFF"
+        android:textSize="12sp" />
+
+</LinearLayout>
+

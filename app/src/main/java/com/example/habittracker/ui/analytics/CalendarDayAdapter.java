@@ -70,13 +70,11 @@ public class CalendarDayAdapter extends RecyclerView.Adapter<CalendarDayAdapter.
 
     static class DayViewHolder extends RecyclerView.ViewHolder {
         private final TextView dayNumber;
-        private final View todayIndicator;
         private final View dayContainer;
 
         DayViewHolder(@NonNull View itemView) {
             super(itemView);
             dayNumber = itemView.findViewById(R.id.day_number);
-            todayIndicator = itemView.findViewById(R.id.today_indicator);
             dayContainer = itemView.findViewById(R.id.day_container);
         }
 
@@ -85,9 +83,20 @@ public class CalendarDayAdapter extends RecyclerView.Adapter<CalendarDayAdapter.
             cal.setTime(calendarDay.getDate());
             dayNumber.setText(String.valueOf(cal.get(Calendar.DAY_OF_MONTH)));
 
-            boolean highlight = isToday || isSelected;
-            dayContainer.setBackgroundResource(highlight ? R.drawable.container_blue : R.drawable.container_login_2);
-            todayIndicator.setVisibility(View.GONE);
+            // - default: dark background
+            // - selected: blue background
+            // - today: border only
+            // - today + selected: blue background + border
+            if (isToday && isSelected) {
+                dayContainer.setBackgroundResource(R.drawable.calendar_day_selected_today);
+            } else if (isSelected) {
+                dayContainer.setBackgroundResource(R.drawable.container_blue);
+            } else if (isToday) {
+                dayContainer.setBackgroundResource(R.drawable.calendar_day_today_border);
+            } else {
+                // use default style
+                dayContainer.setBackgroundResource(R.drawable.calendar_day_default);
+            }
 
             float alpha = calendarDay.isInCurrentMonth() ? 1f : 0.3f;
             dayContainer.setAlpha(alpha);

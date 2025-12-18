@@ -21,14 +21,6 @@
             android:textColor="@android:color/white"
             android:textSize="14sp"
             android:textStyle="bold" />
-
-        <View
-            android:id="@+id/today_indicator"
-            android:layout_width="6dp"
-            android:layout_height="6dp"
-            android:layout_marginTop="2dp"
-            android:background="@drawable/container_blue"
-            android:visibility="gone" />
     </LinearLayout>
 </FrameLayout>
 
