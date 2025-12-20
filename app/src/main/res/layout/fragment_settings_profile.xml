@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container_profile_settings"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/container_login"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:id="@+id/container_profile_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/container_profile_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/container_login_2"
+            android:gravity="left|top"
+            android:orientation="vertical"
+            android:paddingBottom="32dp">
+
+            <!-- HEADER SECTION (Copied strictly from Settings Layout) -->
+            <LinearLayout
+                android:id="@+id/header_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:gravity="left|center_vertical"
+                android:orientation="horizontal"
+                android:paddingBottom="8dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="16dp">
+
+                <ImageView
+                    android:id="@+id/btn_back_profile"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="12dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_left_back"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    app:tint="#FFFFFF"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="23dp"
+                    android:layout_marginRight="48dp"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="Edit Profile"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="18dp" />
+            </LinearLayout>
+
+            <!-- AVATAR SECTION (Centered) -->
+            <RelativeLayout
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp">
+
+                <ImageView
+                    android:id="@+id/img_profile_avatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_avatar"
+                    android:scaleType="centerCrop"
+                    android:background="@drawable/container_navi"/>
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/container_navi"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_theme"
+                    android:tint="#FFFFFFFF"/>
+            </RelativeLayout>
+
+            <!-- SECTION TITLE -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="12dp"
+                android:text="Personal Information"
+                android:textColor="#FFFFFFFF"
+                android:textSize="22dp" />
+
+            <!-- NAME INPUT -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Full Name"
+                    android:textColor="#FF91ADC9"
+                    android:textSize="14dp"
+                    android:layout_marginBottom="8dp"/>
+
+                <EditText
+                    android:id="@+id/input_fullname"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/container_navi"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:text=""
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="16dp"
+                    android:maxLines="1"
+                    android:inputType="textPersonName"/>
+            </LinearLayout>
+
+            <!-- EMAIL INPUT -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Email Address"
+                    android:textColor="#FF91ADC9"
+                    android:textSize="14dp"
+                    android:layout_marginBottom="8dp"/>
+
+                <EditText
+                    android:id="@+id/input_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/container_navi"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:text=""
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="16dp"
+                    android:maxLines="1"
+                    android:inputType="textEmailAddress"/>
+            </LinearLayout>
+
+            <!-- BIO INPUT -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="24dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bio"
+                    android:textColor="#FF91ADC9"
+                    android:textSize="14dp"
+                    android:layout_marginBottom="8dp"/>
+
+                <EditText
+                    android:id="@+id/input_bio"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:background="@drawable/container_navi"
+                    android:padding="16dp"
+                    android:text=""
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="16dp"
+                    android:gravity="top|left"
+                    android:inputType="textMultiLine"/>
+            </LinearLayout>
+
+            <!-- SAVE BUTTON -->
+            <Button
+                android:id="@+id/btn_save_profile"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginLeft="32dp"
+                android:layout_marginRight="32dp"
+                android:text="Save Changes"
+                android:textColor="#FFFFFFFF"
+                android:background="@drawable/container_navi"
+                app:backgroundTint="#1877F2"
+                android:textAllCaps="false"
+                android:textSize="18dp"/>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
