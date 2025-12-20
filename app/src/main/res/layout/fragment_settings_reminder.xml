@@ -25,7 +25,7 @@
             android:orientation="vertical"
             android:paddingBottom="32dp">
 
-            <!-- HEADER SECTION (Adapted from Settings Layout) -->
+            <!-- HEADER SECTION -->
             <LinearLayout
                 android:id="@+id/header_reminders"
                 android:layout_width="match_parent"
@@ -161,18 +161,20 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Reminder Time"
+                        android:text="Daily Briefing"
                         android:textColor="#FFFFFFFF"
                         android:textSize="16dp" />
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Daily at"
+                        android:text="Morning summary at"
                         android:textColor="#FF91ADC9"
                         android:textSize="14dp" />
                 </LinearLayout>
 
+                <!-- ADDED ID HERE -->
                 <TextView
+                    android:id="@+id/txt_time_display"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="08:00 AM"
@@ -182,13 +184,18 @@
             </LinearLayout>
 
             <!-- DAYS REPEAT ROW -->
+            <!-- ADDED ID HERE -->
             <LinearLayout
+                android:id="@+id/btn_set_frequency"
                 android:layout_width="match_parent"
                 android:layout_height="72dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingLeft="16dp"
-                android:paddingRight="16dp">
+                android:paddingRight="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground">
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -210,11 +217,17 @@
                         android:textSize="14dp" />
                 </LinearLayout>
 
+                <!-- ADDED ID HERE -->
                 <TextView
+                    android:id="@+id/txt_frequency_display"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Every Day"
                     android:textColor="#FF91ADC9"
+                    android:maxWidth="150dp"
+                    android:gravity="end"
+                    android:ellipsize="end"
+                    android:singleLine="true"
                     android:textSize="16dp" />
             </LinearLayout>
 
