@@ -38,6 +38,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.navigation.fragment)
+    implementation(libs.androidx.navigation.ui)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
     implementation(libs.recyclerview)
 
