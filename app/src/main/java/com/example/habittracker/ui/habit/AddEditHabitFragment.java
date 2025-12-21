@@ -22,6 +22,7 @@ import com.example.habittracker.data.repository.callback.HabitQueryCallback;
 import com.example.habittracker.ui.adapter.IconAdapter; // Adapter Icon cũ
 import com.example.habittracker.R; // Resource ID
 import com.example.habittracker.data.repository.callback.SimpleCallback;
+import com.example.habittracker.data.repository.callback.DataCallback;
 import com.example.habittracker.data.model.Habit;
 import com.example.habittracker.data.repository.HabitRepository;
 import com.example.habittracker.databinding.FragmentAddEditHabitBinding; // Binding
@@ -230,6 +231,7 @@ public class AddEditHabitFragment extends Fragment {
     }
 
     private void saveHabit() {
+        // 1. Validate dữ liệu (Giữ nguyên code cũ của mày)
         String title = binding.editHabitName.getText().toString().trim();
         if (title.isEmpty()) {
             binding.editHabitName.setError("Required");
@@ -240,18 +242,17 @@ public class AddEditHabitFragment extends Fragment {
         try {
             target = Double.parseDouble(binding.editHabitValue.getText().toString());
         } catch (Exception e) {
-            // Nếu nhập sai số hoặc để trống, mặc định là 0 (hoặc bạn có thể báo lỗi)
+            // Mặc định 0
         }
 
         String unit = binding.editHabitUnit.getText().toString().trim();
         String desc = binding.editHabitDesc.getText().toString().trim();
 
-        // Tạo Map Frequency để lưu vào DB
+        // Map Frequency (Giữ nguyên)
         Map<String, Object> freqMap = new HashMap<>();
         freqMap.put("type", selectedFrequency);
-        // (Nếu sau này làm Weekly nâng cao thì thêm "daysOfWeek" vào đây)
 
-        // Tạo đối tượng Habit mới
+        // Tạo Object Habit (Giữ nguyên)
         Habit habit = new Habit(
                 title,
                 desc,
@@ -263,24 +264,59 @@ public class AddEditHabitFragment extends Fragment {
                 target
         );
 
-        // Callback xử lý kết quả
-        SimpleCallback callback = (success, e) -> {
-            if (success) {
-                String msg = isEditMode ? "Saved Changes" : "Habit Created";
-                Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
-                navController.popBackStack(); // Quay về màn hình trước
-            } else {
-                Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        };
-
-        // Gọi Repository
+        // 2. Gọi Repository (CODE MỚI - TÁCH LUỒNG)
         if (isEditMode) {
-            habit.setId(currentHabitId); // Quan trọng: Gán ID cũ để update đúng doc
-            habitRepository.updateHabit(habit, callback);
+            habit.setId(currentHabitId);
+
+            // Trường hợp UPDATE: Dùng DataCallback<Boolean>
+            habitRepository.updateHabit(habit, new DataCallback<Boolean>() {
+                @Override
+                public void onSuccess(Boolean data) {
+                    // Update thành công -> ID chính là currentHabitId
+                    handleSaveSuccess(currentHabitId, title);
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Toast.makeText(getContext(), "Update Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+
         } else {
-            habitRepository.addHabit(habit, callback);
+            // Trường hợp ADD: Dùng DataCallback<String> để hứng cái ID mới về
+            habitRepository.addHabit(habit, new DataCallback<String>() {
+                @Override
+                public void onSuccess(String newHabitId) {
+                    // Add thành công -> Có ID mới toanh -> Truyền vào handleSaveSuccess
+                    handleSaveSuccess(newHabitId, title);
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Toast.makeText(getContext(), "Add Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
+    }
+
+    // Hàm xử lý chung sau khi Lưu thành công
+    private void handleSaveSuccess(String habitId, String habitTitle) {
+        String msg = isEditMode ? "Saved Changes" : "Habit Created";
+        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+
+        // --- DEBUG GIAI ĐOẠN 1: KIỂM TRA ID ---
+        Log.d("TEST_REMINDER", "--------------------------");
+        Log.d("TEST_REMINDER", "GIAI ĐOẠN 1: Lưu thành công!");
+        if (habitId != null && !habitId.isEmpty()) {
+            Log.d("TEST_REMINDER", ">> SUCCESS: Đã nhận được ID từ Repository: " + habitId);
+            Log.d("TEST_REMINDER", ">> Sẵn sàng để đặt báo thức cho: " + habitTitle);
+        } else {
+            Log.e("TEST_REMINDER", ">> FAIL: Vẫn chưa lấy được ID. Cần kiểm tra lại Repository.");
+        }
+        Log.d("TEST_REMINDER", "--------------------------");
+        // --------------------------------------
+
+        navController.popBackStack();
     }
 
     private void updateStartDateText() {
