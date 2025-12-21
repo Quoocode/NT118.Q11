@@ -33,7 +33,7 @@ public class HabitAlarmReceiver extends BroadcastReceiver {
 
             // Gọi hàm hiển thị thông báo (Sẽ cập nhật NotificationHelper ở Giai đoạn 3)
             // Tạm thời comment lại để code không lỗi
-//            NotificationHelper.showHabitNotification(context, habitTitle, habitId);
+            NotificationHelper.showHabitNotification(context, habitTitle, habitId);
         } else {
             Log.d(TAG, ">> CHECK FAIL: Hôm nay không phải lịch của thói quen này.");
         }
