@@ -3,11 +3,15 @@ package com.example.habittracker.ui.settings;
 import android.Manifest;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent; // Import Mới
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri; // Import Mới
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings; // Import Mới
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,7 +56,7 @@ public class SettingsReminderFragment extends Fragment {
     private ArrayList<Integer> dayList = new ArrayList<>();
     private final String[] dayArray = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
 
-    // Launcher xin quyền (Android 13+)
+    // Launcher xin quyền POST_NOTIFICATIONS (Android 13+)
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
@@ -60,17 +64,17 @@ public class SettingsReminderFragment extends Fragment {
                     saveBoolean(KEY_ALLOW_NOTIFS, true);
                     updateUIState(true);
 
-                    // Quyền đã cấp -> Kích hoạt ngay lịch hẹn giờ hiện tại
+                    // Quyền đã cấp -> Kích hoạt ngay lịch hẹn giờ
                     rescheduleAlarm();
 
+                    // Bắn test và debug
                     NotificationHelper.showTestNotification(requireContext(), MainActivity.class);
+                    NotificationHelper.debugAlarmPermission(requireContext());
                 } else {
                     Toast.makeText(getContext(), "Bạn đã từ chối quyền thông báo.", Toast.LENGTH_SHORT).show();
                     binding.switchAllowNotifs.setChecked(false);
                     saveBoolean(KEY_ALLOW_NOTIFS, false);
                     updateUIState(false);
-
-                    // Từ chối -> Hủy lịch hẹn
                     NotificationHelper.cancelDailyBriefing(requireContext());
                 }
             });
@@ -91,6 +95,9 @@ public class SettingsReminderFragment extends Fragment {
         NotificationHelper.createNotificationChannel(requireContext());
         selectedDays = new boolean[dayArray.length];
 
+        // Debug ngay khi vào màn hình
+        NotificationHelper.debugAlarmPermission(requireContext());
+
         NavController navController = NavHostFragment.findNavController(this);
 
         // 2. Load cài đặt cũ
@@ -99,14 +106,23 @@ public class SettingsReminderFragment extends Fragment {
         // 3. Sự kiện Click
         binding.btnBackReminders.setOnClickListener(v -> navController.popBackStack());
 
+        // --- SỬA LOGIC SWITCH ---
         binding.switchAllowNotifs.setOnClickListener(v -> {
             boolean isChecked = binding.switchAllowNotifs.isChecked();
             if (isChecked) {
-                checkAndRequestPermission(); // Bật -> Xin quyền & Hẹn giờ
+                // [MỚI] Bước 1: Kiểm tra quyền Báo thức chính xác trước
+                if (!checkExactAlarmPermission()) {
+                    binding.switchAllowNotifs.setChecked(false); // Tắt lại switch vì chưa có quyền
+                    showPermissionDialog(); // Hiện popup bắt bật
+                    return;
+                }
+
+                // [MỚI] Bước 2: Nếu có quyền báo thức rồi -> Kiểm tra quyền Thông báo
+                checkAndRequestPermission();
             } else {
                 saveBoolean(KEY_ALLOW_NOTIFS, false);
                 updateUIState(false);
-                NotificationHelper.cancelDailyBriefing(requireContext()); // Tắt -> Hủy hẹn
+                NotificationHelper.cancelDailyBriefing(requireContext());
             }
         });
 
@@ -120,6 +136,33 @@ public class SettingsReminderFragment extends Fragment {
         binding.switchVibration.setOnCheckedChangeListener((buttonView, isChecked) ->
                 saveBoolean(KEY_VIBRATION, isChecked));
     }
+
+    // --- HÀM KIỂM TRA QUYỀN ALARM (MỚI THÊM) ---
+    private boolean checkExactAlarmPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            android.app.AlarmManager alarmManager = (android.app.AlarmManager) requireContext().getSystemService(android.content.Context.ALARM_SERVICE);
+            if (alarmManager != null && !alarmManager.canScheduleExactAlarms()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void showPermissionDialog() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Cấp quyền Báo thức")
+                .setMessage("Để sử dụng tính năng nhắc nhở hàng ngày, ứng dụng cần quyền đặt báo thức chính xác. Nhấn OK để mở Cài đặt.")
+                .setPositiveButton("OK", (dialog, which) -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                        intent.setData(Uri.parse("package:" + requireContext().getPackageName()));
+                        startActivity(intent);
+                    }
+                })
+                .setNegativeButton("Hủy", null)
+                .show();
+    }
+    // -------------------------------------------
 
     // --- LOGIC TIME PICKER ---
     private void showTimePickerDialog() {
@@ -140,7 +183,7 @@ public class SettingsReminderFragment extends Fragment {
                     saveInt(KEY_TIME_HOUR, hourOfDay);
                     saveInt(KEY_TIME_MINUTE, minuteOfHour);
 
-                    // Cập nhật lại báo thức với giờ mới
+                    // Cập nhật lại báo thức
                     rescheduleAlarm();
 
                 }, hour, minute, false);
@@ -178,9 +221,8 @@ public class SettingsReminderFragment extends Fragment {
             saveString(KEY_FREQ_DISPLAY, result);
             saveDayListToPrefs();
 
-            // Cập nhật lại báo thức (để Receiver biết ngày mới)
-            // (Thực ra Receiver đọc trực tiếp từ Prefs nên không cần gọi lại Alarm,
-            // nhưng gọi lại cũng không sao để đảm bảo đồng bộ)
+            // Cập nhật lại báo thức (vì thay đổi ngày)
+            rescheduleAlarm();
         });
 
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
@@ -189,13 +231,23 @@ public class SettingsReminderFragment extends Fragment {
 
     // --- CÁC HÀM HỖ TRỢ ---
 
-    // Hàm quan trọng: Đặt lại báo thức dựa trên giờ đã lưu
     private void rescheduleAlarm() {
         if (binding.switchAllowNotifs.isChecked()) {
+            // [MỚI] Kiểm tra quyền trước khi đặt
+            if (!checkExactAlarmPermission()) {
+                Log.e("ALARM_PERMISSION", "Daily Briefing: Bị chặn quyền Exact Alarm.");
+                showPermissionDialog();
+                return;
+            }
+
             int hour = sharedPreferences.getInt(KEY_TIME_HOUR, 8);
             int minute = sharedPreferences.getInt(KEY_TIME_MINUTE, 0);
+
+            // Debug log
+            NotificationHelper.debugAlarmPermission(requireContext());
+
             NotificationHelper.scheduleDailyBriefing(requireContext(), hour, minute);
-            Toast.makeText(getContext(), "Đã đặt lịch nhắc nhở!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Đã đặt lịch Daily Briefing!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -250,7 +302,6 @@ public class SettingsReminderFragment extends Fragment {
     private void restoreDayListFromPrefs() {
         String savedIndices = sharedPreferences.getString(KEY_SELECTED_DAYS, "0,1,2,3,4,5,6");
         dayList.clear();
-        // Reset mảng selectedDays về false trước khi tick lại
         for(int i=0; i<selectedDays.length; i++) selectedDays[i] = false;
 
         if (!savedIndices.isEmpty()) {

@@ -1,9 +1,13 @@
 package com.example.habittracker.ui.habit;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +32,7 @@ import com.example.habittracker.data.model.Habit;
 import com.example.habittracker.data.repository.HabitRepository;
 import com.example.habittracker.databinding.FragmentAddEditHabitBinding; // Binding
 
+import com.example.habittracker.utils.NotificationHelper;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -231,6 +236,34 @@ public class AddEditHabitFragment extends Fragment {
         binding.btnConfirmAction.setOnClickListener(v -> saveHabit());
     }
 
+    // --- HÀM KIỂM TRA QUYỀN (MỚI) ---
+    private boolean checkExactAlarmPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            android.app.AlarmManager alarmManager = (android.app.AlarmManager) requireContext().getSystemService(android.content.Context.ALARM_SERVICE);
+            if (alarmManager != null && !alarmManager.canScheduleExactAlarms()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void showPermissionDialog() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Cấp quyền Báo thức")
+                .setMessage("Để nhận nhắc nhở thói quen đúng giờ, bạn cần cho phép ứng dụng đặt báo thức. Nhấn OK để mở Cài đặt.")
+                .setPositiveButton("OK", (dialog, which) -> {
+                    // Mở màn hình cài đặt quyền
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                        intent.setData(Uri.parse("package:" + requireContext().getPackageName()));
+                        startActivity(intent);
+                    }
+                })
+                .setNegativeButton("Để sau", null)
+                .show();
+    }
+    // --------------------------------
+
     private void saveHabit() {
         // 1. Validate dữ liệu (Giữ nguyên code cũ của mày)
         String title = binding.editHabitName.getText().toString().trim();
@@ -252,6 +285,17 @@ public class AddEditHabitFragment extends Fragment {
         // Map Frequency (Giữ nguyên)
         Map<String, Object> freqMap = new HashMap<>();
         freqMap.put("type", selectedFrequency);
+
+        // --- KIỂM TRA QUYỀN TRƯỚC KHI LƯU ---
+        // Chỉ kiểm tra nếu người dùng có đặt giờ nhắc
+        if (selectedReminderTime != null && !selectedReminderTime.isEmpty()) {
+            if (!checkExactAlarmPermission()) {
+                Log.e("ALARM_PERMISSION", "Bị chặn quyền Exact Alarm. Đang yêu cầu user cấp quyền...");
+                showPermissionDialog();
+                return; // Dừng lại, không lưu
+            }
+        }
+        // -------------------------------------
 
         // Tạo Object Habit (Giữ nguyên)
         Habit habit = new Habit(
@@ -292,6 +336,7 @@ public class AddEditHabitFragment extends Fragment {
                     handleSaveSuccess(newHabitId, title);
                 }
 
+
                 @Override
                 public void onFailure(Exception e) {
                     Toast.makeText(getContext(), "Add Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -305,33 +350,34 @@ public class AddEditHabitFragment extends Fragment {
         String msg = isEditMode ? "Saved Changes" : "Habit Created";
         Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
 
-        // --- DEBUG GIAI ĐOẠN 1: KIỂM TRA ID ---
         Log.d("TEST_REMINDER", "--------------------------");
-        Log.d("TEST_REMINDER", "GIAI ĐOẠN 1: Lưu thành công!");
+        Log.d("TEST_REMINDER", "GIAI ĐOẠN 3 (FINAL): Save Success!");
+
         if (habitId != null && !habitId.isEmpty()) {
-            Log.d("TEST_REMINDER", ">> SUCCESS: Đã nhận được ID từ Repository: " + habitId);
-            Log.d("TEST_REMINDER", ">> Sẵn sàng để đặt báo thức cho: " + habitTitle);
+            NotificationHelper.debugAlarmPermission(requireContext());
+            Log.d("TEST_REMINDER", ">> ID OK: " + habitId);
+
+            // Kiểm tra xem user có đặt giờ không
+            if (selectedReminderTime != null && !selectedReminderTime.isEmpty()) {
+                Log.d("TEST_REMINDER", ">> Calling Scheduler for: " + selectedReminderTime);
+
+                // [QUAN TRỌNG] GỌI HÀM ĐẶT BÁO THỨC THẬT SỰ
+                NotificationHelper.scheduleHabitReminder(
+                        requireContext(),
+                        habitId,
+                        habitTitle,
+                        selectedReminderTime,
+                        selectedFrequency,
+                        selectedStartDate.getTime() // Chuyển Calendar thành Date
+                );
+
+            } else {
+                Log.d("TEST_REMINDER", ">> No Reminder Time set. Skipping alarm.");
+            }
         } else {
-            Log.e("TEST_REMINDER", ">> FAIL: Vẫn chưa lấy được ID. Cần kiểm tra lại Repository.");
+            Log.e("TEST_REMINDER", ">> FAIL: ID is null! Cannot schedule alarm.");
         }
         Log.d("TEST_REMINDER", "--------------------------");
-        // --------------------------------------
-
-        // --- CODE TEST GIAI ĐOẠN 2 (XÓA SAU KHI TEST XONG) ---
-        Log.d("TEST_PHASE_2", "Đang giả lập tín hiệu báo thức gửi tới Receiver...");
-
-        Intent intent = new Intent(requireContext(), com.example.habittracker.utils.HabitAlarmReceiver.class);
-        intent.setAction("com.example.habittracker.TEST_ALARM"); // Action tùy ý
-
-        // Đóng gói dữ liệu giả lập để test logic "Smart Check"
-        intent.putExtra("HABIT_TITLE", habitTitle);
-        intent.putExtra("HABIT_ID", habitId);
-        intent.putExtra("HABIT_FREQ_TYPE", selectedFrequency); // VD: DAILY, WEEKLY
-        intent.putExtra("HABIT_START_DATE", selectedStartDate.getTime().getTime()); // Milliseconds
-
-        // Bắn tín hiệu ngay lập tức!
-        requireContext().sendBroadcast(intent);
-        // -----------------------------------------------------
 
         navController.popBackStack();
     }
