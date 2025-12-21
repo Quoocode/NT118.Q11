@@ -2,6 +2,7 @@ package com.example.habittracker.ui.habit;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -315,6 +316,22 @@ public class AddEditHabitFragment extends Fragment {
         }
         Log.d("TEST_REMINDER", "--------------------------");
         // --------------------------------------
+
+        // --- CODE TEST GIAI ĐOẠN 2 (XÓA SAU KHI TEST XONG) ---
+        Log.d("TEST_PHASE_2", "Đang giả lập tín hiệu báo thức gửi tới Receiver...");
+
+        Intent intent = new Intent(requireContext(), com.example.habittracker.utils.HabitAlarmReceiver.class);
+        intent.setAction("com.example.habittracker.TEST_ALARM"); // Action tùy ý
+
+        // Đóng gói dữ liệu giả lập để test logic "Smart Check"
+        intent.putExtra("HABIT_TITLE", habitTitle);
+        intent.putExtra("HABIT_ID", habitId);
+        intent.putExtra("HABIT_FREQ_TYPE", selectedFrequency); // VD: DAILY, WEEKLY
+        intent.putExtra("HABIT_START_DATE", selectedStartDate.getTime().getTime()); // Milliseconds
+
+        // Bắn tín hiệu ngay lập tức!
+        requireContext().sendBroadcast(intent);
+        // -----------------------------------------------------
 
         navController.popBackStack();
     }
