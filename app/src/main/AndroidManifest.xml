@@ -32,6 +32,11 @@
             android:enabled="true"
             android:exported="false"/>
 
+        <!-- [MỚI] Receiver Riêng cho Từng Thói Quen -->
+        <receiver android:name=".utils.HabitAlarmReceiver"
+            android:enabled="true"
+            android:exported="false"/>
+
     </application>
 
 </manifest>
