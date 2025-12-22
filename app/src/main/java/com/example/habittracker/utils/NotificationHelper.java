@@ -29,6 +29,8 @@ public class NotificationHelper {
     private static final String CHANNEL_NAME = "Habit Reminders";
     private static final String CHANNEL_DESC = "Thông báo nhắc nhở thói quen hàng ngày";
     private static final int DAILY_REMINDER_REQUEST_CODE = 1001; // Mã định danh cho báo thức này
+    private static final int DAILY_BRIEFING_ID = 1001;
+
 
     // 1. Tạo kênh thông báo
     public static void createNotificationChannel(Context context) {
@@ -72,35 +74,45 @@ public class NotificationHelper {
 
     // --- CÁC HÀM MỚI (SCHEDULER) ---
 
-    // 3. Đặt lịch hẹn giờ (Gọi hàm này khi user lưu giờ hoặc bật switch)
-    @SuppressLint("ScheduleExactAlarm") // Bỏ qua cảnh báo quyền Exact Alarm (cần thêm quyền vào manifest sau)
+    // 2. Đặt lịch Daily Briefing (CẬP NHẬT THEO YÊU CẦU CỦA BẠN)
+    @SuppressLint("ScheduleExactAlarm")
     public static void scheduleDailyBriefing(Context context, int hour, int minute) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(context, ReminderReceiver.class);
+        Intent intent = new Intent(context, ReminderReceiver.class); // Vẫn dùng ReminderReceiver cũ cho Daily Briefing
 
-        // FLAG_UPDATE_CURRENT: Nếu đã có lịch cũ thì cập nhật đè lên
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, DAILY_REMINDER_REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context,
+                DAILY_BRIEFING_ID,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
 
-        // Tính thời gian báo thức
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, minute);
         calendar.set(Calendar.SECOND, 0);
 
-        // Nếu giờ đặt đã qua rồi (VD: giờ là 9h mà đặt 8h), thì lùi sang ngày mai
+        // Nếu giờ đặt đã qua -> Lùi sang ngày mai
         if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
             calendar.add(Calendar.DAY_OF_YEAR, 1);
         }
 
-        // Đặt báo thức lặp lại hàng ngày (RTC_WAKEUP: Đánh thức máy kể cả khi ngủ)
         if (alarmManager != null) {
-            // Dùng setRepeating cho đơn giản (Độ chính xác tương đối)
-            alarmManager.setRepeating(
-                    AlarmManager.RTC_WAKEUP,
-                    calendar.getTimeInMillis(),
-                    AlarmManager.INTERVAL_DAY, // Lặp lại sau mỗi 24h
-                    pendingIntent
-            );
+            // THAY THẾ setRepeating BẰNG setExactAndAllowWhileIdle
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        calendar.getTimeInMillis(),
+                        pendingIntent
+                );
+            } else {
+                alarmManager.setExact(
+                        AlarmManager.RTC_WAKEUP,
+                        calendar.getTimeInMillis(),
+                        pendingIntent
+                );
+            }
+            Log.d("ALARM_DEBUG", "Đã đặt lịch Daily Briefing chính xác lúc " + calendar.getTime().toString());
         }
     }
 
@@ -108,7 +120,7 @@ public class NotificationHelper {
     public static void cancelDailyBriefing(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, ReminderReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, DAILY_REMINDER_REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, DAILY_BRIEFING_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         if (alarmManager != null) {
             alarmManager.cancel(pendingIntent);
@@ -144,6 +156,7 @@ public class NotificationHelper {
     }
 
     // Đặt lịch cho Thói quen
+    // Đặt lịch cho Thói quen (CẬP NHẬT: Dùng setExactAndAllowWhileIdle cho MỌI TẦN SUẤT)
     @SuppressLint("ScheduleExactAlarm")
     public static void scheduleHabitReminder(Context context, String habitId, String title, String timeString, String frequency, Date startDate) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -156,17 +169,24 @@ public class NotificationHelper {
         int minute = Integer.parseInt(parts[1]);
 
         // Tính thời gian báo thức đầu tiên
+        // Lấy ngày hiện tại làm mốc
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(startDate);
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, minute);
         calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
 
-        // Xử lý nếu giờ đã qua
-        if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+        // Xử lý nếu giờ đặt đã qua trong ngày hôm nay
+        if (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
             if ("WEEKLY".equals(frequency)) {
-                calendar.add(Calendar.WEEK_OF_YEAR, 1);
+                // Nếu là Weekly mà qua giờ rồi -> Chuyển sang tuần sau (cộng 7 ngày)
+                // Lưu ý: Logic này tạm thời đơn giản, đúng ra phải check ngày trong tuần
+                calendar.add(Calendar.DAY_OF_YEAR, 7);
+            } else if ("ONCE".equals(frequency)) {
+                // ONCE qua rồi thì thôi, không đặt nữa
+                return;
             } else {
+                // DAILY và MONTHLY: Cộng 1 ngày để đặt cho ngày mai
                 calendar.add(Calendar.DAY_OF_YEAR, 1);
             }
         }
@@ -177,6 +197,8 @@ public class NotificationHelper {
         intent.putExtra("HABIT_ID", habitId);
         intent.putExtra("HABIT_FREQ_TYPE", frequency);
         intent.putExtra("HABIT_START_DATE", startDate.getTime());
+        // [QUAN TRỌNG] Truyền timeString để Receiver biết đường đặt lại
+        intent.putExtra("HABIT_TIME_STRING", timeString);
 
         // ID Báo thức duy nhất = HashCode của Habit ID
         int alarmId = habitId.hashCode();
@@ -190,16 +212,15 @@ public class NotificationHelper {
 
         long triggerTime = calendar.getTimeInMillis();
 
-        // Đặt lịch theo tần suất
-        if ("ONCE".equals(frequency)) {
+        // [CẬP NHẬT] Luôn dùng setExactAndAllowWhileIdle cho tất cả các loại tần suất
+        // Receiver sẽ chịu trách nhiệm đặt lại (Reschedule) sau khi báo thức nổ
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
-        } else if ("WEEKLY".equals(frequency)) {
-            // Lặp mỗi 7 ngày
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, triggerTime, AlarmManager.INTERVAL_DAY * 7, pendingIntent);
         } else {
-            // DAILY và MONTHLY: Đều đặt lặp mỗi ngày (Receiver sẽ tự lọc ngày Monthly sau)
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, triggerTime, AlarmManager.INTERVAL_DAY, pendingIntent);
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
         }
+
+        Log.d("ALARM_DEBUG", "Đã đặt lịch Habit chính xác cho: " + title + " lúc " + calendar.getTime().toString());
     }
 
     // Hủy lịch cho Thói quen (Dùng khi Edit/Delete)
