@@ -66,5 +66,6 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation ("com.google.firebase:firebase-firestore")
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    implementation("com.github.Dimezis:BlurView:version-3.2.0")
 
 }

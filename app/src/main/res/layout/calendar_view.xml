@@ -27,7 +27,7 @@
             android:layout_marginTop="11dp"
             android:layout_marginBottom="11dp"
             android:scaleType="centerInside"
-            android:src="@drawable/ic_arrow_left" />
+            android:src="@drawable/ic_chevron_left_2" />
 
         <TextView
             android:id="@+id/container_summary_depth_frame_23"
