@@ -49,7 +49,7 @@
             android:layout_marginTop="11dp"
             android:layout_marginBottom="11dp"
             android:scaleType="centerInside"
-            android:src="@drawable/ic_right_back" />
+            android:src="@drawable/ic_chevron_right" />
     </LinearLayout>
 
     <LinearLayout
