@@ -33,7 +33,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:scaleType="centerInside"
-                android:src="@drawable/ic_left_back" />
+                android:src="@drawable/ic_arrow_left" />
 
             <TextView
                 android:id="@+id/calendar_title"
@@ -63,7 +63,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:scaleType="centerInside"
-                android:src="@drawable/ic_left_back" />
+                android:src="@drawable/ic_chevron_left" />
 
             <TextView
                 android:id="@+id/month_label"
@@ -87,7 +87,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:scaleType="centerInside"
-                android:src="@drawable/ic_right_back" />
+                android:src="@drawable/ic_chevron_right" />
         </LinearLayout>
 
         <LinearLayout

@@ -285,13 +285,13 @@ public class HomeFragment extends Fragment {
 
         int[] icons = new int[]{
                 R.drawable.ic_cup,
-                R.drawable.ic_streak,
+                R.drawable.ic_fire,
                 R.drawable.ic_plus,
                 R.drawable.ic_cup,
-                R.drawable.ic_streak,
+                R.drawable.ic_fire,
                 R.drawable.ic_plus,
                 R.drawable.ic_cup,
-                R.drawable.ic_streak,
+                R.drawable.ic_fire,
                 R.drawable.ic_plus
         };
         String[] titles = new String[]{
