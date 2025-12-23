@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.example.habittracker.MainActivity;
 
@@ -13,37 +14,44 @@ public class ReminderReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        // Đây là nơi code sẽ chạy khi đến giờ hẹn (VD: 8:00 AM)
+        Log.d("ALARM_DEBUG", "⏰ ReminderReceiver (Daily Briefing) đã bị đánh thức!");
 
-        // 1. Lấy dữ liệu ngày đã chọn từ SharedPreferences để kiểm tra
         SharedPreferences prefs = context.getSharedPreferences("HabitTrackerPrefs", Context.MODE_PRIVATE);
 
-        // Kiểm tra xem Switch tổng có đang bật không? (Double check cho chắc)
+        // 1. Kiểm tra Switch tổng
         boolean isAllowed = prefs.getBoolean("allow_notifs", false);
         if (!isAllowed) {
-            return; // Nếu tắt rồi thì thôi, không làm gì cả
+            Log.d("ALARM_DEBUG", ">> Switch tắt -> Không làm gì cả.");
+            return;
         }
 
-        // 2. Kiểm tra hôm nay có phải ngày được chọn không (Logic Phương án A)
+        // 2. Logic hiện thông báo (Smart Check)
         if (isTodaySelected(prefs)) {
-            // Nếu đúng ngày -> Bắn thông báo Daily Briefing
-            // Truyền MainActivity.class để khi bấm vào thông báo thì mở App
+            Log.d("ALARM_DEBUG", ">> Hôm nay có lịch -> Bắn thông báo Daily Briefing!");
             NotificationHelper.showTestNotification(context, MainActivity.class);
+        } else {
+            Log.d("ALARM_DEBUG", ">> Hôm nay không có lịch -> Im lặng.");
         }
+
+        // 3. [QUAN TRỌNG NHẤT] TỰ ĐỘNG ĐẶT LẠI LỊCH CHO LẦN SAU (Reschedule)
+        // Lấy giờ đã lưu
+        int hour = prefs.getInt("reminder_hour", 8);
+        int minute = prefs.getInt("reminder_minute", 0);
+
+        Log.d("ALARM_DEBUG", ">> Đang Reschedule cho lần tiếp theo...");
+
+        // Gọi lại hàm đặt lịch. Vì giờ này (ví dụ 14:52) đã qua so với hiện tại (14:52:01),
+        // nên logic bên trong NotificationHelper sẽ tự động cộng thêm 1 ngày (hoặc 1 phút hack).
+        NotificationHelper.scheduleDailyBriefing(context, hour, minute);
     }
 
-    // Hàm kiểm tra xem hôm nay có nằm trong danh sách user chọn không
+    // Hàm kiểm tra ngày (Giữ nguyên)
     private boolean isTodaySelected(SharedPreferences prefs) {
-        String savedIndices = prefs.getString("selected_days_indices", "0,1,2,3,4,5,6"); // Mặc định full tuần
+        String savedIndices = prefs.getString("selected_days_indices", "0,1,2,3,4,5,6");
         if (savedIndices.isEmpty()) return false;
 
-        // Lấy thứ trong tuần hiện tại (Android tính: CN=1, T2=2, ..., T7=7)
         Calendar calendar = Calendar.getInstance();
         int currentDayAndroid = calendar.get(Calendar.DAY_OF_WEEK);
-
-        // Quy đổi sang hệ số của App mình (T2=0, T3=1, ..., CN=6)
-        // Android: Sun(1), Mon(2), Tue(3), Wed(4), Thu(5), Fri(6), Sat(7)
-        // App mình: Mon(0), Tue(1), Wed(2), Thu(3), Fri(4), Sat(5), Sun(6)
         int currentDayAppIndex = -1;
 
         if (currentDayAndroid == Calendar.MONDAY) currentDayAppIndex = 0;
@@ -54,13 +62,12 @@ public class ReminderReceiver extends BroadcastReceiver {
         else if (currentDayAndroid == Calendar.SATURDAY) currentDayAppIndex = 5;
         else if (currentDayAndroid == Calendar.SUNDAY) currentDayAppIndex = 6;
 
-        // Kiểm tra xem index hôm nay có trong chuỗi đã lưu không
         String[] split = savedIndices.split(",");
         for (String s : split) {
             if (s.equals(String.valueOf(currentDayAppIndex))) {
-                return true; // Có trùng -> Hôm nay cần báo
+                return true;
             }
         }
-        return false; // Không trùng
+        return false;
     }
 }
