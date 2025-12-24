@@ -3,21 +3,22 @@ package com.example.habittracker;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer; // Mới
+import androidx.lifecycle.ViewModelProvider; // Mới
 import androidx.navigation.NavController;
-import androidx.navigation.NavGraph; // Import mới
+import androidx.navigation.NavGraph;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.habittracker.R;
 import com.example.habittracker.databinding.ActivityMainBinding;
-import com.example.habittracker.DatabaseStructure.HabitRepository;
-import com.example.habittracker.DatabaseStructure.Habit;
-import com.example.habittracker.DatabaseStructure.DataSeeder;
-import com.google.firebase.auth.FirebaseAuth; // Import mới
-import com.google.firebase.auth.FirebaseUser; // Import mới
+import com.example.habittracker.data.model.Habit; // Mới
+import com.example.habittracker.ui.ViewModel.HabitViewModel; // Mới: Đảm bảo package đúng với file bạn vừa tạo
+import com.example.habittracker.utils.NotificationHelper; // Mới: Đảm bảo package đúng
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private NavController navController;
+    private HabitViewModel habitViewModel; // Khai báo ViewModel
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,17 +45,15 @@ public class MainActivity extends AppCompatActivity {
 
             // --- [MỚI] LOGIC KIỂM TRA ĐĂNG NHẬP (AUTO LOGIN) ---
 
-            // Lấy NavGraph hiện tại (được khai báo trong nav_graph.xml)
-            NavGraph navGraph = navController.getNavInflater().inflate(R.navigation.nav_graph); // Thay nav_graph bằng tên file xml điều hướng của bạn nếu khác
+            // Lấy NavGraph hiện tại
+            NavGraph navGraph = navController.getNavInflater().inflate(R.navigation.nav_graph);
 
             // Kiểm tra user hiện tại
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
             if (currentUser != null) {
-                // Nếu đã đăng nhập -> Chuyển hướng thẳng vào Home
                 navGraph.setStartDestination(R.id.homeFragment);
             } else {
-                // Nếu chưa -> Vào Login (Mặc định)
                 navGraph.setStartDestination(R.id.loginFragment);
             }
 
@@ -69,11 +69,49 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // --- ĐOẠN DATA SEEDER (Có thể bỏ hoặc comment lại sau này) ---
-        // Chỉ chạy khi user đã đăng nhập để tránh lỗi null UID
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             String user1_ID = FirebaseAuth.getInstance().getCurrentUser().getUid();
             // DataSeeder seeder1 = new DataSeeder(user1_ID);
             // seeder1.seedData();
+        }
+
+        // 5. [QUAN TRỌNG] Kích hoạt quan sát dữ liệu để đặt báo thức
+        setupHabitObserver();
+    }
+
+    private void setupHabitObserver() {
+        try {
+            // Khởi tạo ViewModel
+            habitViewModel = new ViewModelProvider(this).get(HabitViewModel.class);
+
+            // A. Lắng nghe dữ liệu (Observe)
+            // Khi nào loadActiveHabits chạy xong, nó sẽ bắn dữ liệu vào đây
+            habitViewModel.getHabits().observe(this, new Observer<List<Habit>>() {
+                @Override
+                public void onChanged(List<Habit> habits) {
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                    if (user != null && habits != null && !habits.isEmpty()) {
+                        Log.d("ALARM_DEBUG", "MainActivity: Đã tải được " + habits.size() + " thói quen. Tiến hành đặt báo thức...");
+
+                        // Gọi NotificationHelper để đặt báo thức
+                        NotificationHelper.scheduleAllHabitReminders(MainActivity.this, habits);
+                    } else {
+                        Log.d("ALARM_DEBUG", "MainActivity: Dữ liệu thói quen trống hoặc User chưa đăng nhập.");
+                    }
+                }
+            });
+
+            // B. Kích hoạt tải dữ liệu ngay nếu đã đăng nhập
+            // Nếu không có dòng này, Observer ở trên sẽ ngồi chơi xơi nước mãi mãi
+            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                Log.d("ALARM_DEBUG", "MainActivity: Đã đăng nhập, gọi ViewModel tải dữ liệu ngay.");
+                habitViewModel.loadActiveHabits();
+            }
+
+        } catch (Exception e) {
+            Log.e("ALARM_DEBUG", "Lỗi setup Observer trong MainActivity: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

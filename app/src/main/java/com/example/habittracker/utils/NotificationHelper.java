@@ -18,9 +18,11 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.example.habittracker.MainActivity;
 import com.example.habittracker.R;
+import com.example.habittracker.data.model.Habit;
 
 import java.util.Calendar;
 import java.util.Date; // [FIX BUG 1] Đã thêm import Date
+import java.util.List;
 
 
 public class NotificationHelper {
@@ -260,7 +262,67 @@ public class NotificationHelper {
     }
 
     // =========================================================================
-    // 4. HELPER METHODS
+    // 4. [MỚI] HÀM HỖ TRỢ LOGOUT/LOGIN HÀNG LOẠT
+    // =========================================================================
+
+    public static void cancelAllHabitReminders(Context context, List<Habit> habitList) {
+        if (habitList == null || habitList.isEmpty()) return;
+
+        for (Habit habit : habitList) {
+            if (habit.getId() != null) {
+                cancelHabitReminder(context, habit.getId());
+                Log.d("ALARM_DEBUG", "Đã hủy báo thức cho: " + habit.getTitle());
+            }
+        }
+    }
+
+    public static void scheduleAllHabitReminders(Context context, List<Habit> habitList) {
+        // 1. Log ngay khi vào hàm để biết hàm có ĐƯỢC GỌI hay không
+        if (habitList == null) {
+            Log.e("ALARM_DEBUG", "!!! scheduleAllHabitReminders bị gọi với habitList là NULL");
+            return;
+        }
+
+        Log.d("ALARM_DEBUG", "--> Bắt đầu scheduleAllHabitReminders. Số lượng: " + habitList.size());
+
+        // 2. Kiểm tra danh sách rỗng (Nguyên nhân chính thường gặp)
+        if (habitList.isEmpty()) {
+            Log.w("ALARM_DEBUG", "!!! Danh sách thói quen RỖNG. Không có gì để đặt báo thức.");
+            return;
+        }
+
+        int count = 0;
+        for (Habit habit : habitList) {
+            // Log kiểm tra từng phần tử xem có bị lọt điều kiện if không
+            if (habit.getId() != null &&
+                    habit.getReminderTime() != null &&
+                    !habit.getReminderTime().isEmpty() &&
+                    !habit.isArchived()) {
+
+                String freqType = "DAILY";
+                if (habit.getFrequency() != null && habit.getFrequency().get("type") != null) {
+                    freqType = (String) habit.getFrequency().get("type");
+                }
+
+                scheduleHabitReminder(
+                        context,
+                        habit.getId(),
+                        habit.getTitle(),
+                        habit.getReminderTime(),
+                        freqType,
+                        habit.getStartDate().toDate()
+                );
+                count++;
+            } else {
+                // Log nếu thói quen bị bỏ qua (để biết tại sao count không tăng)
+                Log.d("ALARM_DEBUG", "Bỏ qua thói quen: " + habit.getTitle() + " (Do thiếu ID, ReminderTime hoặc đã Archive)");
+            }
+        }
+        Log.d("ALARM_DEBUG", "Đã đặt lại báo thức thành công cho " + count + " thói quen.");
+    }
+
+    // =========================================================================
+    // 5. HELPER METHODS
     // =========================================================================
 
     private static boolean hasPermission(Context context) {
