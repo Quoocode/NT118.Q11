@@ -63,7 +63,7 @@ public class NotificationHelper {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_reminder)
+                .setSmallIcon(R.drawable.ic_menu_thinking)
                 .setContentTitle("Daily Briefing") // Đổi tiêu đề cho hợp ngữ cảnh
                 .setContentText("Chào buổi sáng! Kiểm tra các thói quen của bạn ngay.")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -150,7 +150,7 @@ public class NotificationHelper {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, uniqueId, intent, PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_reminder)
+                .setSmallIcon(R.drawable.ic_menu_thinking)
                 .setContentTitle("Nhắc nhở: " + title)
                 .setContentText("Đến giờ thực hiện mục tiêu rồi! Cố lên bạn ơi.")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
