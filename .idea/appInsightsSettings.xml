@@ -6,14 +6,6 @@
         <entry key="Firebase Crashlytics">
           <value>
             <InsightsFilterSettings>
-              <option name="connection">
-                <ConnectionSetting>
-                  <option name="appId" value="com.example.habittracker" />
-                  <option name="mobileSdkAppId" value="1:392391623569:android:350e7647b3f297c7e25030" />
-                  <option name="projectId" value="nt118-q11" />
-                  <option name="projectNumber" value="392391623569" />
-                </ConnectionSetting>
-              </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
               <option name="timeIntervalDays" value="THIRTY_DAYS" />
               <option name="visibilityType" value="ALL" />
