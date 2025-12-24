@@ -22,8 +22,10 @@
             android:layout_height="wrap_content"
             android:background="@drawable/container_login_2"
             android:gravity="left|top"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="32dp"> <!-- Tăng padding bottom để lướt xuống cuối thoáng hơn -->
 
+            <!-- HEADER SECTION -->
             <LinearLayout
                 android:id="@+id/header_settings"
                 android:layout_width="match_parent"
@@ -62,6 +64,7 @@
                     android:textSize="18dp" />
             </LinearLayout>
 
+            <!-- PROFILE SECTION -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="28dp"
@@ -128,6 +131,7 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <!-- PREFERENCES SECTION -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="28dp"
@@ -343,7 +347,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="12dp"
                 android:gravity="left|center_vertical"
-                        android:includeFontPadding="false"
+                android:includeFontPadding="false"
                 android:maxLines="1"
                 android:singleLine="true"
                 android:text="Data"
@@ -404,6 +408,86 @@
                         android:maxLines="1"
                         android:singleLine="true"
                         android:text="Export your habit data"
+                        android:textColor="#FF91ADC9"
+                        android:textSize="14dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- - NEW ACCOUNT SECTION (LOGOUT) - -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="28dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="12dp"
+                android:gravity="left|center_vertical"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="Account"
+                android:textColor="#FFFFFFFF"
+                android:textSize="22dp" />
+
+            <LinearLayout
+                android:id="@+id/btn_logout"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:gravity="left|center_vertical"
+                android:orientation="horizontal"
+                android:paddingBottom="8dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground">
+
+                <LinearLayout
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/container_navi"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <!-- Giả sử bạn có ic_logout, nếu chưa có thì dùng tạm ic_left_back hoặc tạo vector asset mới -->
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_arrow_left"
+                        android:rotation="180"
+                        app:tint="#FF5252"/>
+                    <!-- Xoay ngược icon back làm logout tạm nếu chưa có icon -->
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:gravity="left|center_vertical"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="24dp"
+                        android:gravity="left|center_vertical"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:text="Log Out"
+                        android:textColor="#FF5252"
+                        android:textSize="16dp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="21dp"
+                        android:gravity="left|center_vertical"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:text="Sign out of your account"
                         android:textColor="#FF91ADC9"
                         android:textSize="14dp" />
                 </LinearLayout>

@@ -1,11 +1,7 @@
 package com.example.habittracker.DatabaseStructure;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
-import com.example.habittracker.DatabaseStructure.Habit;
-import com.example.habittracker.DatabaseStructure.History;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,7 +21,7 @@ public class HabitRepository {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private String currentUid;
 
-    public HabitRepository() {
+    public HabitRepository(String uid) {
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         }
