@@ -455,7 +455,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:scaleType="centerInside"
-                        android:src="@drawable/ic_left_back"
+                        android:src="@drawable/ic_arrow_left"
                         android:rotation="180"
                         app:tint="#FF5252"/>
                     <!-- Xoay ngược icon back làm logout tạm nếu chưa có icon -->
