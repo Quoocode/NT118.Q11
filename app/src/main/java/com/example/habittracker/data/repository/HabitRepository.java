@@ -1,36 +1,44 @@
 package com.example.habittracker.data.repository;
 
 import android.util.Log;
-import android.widget.Toast;
+import androidx.annotation.NonNull;
 
-
+// Import Callbacks cũ
+import com.example.habittracker.data.repository.callback.HabitQueryCallback;
+import com.example.habittracker.data.repository.callback.SimpleCallback;
+import com.example.habittracker.data.repository.callback.StatsCallback;
 import com.example.habittracker.data.repository.callback.StreakCallback;
+// Import Callback mới
+import com.example.habittracker.data.repository.callback.DataCallback;
+
+// Import Models
+import com.example.habittracker.data.model.Habit;
+import com.example.habittracker.data.model.HabitHistory;
+import com.example.habittracker.data.model.HabitDailyView;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-// Import các Model mới
-import com.example.habittracker.data.model.Habit;
-import com.example.habittracker.data.model.HabitHistory;
-import com.example.habittracker.data.model.HabitDailyView;
-
-// Import Callbacks
-import com.example.habittracker.data.repository.callback.HabitQueryCallback;
-import com.example.habittracker.data.repository.callback.SimpleCallback;
-import com.example.habittracker.data.repository.callback.StatsCallback;
 
 public class HabitRepository {
 
@@ -213,6 +221,78 @@ public class HabitRepository {
                 callback.onFailure(new Exception("Không tìm thấy Habit"));
             }
         }).addOnFailureListener(e -> callback.onFailure(e));
+    }
+
+    // =================================================================
+    // CÁC HÀM MỚI (OVERLOAD ĐỂ HỖ TRỢ REMINDER)
+    // =================================================================
+
+    public void getActiveHabits(final DataCallback<List<Habit>> callback) {
+        if (userId == null) return;
+
+        habitsRef.whereEqualTo("archived", false)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<Habit> habitList = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        Habit habit = document.toObject(Habit.class);
+                        habit.setId(document.getId());
+                        habitList.add(habit);
+                    }
+                    callback.onSuccess(habitList);
+                })
+                .addOnFailureListener(callback::onFailure);
+    }
+    // 1. ADD MỚI: Trả về String ID (Quan trọng nhất cho Giai đoạn 1)
+    public void addHabit(Habit habit, DataCallback<String> callback) {
+        habitsRef.add(habit)
+                .addOnSuccessListener(documentReference -> {
+                    String newId = documentReference.getId();
+                    // Gán ID vào object để UI dùng ngay
+                    habit.setId(newId);
+                    // Trả ID về
+                    callback.onSuccess(newId);
+                })
+                .addOnFailureListener(callback::onFailure);
+    }
+
+    // 2. UPDATE MỚI: Dùng DataCallback cho đồng bộ
+    public void updateHabit(Habit habit, DataCallback<Boolean> callback) {
+        if (habit.getId() == null) {
+            callback.onFailure(new Exception("Habit ID missing"));
+            return;
+        }
+        habitsRef.document(habit.getId())
+                .set(habit, SetOptions.merge())
+                .addOnSuccessListener(aVoid -> callback.onSuccess(true))
+                .addOnFailureListener(callback::onFailure);
+    }
+
+    // 3. DELETE MỚI (Chuẩn bị cho tương lai)
+    public void deleteHabit(String habitId, DataCallback<Boolean> callback) {
+        if (habitId == null) {
+            callback.onFailure(new Exception("Habit ID missing"));
+            return;
+        }
+        habitsRef.document(habitId)
+                .delete()
+                .addOnSuccessListener(aVoid -> callback.onSuccess(true))
+                .addOnFailureListener(callback::onFailure);
+    }
+
+    // 4. GET BY ID MỚI
+    public void getHabitById(String habitId, DataCallback<Habit> callback) {
+        habitsRef.document(habitId).get().addOnSuccessListener(doc -> {
+            if (doc.exists()) {
+                Habit habit = doc.toObject(Habit.class);
+                if (habit != null) {
+                    habit.setId(doc.getId());
+                    callback.onSuccess(habit);
+                }
+            } else {
+                callback.onFailure(new Exception("Habit not found"));
+            }
+        }).addOnFailureListener(callback::onFailure);
     }
 
     // =================================================================
