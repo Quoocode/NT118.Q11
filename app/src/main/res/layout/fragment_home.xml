@@ -282,7 +282,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:scaleType="centerInside"
-                            android:src="@drawable/ic_streak" />
+                            android:src="@drawable/ic_fire" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -379,6 +379,10 @@
                             android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
+
+                <include
+                    android:id="@+id/include_achievements"
+                    layout="@layout/fragment_achievements" />
 
             </LinearLayout>
         </LinearLayout>

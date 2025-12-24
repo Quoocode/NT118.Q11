@@ -229,12 +229,12 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
             case COMPLETED:
                 pendingMarker.setVisibility(View.GONE);
                 icon.setVisibility(View.VISIBLE);
-                icon.setImageResource(R.drawable.ic_completed);
+                icon.setImageResource(R.drawable.ic_circle_check);
                 break;
             case MISSED:
                 pendingMarker.setVisibility(View.GONE);
                 icon.setVisibility(View.VISIBLE);
-                icon.setImageResource(R.drawable.ic_missed);
+                icon.setImageResource(R.drawable.ic_close_circle);
                 break;
             case PENDING:
                 icon.setVisibility(View.GONE);

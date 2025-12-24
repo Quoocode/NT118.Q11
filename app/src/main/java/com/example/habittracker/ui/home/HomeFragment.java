@@ -6,6 +6,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,13 +29,14 @@ import com.example.habittracker.data.repository.HabitRepository;
 import com.example.habittracker.data.model.HabitDailyView;
 import com.example.habittracker.ui.adapter.DashboardHabitAdapter; // Hoặc HabitAdapter tùy tên bạn đặt
 import com.example.habittracker.data.repository.callback.HabitQueryCallback;
-import com.example.habittracker.data.repository.callback.SimpleCallback;
 
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import android.widget.GridLayout;
 
 public class HomeFragment extends Fragment {
 
@@ -41,7 +47,7 @@ public class HomeFragment extends Fragment {
     // Variables
     private HabitRepository habitRepository;
     private DashboardHabitAdapter habitAdapter;
-    private List<HabitDailyView> todayHabitList = new ArrayList<>();
+    private final List<HabitDailyView> todayHabitList = new ArrayList<>();
     private String currentUserId;
 
     @Override
@@ -49,6 +55,53 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         return binding.getRoot();
+    }
+
+    private void setupAchievementsToggle() {
+        if (binding == null) return;
+        View achievementsRoot = binding.getRoot().findViewById(R.id.include_achievements);
+        if (achievementsRoot == null) return;
+
+        // dummy placeholder
+        DummyBadgeForTesting(achievementsRoot);
+
+        View horizontalContainer = achievementsRoot.findViewById(R.id.badges_list_container);
+        View gridContainer = achievementsRoot.findViewById(R.id.badge_grid_container);
+        ImageButton expandButton = achievementsRoot.findViewById(R.id.btn_badge_expand);
+        Button collapseButton = achievementsRoot.findViewById(R.id.btn_badge_collapse);
+
+        if (horizontalContainer == null || gridContainer == null || expandButton == null || collapseButton == null) {
+            return;
+        }
+
+        collapseButton.setOnClickListener(v -> collapseBadges(horizontalContainer, gridContainer, expandButton));
+        expandButton.setOnClickListener(v -> expandBadges(horizontalContainer, gridContainer, expandButton));
+    }
+
+    private void expandBadges(View horizontalContainer, View gridContainer, ImageButton expandButton) {
+        horizontalContainer.animate().alpha(0f).setDuration(150).withEndAction(() -> {
+            horizontalContainer.setVisibility(View.GONE);
+            gridContainer.setAlpha(0f);
+            gridContainer.setTranslationY(16f);
+            gridContainer.setVisibility(View.VISIBLE);
+            gridContainer.animate().alpha(1f).translationY(0f).setDuration(200).start();
+        }).start();
+        rotateChevron(expandButton, 180f);
+    }
+
+    private void collapseBadges(View horizontalContainer, View gridContainer, ImageButton expandButton) {
+        gridContainer.animate().alpha(0f).translationY(16f).setDuration(150).withEndAction(() -> {
+            gridContainer.setVisibility(View.GONE);
+            horizontalContainer.setAlpha(0f);
+            horizontalContainer.setVisibility(View.VISIBLE);
+            horizontalContainer.animate().alpha(1f).setDuration(200).start();
+        }).start();
+        rotateChevron(expandButton, 0f);
+    }
+
+    private void rotateChevron(ImageButton button, float toDegrees) {
+        if (button == null) return;
+        button.animate().rotation(toDegrees).setDuration(150).start();
     }
 
     @Override
@@ -65,46 +118,23 @@ public class HomeFragment extends Fragment {
 
         // 3. Sự kiện nút "Add Habit"
         // (Đảm bảo ID btnAddHabitToday khớp với file XML fragment_home.xml của bạn)
-        if (binding.btnAddHabitToday != null) {
-            binding.btnAddHabitToday.setOnClickListener(v -> {
-                // Chuyển sang màn hình Add (không gửi ID)
-                navController.navigate(com.example.habittracker.R.id.action_homeFragment_to_addEditHabitFragment);
-            });
-        }
+        binding.btnAddHabitToday.setOnClickListener(v ->
+                navController.navigate(com.example.habittracker.R.id.action_homeFragment_to_addEditHabitFragment)
+        );
         loadStreakData();
         loadDailyProgress();
+        setupAchievementsToggle();
     }
 
     private void setupRecyclerView() {
-        // Kiểm tra binding để tránh crash
-        if (binding.recyclerViewHabits == null) {
-            Log.e(TAG, "LỖI: Không tìm thấy RecyclerView (recyclerViewHabits) trong layout!");
-            return;
-        }
-
         binding.recyclerViewHabits.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Khởi tạo Adapter
         habitAdapter = new DashboardHabitAdapter(getContext(), todayHabitList,
-
-                // Listener 1: Click vào nút Check -> Mở Dialog Check-in
-                new DashboardHabitAdapter.OnHabitCheckListener() {
-                    @Override
-                    public void onHabitCheckClick(HabitDailyView habit) {
-                        // Gọi hàm hiển thị Dialog nhập số liệu
-                        showCheckInDialog(habit);
-                    }
-                },
-
-                // Listener 2: Click vào Item -> Chuyển sang màn hình Detail
-                new DashboardHabitAdapter.OnHabitItemClickListener() {
-                    @Override
-                    public void onItemClick(HabitDailyView habit) {
-                        Bundle bundle = new Bundle();
-                        bundle.putString("EXTRA_HABIT_ID", habit.getHabitId());
-                        // Chuyển sang màn hình Detail (như bạn yêu cầu)
-                        navController.navigate(com.example.habittracker.R.id.action_homeFragment_to_habitDetailsFragment, bundle);
-                    }
+                habit -> showCheckInDialog(habit),
+                habit -> {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("EXTRA_HABIT_ID", habit.getHabitId());
+                    navController.navigate(com.example.habittracker.R.id.action_homeFragment_to_habitDetailsFragment, bundle);
                 }
         );
 
@@ -115,7 +145,6 @@ public class HomeFragment extends Fragment {
      * Hàm hiển thị DialogFragment để Check-in (Nhập số liệu)
      */
     private void showCheckInDialog(HabitDailyView habit) {
-        // Tạo instance của Dialog với dữ liệu hiện tại của habit
         HabitCheckInDialogFragment dialog = HabitCheckInDialogFragment.newInstance(
                 habit.getHabitId(),
                 habit.getTitle(),
@@ -125,20 +154,13 @@ public class HomeFragment extends Fragment {
                 habit.getStatus()
         );
 
-        // Lắng nghe sự kiện khi Dialog check-in xong (để reload list)
-        dialog.setOnCheckInListener(new HabitCheckInDialogFragment.OnCheckInListener() {
-            @Override
-            public void onCheckInCompleted() {
-                Log.d(TAG, "Check-in hoàn tất, tải lại danh sách...");
-                loadHabitsForToday();
-                loadDailyProgress();
-
-                // 3. Tải lại Streak (để cập nhật chuỗi ngay lập tức)
-                loadStreakData();
-            }
+        dialog.setOnCheckInListener(() -> {
+            Log.d(TAG, "Check-in hoàn tất, tải lại danh sách...");
+            loadHabitsForToday();
+            loadDailyProgress();
+            loadStreakData();
         });
 
-        // Hiển thị Dialog
         dialog.show(getChildFragmentManager(), "CheckInDialog");
     }
 
@@ -150,37 +172,32 @@ public class HomeFragment extends Fragment {
 
         Log.d(TAG, "Đang tải habits...");
 
-        // Gọi Repository lấy dữ liệu hôm nay
         habitRepository.getHabitsAndHistoryForDate(Calendar.getInstance(), new HabitQueryCallback() {
             @Override
             public void onSuccess(List<?> result) {
-                // Ép kiểu dữ liệu trả về
-                List<HabitDailyView> data = (List<HabitDailyView>) result;
+                if (binding == null) return;
 
-                // Cập nhật UI
-                if (binding != null) {
-                    todayHabitList.clear();
-                    if (data != null) {
-                        // Sắp xếp: Chưa xong lên đầu, Đã xong xuống dưới
-                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                            data.sort((h1, h2) -> {
-                                boolean isDone1 = h1.getCurrentValue() >= h1.getTargetValue() || "DONE".equals(h1.getStatus());
-                                boolean isDone2 = h2.getCurrentValue() >= h2.getTargetValue() || "DONE".equals(h2.getStatus());
-
-                                if (isDone1 == isDone2) return 0; // Cùng trạng thái thì giữ nguyên
-                                return isDone1 ? 1 : -1; // Done (true) thì nằm sau (1), Pending (false) nằm trước (-1)
-                            });
-                        }
-                        todayHabitList.addAll(data);
+                todayHabitList.clear();
+                for (Object item : result) {
+                    if (item instanceof HabitDailyView) {
+                        todayHabitList.add((HabitDailyView) item);
                     }
-
-                    // Thông báo cho Adapter cập nhật giao diện
-                    if (habitAdapter != null) {
-                        habitAdapter.notifyDataSetChanged();
-                    }
-
-                    Log.d(TAG, "Đã tải xong: " + todayHabitList.size() + " habits");
                 }
+
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                    todayHabitList.sort((h1, h2) -> {
+                        boolean isDone1 = h1.getCurrentValue() >= h1.getTargetValue() || "DONE".equals(h1.getStatus());
+                        boolean isDone2 = h2.getCurrentValue() >= h2.getTargetValue() || "DONE".equals(h2.getStatus());
+                        if (isDone1 == isDone2) return 0;
+                        return isDone1 ? 1 : -1;
+                    });
+                }
+
+                if (habitAdapter != null) {
+                    habitAdapter.notifyDataSetChanged();
+                }
+
+                Log.d(TAG, "Đã tải xong: " + todayHabitList.size() + " habits");
             }
 
             @Override
@@ -193,17 +210,14 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadStreakData() {
-        // Gọi hàm tính User Streak (Không cần ID thói quen)
         habitRepository.calculateUserStreaks(new StreakCallback() {
             @Override
             public void onStreakCalculated(int currentStreak, int longestStreak) {
                 if (binding != null) {
                     String currentText = currentStreak + " days";
                     String longestText = longestStreak + " days";
-                    // Cập nhật UI
-                    // Giả sử bạn có TextView hiển thị Streak của User
-                    binding.tvDetailCurrentStreak.setText(String.valueOf(currentText));
-                    binding.tvDetailLongestStreak.setText(String.valueOf(longestText));
+                    binding.tvDetailCurrentStreak.setText(currentText);
+                    binding.tvDetailLongestStreak.setText(longestText);
                 }
             }
 
@@ -213,29 +227,21 @@ public class HomeFragment extends Fragment {
             }
         });
     }
-    // Hàm này gọi trong onResume() hoặc onViewCreated()
+
     private void loadDailyProgress() {
         Calendar today = Calendar.getInstance();
 
-        // Gọi Repository lấy danh sách thói quen hôm nay
         habitRepository.getHabitsAndHistoryForDate(today, new HabitQueryCallback() {
             @Override
             public void onSuccess(List<?> result) {
                 if (binding == null) return;
 
-                // 1. Tính toán
                 int totalHabits = result.size();
                 int completedHabits = 0;
 
-                // SỬA LẠI ĐOẠN VÒNG LẶP NÀY:
-                // 1. Chạy vòng lặp với kiểu Object (vì List<?> trả về Object)
                 for (Object item : result) {
-
-                    // 2. Kiểm tra và Ép kiểu nó về HabitDailyView
                     if (item instanceof HabitDailyView) {
                         HabitDailyView habit = (HabitDailyView) item;
-
-                        // 3. Giờ thì code kiểm tra trạng thái sẽ hoạt động bình thường
                         if ("DONE".equalsIgnoreCase(habit.getStatus()) ||
                                 "COMPLETED".equalsIgnoreCase(habit.getStatus())) {
                             completedHabits++;
@@ -243,16 +249,12 @@ public class HomeFragment extends Fragment {
                     }
                 }
 
-                // 2. Cập nhật UI Text (Ví dụ: 3/5)
                 String progressText = completedHabits + "/" + totalHabits;
                 binding.tvProgressCount.setText(progressText);
 
-                // 3. Cập nhật Thanh Progress Bar
-                binding.progressBarDaily.setMax(totalHabits); // Đặt mốc tối đa là tổng số
-
-                // Hiệu ứng chạy mượt mà (Animation)
+                binding.progressBarDaily.setMax(totalHabits);
                 ObjectAnimator.ofInt(binding.progressBarDaily, "progress", completedHabits)
-                        .setDuration(500) // Chạy trong 0.5 giây
+                        .setDuration(500)
                         .start();
             }
 
@@ -266,14 +268,79 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // Tải lại dữ liệu mỗi khi quay lại màn hình này (ví dụ từ màn hình Add/Edit hoặc Dialog tắt)
         loadHabitsForToday();
-        //loadDailyProgress();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    private void DummyBadgeForTesting(View achievementsRoot) {
+        LinearLayout list = achievementsRoot.findViewById(R.id.badges_horizontal_list);
+        if (list == null || getContext() == null) return;
+
+        list.removeAllViews();
+
+        int[] icons = new int[]{
+                R.drawable.ic_cup,
+                R.drawable.ic_fire,
+                R.drawable.ic_plus,
+                R.drawable.ic_cup,
+                R.drawable.ic_fire,
+                R.drawable.ic_plus,
+                R.drawable.ic_cup,
+                R.drawable.ic_fire,
+                R.drawable.ic_plus
+        };
+        String[] titles = new String[]{
+                "Starter",
+                "3-day",
+                "Creator",
+                "Consistency",
+                "7-day",
+                "Upgrader",
+                "Milestone",
+                "Streaker",
+                "Collector"
+        };
+
+        LayoutInflater inflater = LayoutInflater.from(requireContext());
+        for (int i = 0; i < titles.length; i++) {
+            View item = inflater.inflate(R.layout.item_badge_placeholder, list, false);
+
+            ImageView icon = item.findViewById(R.id.badge_icon);
+            TextView title = item.findViewById(R.id.badge_title);
+
+            if (icon != null) icon.setImageResource(icons[i % icons.length]);
+            if (title != null) title.setText(titles[i]);
+
+            list.addView(item);
+        }
+
+        GridLayout grid = achievementsRoot.findViewById(R.id.badges_grid);
+        if (grid != null) {
+            grid.removeAllViews();
+
+            for (int i = 0; i < titles.length; i++) {
+                View gridItem = inflater.inflate(R.layout.item_badge_placeholder, grid, false);
+
+                ImageView icon = gridItem.findViewById(R.id.badge_icon);
+                TextView title = gridItem.findViewById(R.id.badge_title);
+
+                if (icon != null) icon.setImageResource(icons[i % icons.length]);
+                if (title != null) title.setText(titles[i]);
+
+                GridLayout.LayoutParams lp = new GridLayout.LayoutParams();
+                lp.width = 0;
+                lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                lp.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
+                lp.setMargins(8, 8, 8, 8);
+                gridItem.setLayoutParams(lp);
+
+                grid.addView(gridItem);
+            }
+        }
     }
 }

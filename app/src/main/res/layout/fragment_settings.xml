@@ -45,7 +45,7 @@
                     android:layout_marginTop="12dp"
                     android:layout_marginBottom="12dp"
                     android:scaleType="centerInside"
-                    android:src="@drawable/ic_left_back"
+                    android:src="@drawable/ic_arrow_left"
                     android:clickable="true"
                     android:focusable="true"
                     android:background="?attr/selectableItemBackgroundBorderless"/>
@@ -172,7 +172,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:scaleType="centerInside"
-                        android:src="@drawable/ic_theme" />
+                        android:src="@drawable/ic_sun" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -231,7 +231,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:scaleType="centerInside"
-                        android:src="@drawable/ic_language" />
+                        android:src="@drawable/ic_world" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -305,7 +305,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:scaleType="centerInside"
-                        android:src="@drawable/ic_reminder" />
+                        android:src="@drawable/ic_bell" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -379,7 +379,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:scaleType="centerInside"
-                        android:src="@drawable/ic_export_data" />
+                        android:src="@drawable/ic_file_download" />
                 </LinearLayout>
 
                 <LinearLayout

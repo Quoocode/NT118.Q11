@@ -27,7 +27,7 @@
                 android:id="@+id/btn_back"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_left_back"
+                android:src="@drawable/ic_arrow_left"
                 android:contentDescription="Back"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 app:tint="@color/white"/>
@@ -244,7 +244,7 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_right_back"
+                    android:src="@drawable/ic_chevron_right"
                     app:tint="#FF91ADC9"/>
             </LinearLayout>
 
@@ -283,7 +283,7 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_right_back"
+                    android:src="@drawable/ic_chevron_right"
                     app:tint="#FF91ADC9"/>
             </LinearLayout>
 
