@@ -7,13 +7,17 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
+import androidx.navigation.NavGraph; // Import mới
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
+
 import com.example.habittracker.R;
-import com.example.habittracker.databinding.ActivityMainBinding; // <-- Tạo từ "activity_main.xml"
+import com.example.habittracker.databinding.ActivityMainBinding;
 import com.example.habittracker.DatabaseStructure.HabitRepository;
 import com.example.habittracker.DatabaseStructure.Habit;
 import com.example.habittracker.DatabaseStructure.DataSeeder;
+import com.google.firebase.auth.FirebaseAuth; // Import mới
+import com.google.firebase.auth.FirebaseUser; // Import mới
 
 import java.util.List;
 
@@ -26,54 +30,68 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // 1. Sử dụng ViewBinding để liên kết layout "activity_main.xml"
+        // 1. Sử dụng ViewBinding
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // 2. Tìm NavController từ NavHostFragment trong "content_main.xml"
-        // (Chúng ta giả sử ID của NavHostFragment là 'nav_host_fragment_content_main')
+        // 2. Tìm NavController
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment_content_main);
 
         if (navHostFragment != null) {
             navController = navHostFragment.getNavController();
 
-            // 3. Liên kết NavController với BottomNavigationView
-            // Thao tác này sẽ tự động xử lý việc "click" vào các item menu
+            // --- [MỚI] LOGIC KIỂM TRA ĐĂNG NHẬP (AUTO LOGIN) ---
+
+            // Lấy NavGraph hiện tại (được khai báo trong nav_graph.xml)
+            NavGraph navGraph = navController.getNavInflater().inflate(R.navigation.nav_graph); // Thay nav_graph bằng tên file xml điều hướng của bạn nếu khác
+
+            // Kiểm tra user hiện tại
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+            if (currentUser != null) {
+                // Nếu đã đăng nhập -> Chuyển hướng thẳng vào Home
+                navGraph.setStartDestination(R.id.homeFragment);
+            } else {
+                // Nếu chưa -> Vào Login (Mặc định)
+                navGraph.setStartDestination(R.id.loginFragment);
+            }
+
+            // Gán lại đồ thị đã chỉnh sửa cho Controller
+            navController.setGraph(navGraph);
+            // ---------------------------------------------------
+
+            // 3. Liên kết BottomNav
             NavigationUI.setupWithNavController(binding.bottomNavigationView, navController);
 
-            // 4. Gọi hàm để quản lý ẩn/hiện thanh điều hướng
+            // 4. Quản lý ẩn/hiện thanh điều hướng
             setupBottomNavVisibility();
         }
 
-        String user1_ID = "ML1NNiZM0XO2TPPtnUOoKi0nMHN2"; // <-- PASTE FULL UID VÀO ĐÂY
-        DataSeeder seeder1 = new DataSeeder(user1_ID);
-        seeder1.seedData();
-
+        // --- ĐOẠN DATA SEEDER (Có thể bỏ hoặc comment lại sau này) ---
+        // Chỉ chạy khi user đã đăng nhập để tránh lỗi null UID
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            String user1_ID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            // DataSeeder seeder1 = new DataSeeder(user1_ID);
+            // seeder1.seedData();
+        }
     }
 
     private void setupBottomNavVisibility() {
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-
-            // Lấy ID của màn hình (Fragment) hiện tại
             int destinationId = destination.getId();
-
-            // Ẩn BottomNav ở các màn hình Xác thực và màn hình Tạo/Sửa
             if (destinationId == R.id.loginFragment ||
                     destinationId == R.id.registerFragment ||
                     destinationId == R.id.addEditHabitFragment ||
                     destinationId == R.id.habitDetailsFragment ||
-                    destinationId == R.id.forgotPasswordFragment) { // <-- Thêm các ID fragment khác nếu cần
-
+                    destinationId == R.id.forgotPasswordFragment) {
                 binding.bottomNavigationView.setVisibility(View.GONE);
             } else {
-                // Hiển thị ở các màn hình chính (Home, Calendar, Settings...)
                 binding.bottomNavigationView.setVisibility(View.VISIBLE);
             }
         });
     }
 
-    // Hỗ trợ nút back của hệ thống để điều hướng
     @Override
     public boolean onSupportNavigateUp() {
         return navController.navigateUp() || super.onSupportNavigateUp();
