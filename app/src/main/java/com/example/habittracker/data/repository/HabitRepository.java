@@ -227,6 +227,22 @@ public class HabitRepository {
     // CÁC HÀM MỚI (OVERLOAD ĐỂ HỖ TRỢ REMINDER)
     // =================================================================
 
+    public void getActiveHabits(final DataCallback<List<Habit>> callback) {
+        if (userId == null) return;
+
+        habitsRef.whereEqualTo("archived", false)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<Habit> habitList = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        Habit habit = document.toObject(Habit.class);
+                        habit.setId(document.getId());
+                        habitList.add(habit);
+                    }
+                    callback.onSuccess(habitList);
+                })
+                .addOnFailureListener(callback::onFailure);
+    }
     // 1. ADD MỚI: Trả về String ID (Quan trọng nhất cho Giai đoạn 1)
     public void addHabit(Habit habit, DataCallback<String> callback) {
         habitsRef.add(habit)
