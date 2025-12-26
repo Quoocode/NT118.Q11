@@ -21,6 +21,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.habittracker.R;
+import com.example.habittracker.data.achievements.AchievementService;
 import com.example.habittracker.data.repository.callback.StreakCallback;
 import com.example.habittracker.databinding.FragmentHomeBinding;
 
@@ -49,6 +50,7 @@ public class HomeFragment extends Fragment {
     private DashboardHabitAdapter habitAdapter;
     private final List<HabitDailyView> todayHabitList = new ArrayList<>();
     private String currentUserId;
+    private AchievementService achievementService;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -112,6 +114,8 @@ public class HomeFragment extends Fragment {
         // 1. Khởi tạo Repository
         currentUserId = FirebaseAuth.getInstance().getUid();
         habitRepository = new HabitRepository(currentUserId);
+
+        achievementService = new AchievementService(requireContext());
 
         // 2. Thiết lập RecyclerView
         setupRecyclerView();
@@ -182,6 +186,11 @@ public class HomeFragment extends Fragment {
                     if (item instanceof HabitDailyView) {
                         todayHabitList.add((HabitDailyView) item);
                     }
+                }
+
+                // Achievement: evaluate today's snapshot (all done, perfect day tracking, streak thresholds)
+                if (achievementService != null) {
+                    achievementService.onDaySnapshot(Calendar.getInstance(), todayHabitList);
                 }
 
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
