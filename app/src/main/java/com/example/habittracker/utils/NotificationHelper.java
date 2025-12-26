@@ -178,7 +178,6 @@ public class NotificationHelper {
         calendar.setTime(startDate); // Lấy ngày tháng năm bắt đầu làm gốc
 
         // Gán giờ nhắc vào ngày đó
-        // Lưu ý: Logic này sẽ lấy ngày/tháng/năm hiện tại để làm mốc so sánh cho lần chạy đầu tiên
         Calendar now = Calendar.getInstance();
         calendar.set(Calendar.YEAR, now.get(Calendar.YEAR));
         calendar.set(Calendar.MONTH, now.get(Calendar.MONTH));
@@ -187,27 +186,20 @@ public class NotificationHelper {
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, minute);
         calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0); // Reset mili giây để so sánh chuẩn
+        calendar.set(Calendar.MILLISECOND, 0);
 
         // --- ĐOẠN HACK LOGIC THỜI GIAN ---
-        // Sử dụng WHILE để đảm bảo thời gian tính ra luôn ở tương lai (Fix lỗi lặp vô tận)
         while (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
-
             if ("WEEKLY".equals(frequency)) {
-                // Code thật: calendar.add(Calendar.WEEK_OF_YEAR, 1);
-//                calendar.add(Calendar.MINUTE, 1); // HACK: 1 Tuần = 1 Phút
                 calendar.add(Calendar.WEEK_OF_YEAR, 1);
-                Log.e("ALARM_DEBUG", ">> HACK WEEKLY: Cộng 1 phút (giả lập 1 tuần)");
+                Log.e("ALARM_DEBUG", ">> HACK WEEKLY: Cộng 1 tuần");
             }
             else if ("ONCE".equals(frequency)) {
                 return; // ONCE qua rồi thì thôi
             }
             else {
-                // DAILY và MONTHLY
-                // Code thật: calendar.add(Calendar.DAY_OF_YEAR, 1);
-//                calendar.add(Calendar.MINUTE, 1); // HACK: 1 Ngày = 1 Phút
                 calendar.add(Calendar.DAY_OF_YEAR, 1);
-                Log.e("ALARM_DEBUG", ">> HACK DAILY/MONTHLY: Cộng 1 phút (giả lập 1 ngày)");
+                Log.e("ALARM_DEBUG", ">> HACK DAILY/MONTHLY: Cộng 1 ngày");
             }
         }
         // --------------------------------
@@ -218,10 +210,8 @@ public class NotificationHelper {
         intent.putExtra("HABIT_ID", habitId);
         intent.putExtra("HABIT_FREQ_TYPE", frequency);
         intent.putExtra("HABIT_START_DATE", startDate.getTime());
-        // Truyền timeString để Receiver biết đường gọi lại hàm này
         intent.putExtra("HABIT_TIME_STRING", timeString);
 
-        // ID Báo thức duy nhất
         int alarmId = habitId.hashCode();
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
@@ -233,17 +223,31 @@ public class NotificationHelper {
 
         long triggerTime = calendar.getTimeInMillis();
 
-        // Luôn dùng setExactAndAllowWhileIdle để xuyên qua chế độ ngủ
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        // --- [FIX CRASH] LOGIC KIỂM TRA QUYỀN VÀ PHIÊN BẢN ---
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            // Android 12 (API 31) trở lên: Bắt buộc kiểm tra quyền canScheduleExactAlarms
+            if (alarmManager.canScheduleExactAlarms()) {
+                Log.d("ALARM_DEBUG", "Android 12+: Có quyền Exact Alarm -> Đặt chính xác.");
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
+            } else {
+                Log.w("ALARM_DEBUG", "Android 12+: Thiếu quyền Exact Alarm -> Fallback sang setAndAllowWhileIdle (Kém chính xác hơn) để tránh Crash.");
+                // Fallback an toàn: Không chính xác tuyệt đối nhưng đảm bảo App không chết
+                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
+            }
+        }
+        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // Android 6 đến 11: Thoải mái dùng setExactAndAllowWhileIdle
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
-        } else {
+        }
+        else {
+            // Android cũ hơn
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
         }
 
         Log.d("ALARM_DEBUG", "Đã đặt lịch Habit (" + frequency + ") cho: " + title + " lúc " + calendar.getTime().toString());
     }
 
-    // Hủy lịch cho Thói quen (Dùng khi Edit/Delete)
+    // Hủy lịch cho Thói quen
     public static void cancelHabitReminder(Context context, String habitId) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, HabitAlarmReceiver.class);
@@ -261,10 +265,7 @@ public class NotificationHelper {
         }
     }
 
-    // =========================================================================
-    // 4. [MỚI] HÀM HỖ TRỢ LOGOUT/LOGIN HÀNG LOẠT
-    // =========================================================================
-
+    // Hủy hàng loạt khi Logout
     public static void cancelAllHabitReminders(Context context, List<Habit> habitList) {
         if (habitList == null || habitList.isEmpty()) return;
 
@@ -276,8 +277,8 @@ public class NotificationHelper {
         }
     }
 
+    // Đặt lại hàng loạt khi Login
     public static void scheduleAllHabitReminders(Context context, List<Habit> habitList) {
-        // 1. Log ngay khi vào hàm để biết hàm có ĐƯỢC GỌI hay không
         if (habitList == null) {
             Log.e("ALARM_DEBUG", "!!! scheduleAllHabitReminders bị gọi với habitList là NULL");
             return;
@@ -285,7 +286,6 @@ public class NotificationHelper {
 
         Log.d("ALARM_DEBUG", "--> Bắt đầu scheduleAllHabitReminders. Số lượng: " + habitList.size());
 
-        // 2. Kiểm tra danh sách rỗng (Nguyên nhân chính thường gặp)
         if (habitList.isEmpty()) {
             Log.w("ALARM_DEBUG", "!!! Danh sách thói quen RỖNG. Không có gì để đặt báo thức.");
             return;
@@ -293,7 +293,6 @@ public class NotificationHelper {
 
         int count = 0;
         for (Habit habit : habitList) {
-            // Log kiểm tra từng phần tử xem có bị lọt điều kiện if không
             if (habit.getId() != null &&
                     habit.getReminderTime() != null &&
                     !habit.getReminderTime().isEmpty() &&
@@ -314,8 +313,7 @@ public class NotificationHelper {
                 );
                 count++;
             } else {
-                // Log nếu thói quen bị bỏ qua (để biết tại sao count không tăng)
-                Log.d("ALARM_DEBUG", "Bỏ qua thói quen: " + habit.getTitle() + " (Do thiếu ID, ReminderTime hoặc đã Archive)");
+                Log.d("ALARM_DEBUG", "Bỏ qua thói quen: " + habit.getTitle());
             }
         }
         Log.d("ALARM_DEBUG", "Đã đặt lại báo thức thành công cho " + count + " thói quen.");
