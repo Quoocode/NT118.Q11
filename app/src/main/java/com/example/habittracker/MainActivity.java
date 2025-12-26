@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
 
-        // 1. Sử dụng ViewBinding
+        // 1. Sử dụng ViewBinding để liên kết layout "activity_main.xml"
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.content_main_container), (v, insets) -> {
@@ -48,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        // 2. Tìm NavController
+        // 2. Tìm NavController từ NavHostFragment trong "content_main.xml"
+        // (Chúng ta giả sử ID của NavHostFragment là 'nav_host_fragment_content_main')
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment_content_main);
 
@@ -64,10 +65,8 @@ public class MainActivity extends AppCompatActivity {
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
             if (currentUser != null) {
-                // Nếu đã đăng nhập -> Chuyển hướng thẳng vào Home
                 navGraph.setStartDestination(R.id.homeFragment);
             } else {
-                // Nếu chưa -> Vào Login (Mặc định)
                 navGraph.setStartDestination(R.id.loginFragment);
             }
 
@@ -78,12 +77,11 @@ public class MainActivity extends AppCompatActivity {
             // 3. Liên kết BottomNav
             NavigationUI.setupWithNavController(binding.bottomNavigationView, navController);
 
-            // 4. Quản lý ẩn/hiện thanh điều hướng
+            // 4. Gọi hàm để quản lý ẩn/hiện thanh điều hướng
             setupBottomNavVisibility();
         }
 
         // --- ĐOẠN DATA SEEDER (Có thể bỏ hoặc comment lại sau này) ---
-        // Chỉ chạy khi user đã đăng nhập để tránh lỗi null UID
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             String user1_ID = FirebaseAuth.getInstance().getCurrentUser().getUid();
             // DataSeeder seeder1 = new DataSeeder(user1_ID);
@@ -132,7 +130,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupBottomNavVisibility() {
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+
+            // Lấy ID của màn hình (Fragment) hiện tại
             int destinationId = destination.getId();
+
+            // Ẩn BottomNav ở các màn hình Xác thực và màn hình Tạo/Sửa
             if (destinationId == R.id.loginFragment ||
                     destinationId == R.id.registerFragment ||
                     destinationId == R.id.addEditHabitFragment ||
@@ -140,11 +142,13 @@ public class MainActivity extends AppCompatActivity {
                     destinationId == R.id.forgotPasswordFragment) {
                 binding.bottomNavigationView.setVisibility(View.GONE);
             } else {
+                // Hiển thị ở các màn hình chính (Home, Calendar, Settings...)
                 binding.bottomNavigationView.setVisibility(View.VISIBLE);
             }
         });
     }
 
+    // Hỗ trợ nút back của hệ thống để điều hướng
     @Override
     public boolean onSupportNavigateUp() {
         return navController.navigateUp() || super.onSupportNavigateUp();

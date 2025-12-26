@@ -33,7 +33,8 @@ public class NotificationHelper {
     private static final int DAILY_REMINDER_REQUEST_CODE = 1001; // Mã định danh cho báo thức này
     private static final int DAILY_BRIEFING_ID = 1001;
 
-    // 1. Tạo kênh thông báo (Bắt buộc cho Android 8.0+)
+
+    // 1. Tạo kênh thông báo
     public static void createNotificationChannel(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
@@ -42,7 +43,6 @@ public class NotificationHelper {
                     NotificationManager.IMPORTANCE_HIGH
             );
             channel.setDescription(CHANNEL_DESC);
-
             NotificationManager manager = context.getSystemService(NotificationManager.class);
             if (manager != null) {
                 manager.createNotificationChannel(channel);
@@ -50,31 +50,26 @@ public class NotificationHelper {
         }
     }
 
-    // 2. Hàm bắn thông báo test
-    // Truyền class Activity muốn mở khi bấm vào thông báo (thường là MainActivity.class)
+    // 2. Hàm bắn thông báo (Đã có từ trước)
+    @SuppressLint("MissingPermission")
     public static void showTestNotification(Context context, Class<?> targetActivity) {
-        // Kiểm tra quyền trên Android 13+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                return; // Chưa có quyền thì không làm gì
+                return;
             }
         }
-
-        // Tạo Intent mở app khi bấm thông báo
         Intent intent = new Intent(context, targetActivity);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
-        // Cấu hình giao diện thông báo
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_bell) // Đảm bảo trong drawable có icon này
-                .setContentTitle("Habit Tracker Xin Chào!")
-                .setContentText("Hệ thống thông báo đã hoạt động tốt!")
+                .setSmallIcon(R.drawable.ic_menu_thinking)
+                .setContentTitle("Daily Briefing") // Đổi tiêu đề cho hợp ngữ cảnh
+                .setContentText("Chào buổi sáng! Kiểm tra các thói quen của bạn ngay.")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
 
-        // Bắn thông báo
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(1001, builder.build());
     }
@@ -155,7 +150,7 @@ public class NotificationHelper {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, uniqueId, intent, PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_bell)
+                .setSmallIcon(R.drawable.ic_menu_thinking)
                 .setContentTitle("Nhắc nhở: " + title)
                 .setContentText("Đến giờ thực hiện mục tiêu rồi! Cố lên bạn ơi.")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
