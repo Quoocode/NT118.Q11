@@ -548,6 +548,42 @@ public class HabitRepository {
                 })
                 .addOnFailureListener(callback::onFailure);
     }
+
+    public void updateHabitHistory(Habit habit, boolean isCompleted, final DataCallback<Boolean> callback) {
+        if (habit == null || habit.getId() == null) {
+            callback.onFailure(new IllegalArgumentException("Habit không hợp lệ"));
+            return;
+        }
+
+        // 1. Xác định ngày hôm nay
+        Calendar today = Calendar.getInstance();
+
+        // 2. Tạo ID cho lịch sử (habitId_yyyy-MM-dd)
+        String historyId = generateHistoryId(habit.getId(), today);
+
+        // 3. Chuẩn bị dữ liệu
+        Map<String, Object> data = new HashMap<>();
+        data.put("habitId", habit.getId());
+        data.put("date", getStartOfDayTimestamp(today));
+
+        if (isCompleted) {
+            data.put("status", "COMPLETED");
+            // Nếu habit có targetValue thì gán max, không thì gán 1
+            data.put("value", habit.getTargetValue() > 0 ? habit.getTargetValue() : 1);
+            data.put("completedAt", Timestamp.now());
+        } else {
+            data.put("status", "PENDING");
+            data.put("value", 0);
+            data.put("completedAt", null); // Xóa thời điểm hoàn thành
+        }
+
+        // 4. Ghi vào Firestore (Dùng SetOptions.merge để không ghi đè mất dữ liệu khác nếu có)
+        historyRef.document(historyId)
+                .set(data, SetOptions.merge())
+                .addOnSuccessListener(aVoid -> callback.onSuccess(true))
+                .addOnFailureListener(callback::onFailure);
+    }
+
     // Hàm phụ: Tính khoảng cách giữa 2 ngày (dạng String yyyy-MM-dd)
     private long getDayDifference(String date1, String date2) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
