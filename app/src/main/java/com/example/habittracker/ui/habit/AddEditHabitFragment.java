@@ -23,6 +23,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import com.example.habittracker.data.achievements.AchievementService;
 import com.example.habittracker.data.repository.callback.HabitQueryCallback;
 import com.example.habittracker.ui.adapter.IconAdapter; // Adapter Icon cũ
 import com.example.habittracker.R; // Resource ID
@@ -69,6 +70,8 @@ public class AddEditHabitFragment extends Fragment {
             // Thêm icon của bạn vào đây (VD: ic_gym, ic_water...)
     );
 
+    private AchievementService achievementService;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -91,6 +94,8 @@ public class AddEditHabitFragment extends Fragment {
         setupIconRecyclerView();
         setupFrequencyButtons();
         setupClickListeners();
+
+        achievementService = new AchievementService(requireContext());
 
         // 3. Check Mode (Add or Edit)
         if (getArguments() != null && getArguments().getString("EXTRA_HABIT_ID") != null) {
@@ -332,7 +337,11 @@ public class AddEditHabitFragment extends Fragment {
             habitRepository.addHabit(habit, new DataCallback<String>() {
                 @Override
                 public void onSuccess(String newHabitId) {
-                    // Add thành công -> Có ID mới toanh -> Truyền vào handleSaveSuccess
+                    // Unlock achievements locally (per-install) on first creation.
+                    if (achievementService != null) {
+                        achievementService.onHabitCreated();
+                    }
+
                     handleSaveSuccess(newHabitId, title);
                 }
 

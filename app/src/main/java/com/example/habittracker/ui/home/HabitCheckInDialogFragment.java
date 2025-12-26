@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.habittracker.R;
+import com.example.habittracker.data.achievements.AchievementService;
 import com.example.habittracker.data.repository.HabitRepository; // Sửa lại package import cho đúng với dự án của bạn
 import com.google.firebase.auth.FirebaseAuth;
 import com.example.habittracker.data.repository.callback.SimpleCallback;
@@ -36,6 +37,7 @@ public class HabitCheckInDialogFragment extends DialogFragment {
     private static final String ARG_STATUS = "ARG_STATUS";
 
     private HabitRepository habitRepository;
+    private AchievementService achievementService;
 
     private OnCheckInListener listener;
 
@@ -76,6 +78,7 @@ public class HabitCheckInDialogFragment extends DialogFragment {
 
         String userId = FirebaseAuth.getInstance().getUid();
         habitRepository = new HabitRepository(userId);
+        achievementService = new AchievementService(requireContext());
 
         TextView tvTitle = view.findViewById(R.id.tv_habit_title);
         TextView tvTarget = view.findViewById(R.id.tv_habit_target);
@@ -122,13 +125,16 @@ public class HabitCheckInDialogFragment extends DialogFragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (isProgrammaticChange) return; // Tránh vòng lặp
+                if (isProgrammaticChange) return;
+
+                Bundle args = getArguments();
+                if (args == null) return;
 
                 String valStr = s.toString();
                 if (!valStr.isEmpty()) {
                     try {
                         double val = Double.parseDouble(valStr);
-                        double target = getArguments().getDouble(ARG_TARGET);
+                        double target = args.getDouble(ARG_TARGET);
 
                         // Nếu nhập >= target -> Tự động chọn DONE
                         if (val >= target) {
@@ -145,18 +151,23 @@ public class HabitCheckInDialogFragment extends DialogFragment {
                                 isProgrammaticChange = false;
                             }
                         }
-                    } catch (NumberFormatException e) { }
+                    } catch (NumberFormatException ignored) {
+                        // ignore
+                    }
                 }
             }
         });
 
         // --- LOGIC TỰ ĐỘNG 2: CHỌN DONE -> TỰ ĐIỀN MAX ---
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            if (isProgrammaticChange) return; // Tránh vòng lặp
+            if (isProgrammaticChange) return;
+
+            Bundle args = getArguments();
+            if (args == null) return;
 
             if (checkedId == R.id.radio_done) {
                 // Nếu chọn DONE -> Điền giá trị bằng Target
-                double target = getArguments().getDouble(ARG_TARGET);
+                double target = args.getDouble(ARG_TARGET);
                 String targetStr = (target == (long) target) ? String.valueOf((long) target) : String.valueOf(target);
 
                 isProgrammaticChange = true;
@@ -169,13 +180,14 @@ public class HabitCheckInDialogFragment extends DialogFragment {
 
         // Xử lý Lưu
         btnConfirm.setOnClickListener(v -> {
-            String habitId = getArguments().getString(ARG_HABIT_ID);
+            Bundle args = getArguments();
+            if (args == null) return;
+
+            String habitId = args.getString(ARG_HABIT_ID);
             String valueStr = edtCurrentValue.getText().toString();
             if (valueStr.isEmpty()) return;
 
             double newValue = Double.parseDouble(valueStr);
-
-            // Lấy trạng thái cuối cùng từ RadioButton
             String newStatus = radioDone.isChecked() ? "DONE" : "PENDING";
 
             habitRepository.updateHistoryStatus(
@@ -185,6 +197,11 @@ public class HabitCheckInDialogFragment extends DialogFragment {
                     newValue,
                     (success, e) -> {
                         if (success) {
+                            if (achievementService != null) {
+                                double target = args.getDouble(ARG_TARGET);
+                                achievementService.onCheckInCommitted(newStatus, newValue, target);
+                            }
+
                             Toast.makeText(getContext(), "Updated!", Toast.LENGTH_SHORT).show();
                             if (listener != null) {
                                 listener.onCheckInCompleted();

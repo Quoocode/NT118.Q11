@@ -139,10 +139,11 @@ public class MainActivity extends AppCompatActivity {
                     destinationId == R.id.registerFragment ||
                     destinationId == R.id.addEditHabitFragment ||
                     destinationId == R.id.habitDetailsFragment ||
-                    destinationId == R.id.forgotPasswordFragment) {
+                    destinationId == R.id.forgotPasswordFragment ||
+                    destinationId == R.id.forgotPasswordNewFragment) {
                 binding.bottomNavigationView.setVisibility(View.GONE);
             } else {
-                // Hiển thị ở các màn hình chính (Home, Calendar, Settings...)
+                // Hiển thị ở các màn hình chính (Home, Calendar, Achievements, Settings...)
                 binding.bottomNavigationView.setVisibility(View.VISIBLE);
             }
         });
