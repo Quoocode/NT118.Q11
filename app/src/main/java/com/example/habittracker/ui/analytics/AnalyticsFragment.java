@@ -94,6 +94,14 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         View bottomSheet = binding.habitCompletionSection.getRoot();
         sheetBehavior = BottomSheetBehavior.from(bottomSheet);
 
+        // We only want 2 positions: COLLAPSED (calendar bottom) and EXPANDED (month_label bottom)
+        sheetBehavior.setHideable(false);
+
+        // IMPORTANT:
+        // expandedOffset is only respected when fitToContents=false.
+        // (With fitToContents=true, EXPANDED is computed from content height and may ignore expandedOffset.)
+        sheetBehavior.setFitToContents(false);
+
         // Compute expandedOffset + peekHeight after first layout.
         binding.getRoot().post(this::configureSheetHeights);
 
@@ -102,21 +110,48 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
 
         // Fade calendar elements as sheet expands - fade range: calendar bottom -> month_label.
         sheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            private int lastState = BottomSheetBehavior.STATE_COLLAPSED;
+
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                // no-op
+                if (sheetBehavior == null) return;
+
+                // Enforce exactly two resting states:
+                // when the user releases (DRAGGING -> SETTLING), snap to the nearest end.
+                if (lastState == BottomSheetBehavior.STATE_DRAGGING
+                        && newState == BottomSheetBehavior.STATE_SETTLING) {
+
+                    int top = bottomSheet.getTop();
+                    int mid = (fadeStartTopPx + fadeEndTopPx) / 2;
+                    if (top <= mid) {
+                        sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    } else {
+                        sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    }
+                }
+
+                // If some other path still results in half-expanded, force to nearest end.
+                if (newState == BottomSheetBehavior.STATE_HALF_EXPANDED) {
+                    int top = bottomSheet.getTop();
+                    int mid = (fadeStartTopPx + fadeEndTopPx) / 2;
+                    if (top <= mid) {
+                        sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    } else {
+                        sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    }
+                }
+
+                lastState = newState;
             }
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
                 if (binding == null) return;
 
-                // Use actual sheet top position (more robust than slideOffset when using custom peekHeight).
                 int top = bottomSheet.getTop();
                 float t = computeFadeProgress(top);
                 float alpha = 1f - t;
 
-                // Keep header (month label/nav) readable; fade only weekday row + day grid.
                 binding.weekdaysRow.setAlpha(alpha);
                 binding.calendarDaysRecycler.setAlpha(alpha);
             }
@@ -143,10 +178,12 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         }
 
         // Expanded offset: top of sheet should stop at month_label bottom.
+        // IMPORTANT: expandedOffset is in the parent CoordinatorLayout's coordinate system.
+        // We use getLocationInWindow for consistent coordinates.
         int[] rootLoc = new int[2];
         int[] monthLoc = new int[2];
-        binding.getRoot().getLocationOnScreen(rootLoc);
-        binding.monthLabel.getLocationOnScreen(monthLoc);
+        binding.getRoot().getLocationInWindow(rootLoc);
+        binding.monthLabel.getLocationInWindow(monthLoc);
 
         int rootY = rootLoc[1];
         int monthBottomY = monthLoc[1] + binding.monthLabel.getHeight();
@@ -154,17 +191,15 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         sheetBehavior.setExpandedOffset(expandedOffset);
 
         // Collapsed (lowest) position should be exactly at the bottom of calendar.
-        // That means the sheet top == calendar_container bottom.
-        int calendarBottom = binding.calendarContainer.getBottom(); // parent-coordinates pixels
+        int calendarBottom = binding.calendarContainer.getBottom();
         int parentHeight = binding.getRoot().getHeight();
         int peekHeight = Math.max(0, parentHeight - calendarBottom);
         sheetBehavior.setPeekHeight(peekHeight, true);
 
-        // Save fade bounds based on the defined behavior positions.
+        // Save fade bounds
         fadeStartTopPx = calendarBottom;
         fadeEndTopPx = expandedOffset;
 
-        // Start collapsed.
         sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
         // Ensure alpha reflects current position (important after rotation/layout changes)
