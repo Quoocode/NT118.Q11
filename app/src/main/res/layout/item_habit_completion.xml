@@ -8,6 +8,7 @@
     android:orientation="horizontal"
     android:padding="12dp">
 
+    <!-- Left: status indicator (NOT clickable anymore) -->
     <LinearLayout
         android:layout_width="48dp"
         android:layout_height="48dp"
@@ -34,6 +35,7 @@
             android:visibility="gone" />
     </LinearLayout>
 
+    <!-- Middle: text -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -58,4 +60,18 @@
             android:textColor="#FF91ADC9"
             android:textSize="14sp" />
     </LinearLayout>
+
+    <!-- Right: action button (check-in/edit) -->
+    <ImageView
+        android:id="@+id/img_check"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="12dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:contentDescription="@null"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_ellipsis" />
+
 </LinearLayout>
