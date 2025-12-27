@@ -33,6 +33,7 @@ import java.util.Locale;
 import com.example.habittracker.ui.home.HabitCheckInDialogFragment;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import android.util.Log;
 
 public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Listener {
 
@@ -58,6 +59,12 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
 
     // Overlay TextView defined in XML (stacked in a FrameLayout over monthLabel)
     private TextView dayIndicatorLabel;
+
+    private static final String TAG_FADE = "CalendarSheetFade";
+    private static final boolean DEBUG_FADE = false;
+
+    // Cache the actual view that BottomSheetBehavior controls.
+    private View habitBottomSheetView;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -184,8 +191,8 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         binding.habitCompletionSection.habitCompletionRecycler.setAdapter(habitAdapter);
 
         // Bottom sheet behavior
-        View bottomSheet = binding.habitCompletionSection.getRoot();
-        sheetBehavior = BottomSheetBehavior.from(bottomSheet);
+        habitBottomSheetView = binding.habitCompletionSection.getRoot();
+        sheetBehavior = BottomSheetBehavior.from(habitBottomSheetView);
 
         // We only want 2 positions: COLLAPSED (calendar bottom) and EXPANDED (month_label bottom)
         sheetBehavior.setHideable(false);
@@ -210,9 +217,16 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 if (sheetBehavior == null) return;
 
+                // Some OEMs pass a different reference here; always use the real sheet view.
+                final View sheet = habitBottomSheetView != null ? habitBottomSheetView : bottomSheet;
+
                 if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-                    // Record where the drag started so we can infer direction on release.
-                    dragStartTop = bottomSheet.getTop();
+                    cancelCalendarFadeAnimations();
+                    dragStartTop = sheet.getTop();
+
+                    if (DEBUG_FADE) {
+                        Log.d(TAG_FADE, "DRAGGING startTop=" + dragStartTop + " fadeStart=" + fadeStartTopPx + " fadeEnd=" + fadeEndTopPx);
+                    }
                 }
 
                 // Direction based toggle on release:
@@ -221,10 +235,14 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
                 if (lastState == BottomSheetBehavior.STATE_DRAGGING
                         && newState == BottomSheetBehavior.STATE_SETTLING) {
 
-                    int endTop = bottomSheet.getTop();
+                    int endTop = sheet.getTop();
                     int startTop = dragStartTop != null ? dragStartTop : endTop;
                     boolean movedUp = endTop < startTop;
                     boolean movedDown = endTop > startTop;
+
+                    if (DEBUG_FADE) {
+                        Log.d(TAG_FADE, "SETTLING startTop=" + startTop + " endTop=" + endTop + " movedUp=" + movedUp + " movedDown=" + movedDown);
+                    }
 
                     if (lastStateStableWasCollapsed() && movedUp) {
                         sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
@@ -280,31 +298,45 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
                 if (binding == null) return;
 
-                // Fade calendar grid based on current sheet top.
-                int top = bottomSheet.getTop();
+                cancelCalendarFadeAnimations();
+
+                // Always read from the actual controlled sheet view.
+                final View sheet = habitBottomSheetView != null ? habitBottomSheetView : bottomSheet;
+                int top = sheet.getTop();
+
+                // If bounds got stale (rotation / month header size), recompute once.
+                if (fadeEndTopPx <= 0 || fadeStartTopPx <= 0 || fadeEndTopPx >= fadeStartTopPx) {
+                    binding.getRoot().post(AnalyticsFragment.this::configureSheetHeights);
+                }
+
                 float t = computeFadeProgress(top);
                 float alpha = 1f - t;
 
                 binding.weekdaysRow.setAlpha(alpha);
                 binding.calendarDaysRecycler.setAlpha(alpha);
 
-                // DO NOT morph the month/day label during drag; only switch when stable.
+                if (DEBUG_FADE) {
+                    Log.d(TAG_FADE, "onSlide top=" + top + " t=" + t + " alpha=" + alpha
+                            + " fadeStart=" + fadeStartTopPx + " fadeEnd=" + fadeEndTopPx
+                            + " slideOffset=" + slideOffset);
+                }
             }
         });
     }
 
-    private float computeFadeProgress(int sheetTop) {
-        if (fadeEndTopPx <= fadeStartTopPx) {
-            // Fallback if layout not ready.
-            return 0f;
+    private void cancelCalendarFadeAnimations() {
+        if (binding == null) return;
+        binding.calendarDaysRecycler.animate().cancel();
+        binding.weekdaysRow.animate().cancel();
+        // monthLabel/dayIndicatorLabel are animated during month switch too.
+        binding.monthLabel.animate().cancel();
+        if (dayIndicatorLabel != null) {
+            dayIndicatorLabel.animate().cancel();
         }
+    }
 
-        // When collapsed (sheetTop ~= fadeStartTopPx): t = 0.
-        // When expanded (sheetTop ~= fadeEndTopPx): t = 1.
-        float t = (fadeStartTopPx - sheetTop) / (float) (fadeStartTopPx - fadeEndTopPx);
-        if (t < 0f) return 0f;
-        if (t > 1f) return 1f;
-        return t;
+    private float computeFadeProgress(int sheetTop) {
+        return CalendarFadeMath.computeProgress(sheetTop, fadeStartTopPx, fadeEndTopPx);
     }
 
     private void configureSheetHeights() {
@@ -312,40 +344,88 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
             return;
         }
 
-        // Expanded offset: top of sheet should stop at month navigation row bottom.
-        // IMPORTANT: expandedOffset is in the parent CoordinatorLayout's coordinate system.
-        // We use getLocationInWindow for consistent coordinates.
-        int[] rootLoc = new int[2];
-        int[] navRowLoc = new int[2];
-        binding.getRoot().getLocationInWindow(rootLoc);
-        binding.monthNavigationRow.getLocationInWindow(navRowLoc);
+        final View root = binding.getRoot();
+        final View bottomSheet = habitBottomSheetView != null
+                ? habitBottomSheetView
+                : binding.habitCompletionSection.getRoot();
 
-        int rootY = rootLoc[1];
-        int navRowBottomY = navRowLoc[1] + binding.monthNavigationRow.getHeight();
-        int expandedOffset = Math.max(0, navRowBottomY - rootY);
+        // If we run too early, measurements can be 0 which breaks the math.
+        if (root.getHeight() == 0 || bottomSheet.getHeight() == 0) {
+            root.post(this::configureSheetHeights);
+            return;
+        }
+
+        int calendarBottomInRoot = getBottomInAncestorCoords(binding.calendarContainer, root);
+        int navRowBottomInRoot = getBottomInAncestorCoords(binding.monthNavigationRow, root);
+
+        // Expanded offset: sheet top should stop at bottom of month navigation row.
+        // Clamp >= 0.
+        int expandedOffset = Math.max(0, navRowBottomInRoot);
         sheetBehavior.setExpandedOffset(expandedOffset);
 
         // Collapsed (lowest) position should be exactly at the bottom of calendar.
-        int calendarBottom = binding.calendarContainer.getBottom();
-        int parentHeight = binding.getRoot().getHeight();
-        int peekHeight = Math.max(0, parentHeight - calendarBottom);
+        int parentHeight = root.getHeight();
+        int peekHeight = Math.max(0, parentHeight - calendarBottomInRoot);
         sheetBehavior.setPeekHeight(peekHeight, true);
 
-        // Save fade bounds
-        fadeStartTopPx = calendarBottom;
+        // Save fade bounds (sheet.getTop() is in the same root coords)
+        fadeStartTopPx = calendarBottomInRoot;
         fadeEndTopPx = expandedOffset;
 
+        // Safety: if something odd happens (layout changes, wrong ancestor), prevent inverted bounds
+        // which would lock alpha at 1.
+        if (fadeEndTopPx >= fadeStartTopPx) {
+            // Try a last-resort recompute using window coordinates consistently.
+            int[] rootLoc = new int[2];
+            int[] calLoc = new int[2];
+            int[] navLoc = new int[2];
+            root.getLocationInWindow(rootLoc);
+            binding.calendarContainer.getLocationInWindow(calLoc);
+            binding.monthNavigationRow.getLocationInWindow(navLoc);
+
+            int rootY = rootLoc[1];
+            int calBottom = (calLoc[1] + binding.calendarContainer.getHeight()) - rootY;
+            int navBottom = (navLoc[1] + binding.monthNavigationRow.getHeight()) - rootY;
+
+            fadeStartTopPx = calBottom;
+            fadeEndTopPx = navBottom;
+
+            expandedOffset = Math.max(0, fadeEndTopPx);
+            sheetBehavior.setExpandedOffset(expandedOffset);
+
+            peekHeight = Math.max(0, parentHeight - fadeStartTopPx);
+            sheetBehavior.setPeekHeight(peekHeight, true);
+        }
+
+        // Force to collapsed on (re)configure so visuals are deterministic.
         sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
-        // Ensure alpha + label reflect current position after state set
-        View bottomSheet = binding.habitCompletionSection.getRoot();
+        // Ensure alpha + label reflect current position after state set.
         float t = computeFadeProgress(bottomSheet.getTop());
         float alpha = 1f - t;
         binding.weekdaysRow.setAlpha(alpha);
         binding.calendarDaysRecycler.setAlpha(alpha);
 
-        // Since we force collapsed here, make sure label is in collapsed state.
+        if (DEBUG_FADE) {
+            Log.d(TAG_FADE, "configureSheetHeights rootH=" + root.getHeight()
+                    + " sheetTop=" + bottomSheet.getTop()
+                    + " fadeStart=" + fadeStartTopPx
+                    + " fadeEnd=" + fadeEndTopPx);
+        }
+
         applyMonthLabelMorph(0f);
+    }
+
+    /**
+     * Returns descendant's bottom Y in ancestor's coordinate system.
+     * Works even if views aren't direct parent/child.
+     */
+    private int getBottomInAncestorCoords(@NonNull View descendant, @NonNull View ancestor) {
+        int[] descLoc = new int[2];
+        int[] ancLoc = new int[2];
+        descendant.getLocationInWindow(descLoc);
+        ancestor.getLocationInWindow(ancLoc);
+        return (descLoc[1] - ancLoc[1]) + descendant.getHeight();
     }
 
     private void toggleSheet() {
@@ -362,6 +442,25 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         if (binding == null || isMonthAnimating) {
             return;
         }
+
+        // Only animate month transitions when the sheet is fully collapsed.
+        // Otherwise, our drag-fade callback owns alpha and animations will "win" over it.
+        if (sheetBehavior != null && sheetBehavior.getState() != BottomSheetBehavior.STATE_COLLAPSED) {
+            // Still honor the behavior rule: switching months collapses the sheet.
+            sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            applyMonthLabelMorph(0f);
+
+            // Cancel anything in-flight and switch immediately.
+            cancelCalendarFadeAnimations();
+            moveMonth(offset);
+
+            // Recompute anchors since month header height may change.
+            binding.getRoot().post(this::configureSheetHeights);
+
+            isMonthAnimating = false;
+            return;
+        }
+
         isMonthAnimating = true;
 
         // Always collapse the habit sheet when switching months to avoid header label overlap.
@@ -370,6 +469,9 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         }
         // Force label to collapsed state immediately.
         applyMonthLabelMorph(0f);
+
+        // Ensure previous anims don't keep controlling alpha.
+        cancelCalendarFadeAnimations();
 
         // Fade the calendar grid/weekday row; keep month label readable but animate it separately
         View fadeTarget = binding.calendarDaysRecycler;
@@ -412,6 +514,9 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
 
                     // Apply the month change once the old month is faded out.
                     moveMonth(offset);
+
+                    // Recompute anchors since month header height may change.
+                    binding.getRoot().post(this::configureSheetHeights);
 
                     // Month switching always collapses the sheet, so restore to fully visible.
                     float targetAlpha = 1f;
