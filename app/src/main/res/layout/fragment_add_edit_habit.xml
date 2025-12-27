@@ -28,7 +28,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_arrow_left"
-                android:contentDescription="Back"
+                android:contentDescription="@string/back"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 app:tint="@color/white"/>
 
@@ -236,7 +236,7 @@
                         android:id="@+id/tv_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="09:00"
+                        android:text="@string/default_time"
                         android:textColor="#FF91ADC9"
                         android:textSize="14sp"/>
                 </LinearLayout>
@@ -318,7 +318,7 @@
                         android:background="@null"
                         android:textColor="#FFFFFF"
                         android:inputType="numberDecimal"
-                        android:hint="0"
+                        android:hint="@string/hint_target_value"
                         android:textColorHint="#55FFFFFF"/>
                 </LinearLayout>
 
@@ -343,7 +343,7 @@
                         android:layout_height="wrap_content"
                         android:background="@null"
                         android:textColor="#FFFFFF"
-                        android:hint="km"
+                        android:hint="@string/hint_unit_km"
                         android:textColorHint="#55FFFFFF"/>
                 </LinearLayout>
             </LinearLayout>

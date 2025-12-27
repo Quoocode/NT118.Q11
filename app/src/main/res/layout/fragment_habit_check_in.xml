@@ -45,14 +45,14 @@
             android:layout_height="wrap_content"
             android:inputType="numberDecimal"
             android:textColor="@color/white"
-            android:text="0" />
+            android:text="@string/default_zero" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
         android:id="@+id/tv_unit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="km"
+        android:text="@string/unit_km"
         android:textColor="#B0B0B0"
         android:gravity="end"
         android:layout_marginTop="4dp"

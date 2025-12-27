@@ -111,7 +111,7 @@ public class AddEditHabitFragment extends Fragment {
             isEditMode = false;
             // Update UI cho Add Mode
             binding.tvScreenTitle.setText("New Habit");
-            binding.btnConfirmAction.setText("Create Habit"); // Nút duy nhất
+            binding.btnConfirmAction.setText(R.string.btn_create_habit); // Nút duy nhất
 
             updateStartDateText();
         }

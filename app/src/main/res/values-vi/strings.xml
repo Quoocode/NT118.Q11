@@ -8,6 +8,46 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
     <string name="default_web_client_id">392391623569-dootefjgroer4isdof8hk6u760upkbcb.apps.googleusercontent.com</string>
+
+    <!--calendar-->
+
+    <string name="day_sun">CN</string>
+    <string name="day_mon">T2</string>
+    <string name="day_tue">T3</string>
+    <string name="day_wed">T4</string>
+    <string name="day_thu">T5</string>
+    <string name="day_fri">T6</string>
+    <string name="day_sat">T7</string>
+
+    <!--dialog_achievement-->
+    <string name="achievement_icon_desc">Biểu tượng thành tích</string>
+    <string name="achievement_title_placeholder">Tiêu đề</string>
+    <string name="achievement_description_placeholder">Mô tả</string>
+    <string name="achievement_not_unlocked">Chưa mở khóa</string>
+
+    <!--fragment_achievements-->
+    <string name="achievements_title">Thành tích</string>
+    <string name="achievement_unlocked">Đã mở khóa</string>
+    <string name="achievement_progress_placeholder">0/0</string>
+    <string name="badges_title">Huy hiệu</string>
+    <string name="expand_badges_desc">Mở rộng huy hiệu</string>
+    <!--    <string name="show_less">Thu gọn</string>-->
+
+    <!--fragment_calendar-->
+    <string name="calendar_title">Lịch</string>
+
+    <string name="calendar_month_placeholder">Tháng 10 2024</string>
+    <string name="calendar_day_placeholder">Thứ Ba, 25 Tháng 12 2025</string>
+
+    <string name="weekday_sun">CN</string>
+    <string name="weekday_mon">T2</string>
+    <string name="weekday_tue">T3</string>
+    <string name="weekday_wed">T4</string>
+    <string name="weekday_thu">T5</string>
+    <string name="weekday_fri">T6</string>
+    <string name="weekday_sat">T7</string>
+
+
     <!-- Login -->
 
     <string name="login">Đăng nhập</string>
@@ -60,6 +100,12 @@
     <string name="unit">Đơn vị</string>
 
     <string name="btn_create_habit">Tạo thói quen</string>
+    <string name="back">Quay lại</string>
+    <string name="default_time">09:00</string>
+    <string name="hint_target_value">0</string>
+    <string name="hint_unit_km">km</string>
+
+
 
     <!-- Thành tích -->
     <string name="achievements">Thành tích</string>
@@ -75,6 +121,10 @@
     <string name="update_progress">Cập nhật tiến độ</string>
     <string name="target_format">Mục tiêu: %1$s %2$s</string>
     <string name="current_value">Giá trị hiện tại</string>
+
+    <string name="unit_km">km</string>
+    <string name="default_zero">0</string>
+
     <string name="status_pending">Chưa hoàn thành</string>
     <string name="status_done">Hoàn thành</string>
     <string name="btn_update">Cập nhật</string>
@@ -125,7 +175,7 @@
 
     <string name="save_changes">Lưu thay đổi</string>
     <!--Reminders-->
-<!--    <string name="reminders">Nhắc nhở</string>-->
+    <!--    <string name="reminders">Nhắc nhở</string>-->
     <string name="general">Chung</string>
 
     <string name="allow_notifications">Cho phép thông báo</string>
@@ -139,7 +189,8 @@
     <string name="select_active_days">Chọn ngày hoạt động</string>
     <string name="every_day">Hằng ngày</string>
 
-<!--    <string name="preferences">Tùy chọn</string>-->
+
+    <!--    <string name="preferences">Tùy chọn</string>-->
     <string name="sound">Âm thanh</string>
     <string name="play_sound_notification">Phát âm thanh khi có thông báo</string>
 

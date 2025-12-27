@@ -48,6 +48,45 @@
     <string name="habit_completion_title">Habit Completion</string>
     <string name="error_auth_required">Please sign in to view your calendar.</string>
     <string name="error_load_habits">Unable to load habits: %1$s</string>
+
+    <!--calendar-->
+    <string name="day_sun">S</string>
+    <string name="day_mon">M</string>
+    <string name="day_tue">T</string>
+    <string name="day_wed">W</string>
+    <string name="day_thu">T</string>
+    <string name="day_fri">F</string>
+    <string name="day_sat">S</string>
+
+    <!--dialog_achivement-->
+    <string name="achievement_icon_desc">Achievement icon</string>
+    <string name="achievement_title_placeholder">Title</string>
+    <string name="achievement_description_placeholder">Description</string>
+    <string name="achievement_not_unlocked">Not yet unlocked</string>
+
+    <!--fragment achievements-->
+    <string name="achievements_title">Achievements</string>
+    <string name="achievement_unlocked">Unlocked</string>
+    <string name="achievement_progress_placeholder">0/0</string>
+    <string name="badges_title">Badges</string>
+    <string name="expand_badges_desc">Expand badges</string>
+<!--    <string name="show_less">Show less</string> (co o duoi)-->
+
+    <!--fragment calendar-->
+    <string name="calendar_title">Calendar</string>
+
+    <string name="calendar_month_placeholder">October 2024</string>
+    <string name="calendar_day_placeholder">Tuesday, 25 December 2025</string>
+
+    <string name="weekday_sun">S</string>
+    <string name="weekday_mon">M</string>
+    <string name="weekday_tue">T</string>
+    <string name="weekday_wed">W</string>
+    <string name="weekday_thu">T</string>
+    <string name="weekday_fri">F</string>
+    <string name="weekday_sat">S</string>
+
+
     <!-- Login -->
 
     <string name="login">Log In</string>
@@ -68,6 +107,7 @@
     <string name="register">Register</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="sign_up">Sign Up</string>
+
     <!--Reset Password-->
     <string name="reset_password_title">Reset your password</string>
     <string name="send_verification_code">Send verification code</string>
@@ -95,6 +135,10 @@
     <string name="unit">Unit</string>
 
     <string name="btn_create_habit">Create Habit</string>
+    <string name="back">Back</string>
+    <string name="default_time">09:00</string>
+    <string name="hint_target_value">0</string>
+    <string name="hint_unit_km">km</string>
 
 
     <!-- Achievements -->
@@ -110,6 +154,10 @@
     <string name="update_progress">Update Progress</string>
     <string name="target_format">Target: %1$s %2$s</string>
     <string name="current_value">Current Value</string>
+
+    <string name="unit_km">km</string>
+    <string name="default_zero">0</string>
+
     <string name="status_pending">Pending</string>
     <string name="status_done">Done</string>
     <string name="btn_update">Update</string>
