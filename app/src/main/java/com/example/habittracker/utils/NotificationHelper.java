@@ -105,20 +105,14 @@ public class NotificationHelper {
         // -------------------------------------------
 
         if (alarmManager != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                alarmManager.setExactAndAllowWhileIdle(
-                        AlarmManager.RTC_WAKEUP,
-                        calendar.getTimeInMillis(),
-                        pendingIntent
-                );
-            } else {
-                alarmManager.setExact(
-                        AlarmManager.RTC_WAKEUP,
-                        calendar.getTimeInMillis(),
-                        pendingIntent
-                );
-            }
-            Log.d("ALARM_DEBUG", "Đã đặt lịch Daily Briefing chính xác lúc " + calendar.getTime().toString());
+            scheduleAlarmSafely(
+                    context,
+                    alarmManager,
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.getTimeInMillis(),
+                    pendingIntent
+            );
+            Log.d("ALARM_DEBUG", "Đã đặt lịch Daily Briefing lúc " + calendar.getTime().toString());
         }
     }
 
@@ -233,12 +227,13 @@ public class NotificationHelper {
 
         long triggerTime = calendar.getTimeInMillis();
 
-        // Luôn dùng setExactAndAllowWhileIdle để xuyên qua chế độ ngủ
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
-        } else {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
-        }
+        scheduleAlarmSafely(
+                context,
+                alarmManager,
+                AlarmManager.RTC_WAKEUP,
+                triggerTime,
+                pendingIntent
+        );
 
         Log.d("ALARM_DEBUG", "Đã đặt lịch Habit (" + frequency + ") cho: " + title + " lúc " + calendar.getTime().toString());
     }
@@ -355,4 +350,102 @@ public class NotificationHelper {
         }
     }
 
+    // =========================================================================
+    // 0. EXACT ALARM SAFETY (Android 12+)
+    // =========================================================================
+
+    private static boolean canScheduleExactAlarms(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            return alarmManager != null && alarmManager.canScheduleExactAlarms();
+        }
+        return true;
+    }
+
+    /** Public helper so UI layers can check whether exact alarms are currently allowed (Android 12+). */
+    public static boolean isExactAlarmAllowed(Context context) {
+        return canScheduleExactAlarms(context);
+    }
+
+    /**
+     * Show a dialog that deep-links to the system screen to allow exact alarms (Android 12+).
+     *
+     * Safe no-op on Android < 12.
+     */
+    public static void showExactAlarmPermissionDialog(Context context) {
+        if (context == null) return;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return;
+
+        // If already allowed, no need to interrupt.
+        if (canScheduleExactAlarms(context)) return;
+
+        try {
+            new androidx.appcompat.app.AlertDialog.Builder(context)
+                    .setTitle("Cho phép báo thức đúng giờ")
+                    .setMessage("Để nhắc thói quen đúng giờ, ứng dụng cần quyền 'Báo thức chính xác'. Bạn có muốn mở Cài đặt để bật không?")
+                    .setPositiveButton("Mở cài đặt", (dialog, which) -> {
+                        try {
+                            Intent intent = new Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                            intent.setData(android.net.Uri.parse("package:" + context.getPackageName()));
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            context.startActivity(intent);
+                        } catch (Throwable t) {
+                            Log.e("ALARM_DEBUG", "Failed to open exact alarm settings", t);
+                        }
+                    })
+                    .setNegativeButton("Để sau", null)
+                    .show();
+        } catch (Throwable t) {
+            // If context isn't an Activity-themed context, AlertDialog can fail.
+            Log.e("ALARM_DEBUG", "Failed to show exact alarm permission dialog", t);
+        }
+    }
+
+    /**
+     * Schedules an alarm without crashing on Android 12+ when exact-alarm permission is denied.
+     *
+     * If exact alarms are allowed -> uses setExactAndAllowWhileIdle/setExact.
+     * Otherwise -> uses an inexact fallback (setAndAllowWhileIdle/set).
+     */
+    @SuppressLint("ScheduleExactAlarm")
+    private static void scheduleAlarmSafely(Context context,
+                                           AlarmManager alarmManager,
+                                           int alarmType,
+                                           long triggerAtMillis,
+                                           PendingIntent pendingIntent) {
+        if (alarmManager == null) return;
+
+        boolean allowExact = canScheduleExactAlarms(context);
+        try {
+            if (allowExact) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alarmManager.setExactAndAllowWhileIdle(alarmType, triggerAtMillis, pendingIntent);
+                } else {
+                    alarmManager.setExact(alarmType, triggerAtMillis, pendingIntent);
+                }
+            } else {
+                // Fallback: still schedule a reminder, but not exact.
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alarmManager.setAndAllowWhileIdle(alarmType, triggerAtMillis, pendingIntent);
+                } else {
+                    alarmManager.set(alarmType, triggerAtMillis, pendingIntent);
+                }
+                Log.w("ALARM_DEBUG", "Exact alarm permission denied; scheduled inexact alarm instead.");
+            }
+        } catch (SecurityException se) {
+            // Double safety: some OEMs/devices can still throw even if canScheduleExactAlarms() returns true.
+            Log.e("ALARM_DEBUG", "SecurityException while scheduling alarm; falling back to inexact.", se);
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alarmManager.setAndAllowWhileIdle(alarmType, triggerAtMillis, pendingIntent);
+                } else {
+                    alarmManager.set(alarmType, triggerAtMillis, pendingIntent);
+                }
+            } catch (Throwable t) {
+                Log.e("ALARM_DEBUG", "Failed to schedule even fallback alarm.", t);
+            }
+        }
+    }
+
 }
+

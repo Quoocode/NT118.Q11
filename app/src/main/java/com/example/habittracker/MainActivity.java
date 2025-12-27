@@ -107,6 +107,11 @@ public class MainActivity extends AppCompatActivity {
                     if (user != null && habits != null && !habits.isEmpty()) {
                         Log.d("ALARM_DEBUG", "MainActivity: Đã tải được " + habits.size() + " thói quen. Tiến hành đặt báo thức...");
 
+                        // If exact alarms are blocked (Android 12+), prompt once so reminders can be truly on-time.
+                        if (!NotificationHelper.isExactAlarmAllowed(MainActivity.this)) {
+                            NotificationHelper.showExactAlarmPermissionDialog(MainActivity.this);
+                        }
+
                         // Gọi NotificationHelper để đặt báo thức
                         NotificationHelper.scheduleAllHabitReminders(MainActivity.this, habits);
                     } else {

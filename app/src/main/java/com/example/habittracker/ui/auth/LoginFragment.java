@@ -31,6 +31,8 @@ import java.util.concurrent.Executors;
 import androidx.credentials.CustomCredential;
 import androidx.credentials.GetCredentialResponse;
 import androidx.credentials.CredentialManagerCallback;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 public class LoginFragment extends Fragment {
 
@@ -150,8 +152,24 @@ public class LoginFragment extends Fragment {
 
     }
 
+    private boolean isPlayServicesAvailable() {
+        try {
+            int status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(requireContext());
+            return status == ConnectionResult.SUCCESS;
+        } catch (Throwable t) {
+            // Very defensive: in case Play Services libs are missing/misconfigured.
+            Log.e(TAG, "Play Services availability check failed", t);
+            return false;
+        }
+    }
 
     private void signInWithGoogle() {
+        // If device/emulator doesn't have working Google Play services, Google sign-in will fail.
+        if (!isPlayServicesAvailable()) {
+            Toast.makeText(getContext(), "Thiết bị chưa có Google Play services (hoặc bị lỗi). Hãy dùng Email/Guest hoặc thử emulator 'Google Play'.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         String serverClientId = getString(R.string.default_web_client_id);
 
         // 🌟 SỬ DỤNG API CHO NÚT SIGN-IN (dialog)
