@@ -3,16 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    android:background="@drawable/container_login_2"
+    android:background="@drawable/bg_habit_completion_item"
     android:backgroundTint="?attr/colorSurface"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:padding="12dp">
-
-    <!--
-         backgroundTint="?attr/colorSurface"
-         -> Sáng: Xám nhạt (#F5F5F5) / Tối: Xanh đen navi
-    -->
 
     <LinearLayout
         android:layout_width="48dp"
@@ -21,10 +16,6 @@
         android:backgroundTint="?attr/colorSurfaceContainer"
         android:gravity="center"
         android:orientation="vertical">
-        <!--
-             backgroundTint="?attr/colorSurfaceContainer"
-             -> Đổi màu nền icon container theo theme
-        -->
 
         <ImageView
             android:id="@+id/img_status"
@@ -34,7 +25,6 @@
             android:scaleType="centerInside"
             android:src="@drawable/ic_circle_check"
             android:tint="?android:attr/textColorPrimary"/>
-        <!-- Tint icon theo màu chữ chính -->
 
         <TextView
             android:id="@+id/tv_pending_marker"
@@ -62,7 +52,6 @@
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="16sp"
             android:textStyle="bold" />
-        <!-- textColorPrimary -> Sáng: Đen / Tối: Trắng -->
 
         <TextView
             android:id="@+id/tv_habit_status"
@@ -71,6 +60,19 @@
             android:text="Completed"
             android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp" />
-        <!-- textColorSecondary -> Sáng: Xám / Tối: Xám xanh -->
     </LinearLayout>
+
+    <!-- Right: action button (check-in/edit) -->
+    <ImageView
+        android:id="@+id/img_check"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="12dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:contentDescription="@null"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_ellipsis" />
+
 </LinearLayout>

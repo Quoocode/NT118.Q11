@@ -7,16 +7,17 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer; // Mới
-import androidx.lifecycle.ViewModelProvider; // Mới
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.navigation.NavController;
-import androidx.navigation.NavGraph;
+import androidx.navigation.NavGraph; // Import mới
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.habittracker.R;
 import com.example.habittracker.databinding.ActivityMainBinding;
 import com.example.habittracker.data.model.Habit; // Mới
 import com.example.habittracker.ui.ViewModel.HabitViewModel; // Mới: Đảm bảo package đúng với file bạn vừa tạo
@@ -31,7 +32,10 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private NavController navController;
-    private HabitViewModel habitViewModel; // Khai báo ViewModel
+    private HabitViewModel habitViewModel;
+
+    // [BỔ SUNG] Biến lắng nghe sự kiện đăng nhập/đăng xuất
+    private FirebaseAuth.AuthStateListener authListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +96,9 @@ public class MainActivity extends AppCompatActivity {
 
         // 5. Kích hoạt quan sát dữ liệu
         setupHabitObserver();
+
+        // [BỔ SUNG] Khởi tạo Auth Listener (Chuẩn bị cho onStart)
+        setupAuthStateListener();
     }
 
     private void setupHabitObserver() {
@@ -109,6 +116,11 @@ public class MainActivity extends AppCompatActivity {
                     if (user != null && habits != null && !habits.isEmpty()) {
                         Log.d("ALARM_DEBUG", "MainActivity: Đã tải được " + habits.size() + " thói quen. Tiến hành đặt báo thức...");
 
+                        // If exact alarms are blocked (Android 12+), prompt once so reminders can be truly on-time.
+                        if (!NotificationHelper.isExactAlarmAllowed(MainActivity.this)) {
+                            NotificationHelper.showExactAlarmPermissionDialog(MainActivity.this);
+                        }
+
                         // Gọi NotificationHelper để đặt báo thức
                         NotificationHelper.scheduleAllHabitReminders(MainActivity.this, habits);
                     } else {
@@ -120,13 +132,49 @@ public class MainActivity extends AppCompatActivity {
             // B. Kích hoạt tải dữ liệu ngay nếu đã đăng nhập
             // Nếu không có dòng này, Observer ở trên sẽ ngồi chơi xơi nước mãi mãi
             if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                Log.d("ALARM_DEBUG", "MainActivity: Đã đăng nhập, gọi ViewModel tải dữ liệu ngay.");
+                Log.d("ALARM_DEBUG", "MainActivity: Đã đăng nhập (Cold Start), gọi ViewModel tải dữ liệu.");
                 habitViewModel.loadActiveHabits();
             }
 
         } catch (Exception e) {
             Log.e("ALARM_DEBUG", "Lỗi setup Observer trong MainActivity: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    // [BỔ SUNG] Hàm định nghĩa hành động khi trạng thái Auth thay đổi
+    private void setupAuthStateListener() {
+        authListener = firebaseAuth -> {
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            if (user != null) {
+                // Đây là "Cái Chuông" reo khi Login (kể cả Hot Swap)
+                Log.d("ALARM_DEBUG", "AuthStateListener: Phát hiện User mới đăng nhập: " + user.getUid());
+
+                // Gọi ViewModel tải lại dữ liệu ngay lập tức
+                if (habitViewModel != null) {
+                    habitViewModel.loadActiveHabits();
+                }
+            } else {
+                Log.d("ALARM_DEBUG", "AuthStateListener: User đã đăng xuất.");
+            }
+        };
+    }
+
+    // [BỔ SUNG] Bật lắng nghe khi App hiện lên
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (authListener != null) {
+            FirebaseAuth.getInstance().addAuthStateListener(authListener);
+        }
+    }
+
+    // [BỔ SUNG] Tắt lắng nghe khi App ẩn đi/thoát
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (authListener != null) {
+            FirebaseAuth.getInstance().removeAuthStateListener(authListener);
         }
     }
 
@@ -141,10 +189,11 @@ public class MainActivity extends AppCompatActivity {
                     destinationId == R.id.registerFragment ||
                     destinationId == R.id.addEditHabitFragment ||
                     destinationId == R.id.habitDetailsFragment ||
-                    destinationId == R.id.forgotPasswordFragment) {
+                    destinationId == R.id.forgotPasswordFragment ||
+                    destinationId == R.id.forgotPasswordNewFragment) {
                 binding.bottomNavigationView.setVisibility(View.GONE);
             } else {
-                // Hiển thị ở các màn hình chính (Home, Calendar, Settings...)
+                // Hiển thị ở các màn hình chính (Home, Calendar, Achievements, Settings...)
                 binding.bottomNavigationView.setVisibility(View.VISIBLE);
             }
         });

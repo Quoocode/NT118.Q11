@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,22 +23,17 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 
-// Import Adapter Icon
-import com.example.habittracker.ui.adapter.IconAdapter;
-
-// Import Model và Repository
+import com.example.habittracker.data.achievements.AchievementService;
+import com.example.habittracker.data.repository.callback.HabitQueryCallback;
+import com.example.habittracker.ui.adapter.IconAdapter; // Adapter Icon cũ
+import com.example.habittracker.R; // Resource ID
+import com.example.habittracker.data.repository.callback.SimpleCallback;
+import com.example.habittracker.data.repository.callback.DataCallback;
 import com.example.habittracker.data.model.Habit;
 import com.example.habittracker.data.repository.HabitRepository;
-import com.example.habittracker.data.repository.callback.DataCallback;
-import com.example.habittracker.data.repository.callback.HabitQueryCallback;
-import com.example.habittracker.data.repository.callback.SimpleCallback;
+import com.example.habittracker.databinding.FragmentAddEditHabitBinding; // Binding
 
-// Import Binding
-import com.example.habittracker.databinding.FragmentAddEditHabitBinding;
-
-// Import Notification Helper
 import com.example.habittracker.utils.NotificationHelper;
-
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -72,6 +68,8 @@ public class AddEditHabitFragment extends Fragment {
             "ic_menu_hospital"
     );
 
+    private AchievementService achievementService;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -86,6 +84,11 @@ public class AddEditHabitFragment extends Fragment {
 
         // 1. Init Repository
         String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null || uid.trim().isEmpty()) {
+            Toast.makeText(getContext(), "Please sign in again.", Toast.LENGTH_SHORT).show();
+            navController.popBackStack();
+            return;
+        }
         habitRepository = new HabitRepository(uid);
 
         selectedStartDate = Calendar.getInstance();
@@ -94,6 +97,8 @@ public class AddEditHabitFragment extends Fragment {
         setupIconRecyclerView();
         setupFrequencyButtons();
         setupClickListeners();
+
+        achievementService = new AchievementService(requireContext());
 
         // 3. Check Mode (Add or Edit)
         if (getArguments() != null && getArguments().getString("EXTRA_HABIT_ID") != null) {
@@ -221,10 +226,11 @@ public class AddEditHabitFragment extends Fragment {
             }, hour, minute, DateFormat.is24HourFormat(getContext())).show();
         });
 
+        // Nút Hành Động Duy Nhất (Create/Save)
         binding.btnConfirmAction.setOnClickListener(v -> saveHabit());
     }
 
-    // --- PERMISSION CHECKS ---
+    // --- HÀM KIỂM TRA QUYỀN (MỚI) ---
     private boolean checkExactAlarmPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             android.app.AlarmManager alarmManager = (android.app.AlarmManager) requireContext().getSystemService(android.content.Context.ALARM_SERVICE);
@@ -249,6 +255,7 @@ public class AddEditHabitFragment extends Fragment {
                 .setNegativeButton("Để sau", null)
                 .show();
     }
+    // --------------------------------
 
     // --- SAVE LOGIC ---
     private void saveHabit() {
@@ -284,17 +291,22 @@ public class AddEditHabitFragment extends Fragment {
         String unit = binding.editHabitUnit.getText().toString().trim();
         String desc = binding.editHabitDesc.getText().toString().trim();
 
+        // Map Frequency (Giữ nguyên)
         Map<String, Object> freqMap = new HashMap<>();
         freqMap.put("type", selectedFrequency);
 
-        // Kiểm tra quyền báo thức nếu có giờ nhắc
+        // --- KIỂM TRA QUYỀN TRƯỚC KHI LƯU ---
+        // Chỉ kiểm tra nếu người dùng có đặt giờ nhắc
         if (selectedReminderTime != null && !selectedReminderTime.isEmpty()) {
             if (!checkExactAlarmPermission()) {
+                Log.e("ALARM_PERMISSION", "Bị chặn quyền Exact Alarm. Đang yêu cầu user cấp quyền...");
                 showPermissionDialog();
                 return;
             }
         }
+        // -------------------------------------
 
+        // Tạo Object Habit (Giữ nguyên)
         Habit habit = new Habit(
                 title,
                 desc,
@@ -306,24 +318,38 @@ public class AddEditHabitFragment extends Fragment {
                 target
         );
 
+        // 2. Gọi Repository (CODE MỚI - TÁCH LUỒNG)
         if (isEditMode) {
             habit.setId(currentHabitId);
+
+            // Trường hợp UPDATE: Dùng DataCallback<Boolean>
             habitRepository.updateHabit(habit, new DataCallback<Boolean>() {
                 @Override
                 public void onSuccess(Boolean data) {
+                    // Update thành công -> ID chính là currentHabitId
                     handleSaveSuccess(currentHabitId, title);
                 }
+
                 @Override
                 public void onFailure(Exception e) {
                     Toast.makeText(getContext(), "Update Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
+
         } else {
+            // Trường hợp ADD: Dùng DataCallback<String> để hứng cái ID mới về
             habitRepository.addHabit(habit, new DataCallback<String>() {
                 @Override
                 public void onSuccess(String newHabitId) {
+                    // Unlock achievements locally (per-install) on first creation.
+                    if (achievementService != null) {
+                        achievementService.onHabitCreated();
+                    }
+
                     handleSaveSuccess(newHabitId, title);
                 }
+
+
                 @Override
                 public void onFailure(Exception e) {
                     Toast.makeText(getContext(), "Add Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -332,6 +358,7 @@ public class AddEditHabitFragment extends Fragment {
         }
     }
 
+    // Hàm xử lý chung sau khi Lưu thành công
     private void handleSaveSuccess(String habitId, String habitTitle) {
         String msg = isEditMode ? "Saved Changes" : "Habit Created";
         Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
@@ -343,29 +370,79 @@ public class AddEditHabitFragment extends Fragment {
             NotificationHelper.debugAlarmPermission(requireContext());
             Log.d("TEST_REMINDER", ">> ID OK: " + habitId);
 
+            // Build a Habit instance for alarm helpers that require the whole object.
+            Map<String, Object> freqMap = new HashMap<>();
+            freqMap.put("type", selectedFrequency);
+            Habit habitForAlarm = new Habit(
+                    habitTitle,
+                    binding.editHabitDesc.getText() != null ? binding.editHabitDesc.getText().toString().trim() : "",
+                    selectedIconName,
+                    binding.editHabitUnit.getText() != null ? binding.editHabitUnit.getText().toString().trim() : "",
+                    freqMap,
+                    selectedReminderTime,
+                    new Timestamp(selectedStartDate.getTime()),
+                    0
+            );
+            habitForAlarm.setId(habitId);
+
             // Kiểm tra xem user có đặt giờ không
             if (selectedReminderTime != null && !selectedReminderTime.isEmpty()) {
-                Log.d("TEST_REMINDER", ">> Calling Scheduler for: " + selectedReminderTime);
 
-                // [QUAN TRỌNG] GỌI HÀM ĐẶT BÁO THỨC THẬT SỰ
-                NotificationHelper.scheduleHabitReminder(
-                        requireContext(),
-                        habitId,
-                        habitTitle,
-                        selectedReminderTime,
-                        selectedFrequency,
-                        selectedStartDate.getTime() // Chuyển Calendar thành Date
-                );
+                // [THÔNG MINH] Kiểm tra trạng thái hôm nay trước khi đặt lịch
+                habitRepository.getHabitHistoryStatus(habitId, Calendar.getInstance(), new DataCallback<String>() {
+                    @Override
+                    public void onSuccess(String status) {
+                        boolean isCompleted = "DONE".equalsIgnoreCase(status) || "COMPLETED".equalsIgnoreCase(status);
+
+                        Log.d("TEST_REMINDER", ">> Habit Status Today: " + status);
+
+                        if (isCompleted) {
+                            Log.d("TEST_REMINDER", ">> Đã làm xong -> Dời lịch sang ngày mai với giờ mới.");
+                            // Tự động tính toán ngày mai với giờ mới
+                            NotificationHelper.updateAlarmBasedOnStatus(requireContext(), habitForAlarm, true);
+                        } else {
+                            Log.d("TEST_REMINDER", ">> Chưa làm -> Đặt lịch bình thường (Hôm nay nếu kịp).");
+                            // Đặt lịch bình thường
+                            NotificationHelper.scheduleHabitReminder(
+                                    requireContext(),
+                                    habitId,
+                                    habitTitle,
+                                    selectedReminderTime,
+                                    selectedFrequency,
+                                    selectedStartDate.getTime() // Chuyển Calendar thành Date
+                            );
+                        }
+                        // Thoát màn hình sau khi xử lý xong Alarm
+                        navController.popBackStack();
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        // Nếu lỗi check status -> Cứ đặt lịch bình thường cho an toàn
+                        Log.e("TEST_REMINDER", ">> Lỗi check status, fallback về lịch thường.");
+                        NotificationHelper.scheduleHabitReminder(
+                                requireContext(),
+                                habitId,
+                                habitTitle,
+                                selectedReminderTime,
+                                selectedFrequency,
+                                selectedStartDate.getTime() // Chuyển Calendar thành Date
+                        );
+                        navController.popBackStack();
+                    }
+                });
 
             } else {
-                Log.d("TEST_REMINDER", ">> No Reminder Time set. Skipping alarm.");
+                // Không đặt giờ -> Thoát luôn
+                Log.d("TEST_REMINDER", ">> No Reminder Time set.");
+                navController.popBackStack();
             }
         } else {
             Log.e("TEST_REMINDER", ">> FAIL: ID is null! Cannot schedule alarm.");
         }
         Log.d("TEST_REMINDER", "--------------------------");
 
-        navController.popBackStack();
+        // NOTE: Don't pop here; we already pop in the branches above.
     }
 
     private void updateStartDateText() {
@@ -379,3 +456,4 @@ public class AddEditHabitFragment extends Fragment {
         binding = null;
     }
 }
+

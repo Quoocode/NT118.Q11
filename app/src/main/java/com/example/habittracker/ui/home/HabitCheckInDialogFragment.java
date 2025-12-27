@@ -18,8 +18,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProvider; // Mới
 
 import com.example.habittracker.R;
+import com.example.habittracker.data.repository.callback.DataCallback; // Mới
+import com.example.habittracker.ui.ViewModel.HabitViewModel; // Mới
+import com.example.habittracker.data.achievements.AchievementService;
 import com.example.habittracker.data.repository.HabitRepository; // Sửa lại package import cho đúng với dự án của bạn
 import com.google.firebase.auth.FirebaseAuth;
 import com.example.habittracker.data.repository.callback.SimpleCallback;
@@ -35,7 +39,9 @@ public class HabitCheckInDialogFragment extends DialogFragment {
     private static final String ARG_UNIT = "ARG_UNIT";
     private static final String ARG_STATUS = "ARG_STATUS";
 
-    private HabitRepository habitRepository;
+    private AchievementService achievementService;
+    // Thay Repository bằng ViewModel
+    private HabitViewModel habitViewModel;
 
     private OnCheckInListener listener;
 
@@ -75,7 +81,9 @@ public class HabitCheckInDialogFragment extends DialogFragment {
         super.onViewCreated(view, savedInstanceState);
 
         String userId = FirebaseAuth.getInstance().getUid();
-        habitRepository = new HabitRepository(userId);
+        achievementService = new AchievementService(requireContext());
+        // [MỚI] Khởi tạo ViewModel (Liên kết với Activity cha để đồng bộ)
+        habitViewModel = new ViewModelProvider(requireActivity()).get(HabitViewModel.class);
 
         TextView tvTitle = view.findViewById(R.id.tv_habit_title);
         TextView tvTarget = view.findViewById(R.id.tv_habit_target);
@@ -122,13 +130,16 @@ public class HabitCheckInDialogFragment extends DialogFragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (isProgrammaticChange) return; // Tránh vòng lặp
+                if (isProgrammaticChange) return;
+
+                Bundle args = getArguments();
+                if (args == null) return;
 
                 String valStr = s.toString();
                 if (!valStr.isEmpty()) {
                     try {
                         double val = Double.parseDouble(valStr);
-                        double target = getArguments().getDouble(ARG_TARGET);
+                        double target = args.getDouble(ARG_TARGET);
 
                         // Nếu nhập >= target -> Tự động chọn DONE
                         if (val >= target) {
@@ -145,18 +156,23 @@ public class HabitCheckInDialogFragment extends DialogFragment {
                                 isProgrammaticChange = false;
                             }
                         }
-                    } catch (NumberFormatException e) { }
+                    } catch (NumberFormatException ignored) {
+                        // ignore
+                    }
                 }
             }
         });
 
         // --- LOGIC TỰ ĐỘNG 2: CHỌN DONE -> TỰ ĐIỀN MAX ---
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            if (isProgrammaticChange) return; // Tránh vòng lặp
+            if (isProgrammaticChange) return;
+
+            Bundle args = getArguments();
+            if (args == null) return;
 
             if (checkedId == R.id.radio_done) {
                 // Nếu chọn DONE -> Điền giá trị bằng Target
-                double target = getArguments().getDouble(ARG_TARGET);
+                double target = args.getDouble(ARG_TARGET);
                 String targetStr = (target == (long) target) ? String.valueOf((long) target) : String.valueOf(target);
 
                 isProgrammaticChange = true;
@@ -167,9 +183,12 @@ public class HabitCheckInDialogFragment extends DialogFragment {
             }
         });
 
-        // Xử lý Lưu
+        // [MỚI] Xử lý Lưu thông qua ViewModel
         btnConfirm.setOnClickListener(v -> {
-            String habitId = getArguments().getString(ARG_HABIT_ID);
+            Bundle args = getArguments();
+            if (args == null) return;
+
+            String habitId = args.getString(ARG_HABIT_ID);
             String valueStr = edtCurrentValue.getText().toString();
             if (valueStr.isEmpty()) return;
 
@@ -178,23 +197,27 @@ public class HabitCheckInDialogFragment extends DialogFragment {
             // Lấy trạng thái cuối cùng từ RadioButton
             String newStatus = radioDone.isChecked() ? "DONE" : "PENDING";
 
-            habitRepository.updateHistoryStatus(
-                    habitId,
-                    Calendar.getInstance(),
-                    newStatus,
-                    newValue,
-                    (success, e) -> {
-                        if (success) {
-                            Toast.makeText(getContext(), "Updated!", Toast.LENGTH_SHORT).show();
-                            if (listener != null) {
-                                listener.onCheckInCompleted();
-                            }
-                            dismiss();
-                        } else {
-                            Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+            // Gọi ViewModel để xử lý cả DB và Alarm
+            habitViewModel.performCheckIn(habitId, newValue, newStatus, new DataCallback<Boolean>() {
+                @Override
+                public void onSuccess(Boolean data) {
+                    Toast.makeText(getContext(), "Updated!", Toast.LENGTH_SHORT).show();
+                    double targetValue = args.getDouble(ARG_TARGET);
+
+                    if (achievementService != null) {
+                        achievementService.onCheckInCommitted(newStatus, newValue, targetValue);
                     }
-            );
+                    if (listener != null) {
+                        listener.onCheckInCompleted();
+                    }
+                    dismiss();
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         });
     }
 

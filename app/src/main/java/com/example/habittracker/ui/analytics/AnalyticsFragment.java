@@ -1,32 +1,39 @@
 package com.example.habittracker.ui.analytics;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
+
 import com.example.habittracker.R;
-import com.example.habittracker.databinding.FragmentCalendarBinding; // Tạo từ fragment_calendar.xml
-import com.example.habittracker.data.repository.HabitRepository;
 import com.example.habittracker.data.model.HabitDailyView;
+import com.example.habittracker.data.repository.HabitRepository;
 import com.example.habittracker.data.repository.callback.HabitQueryCallback;
+import com.example.habittracker.databinding.FragmentCalendarBinding; // Tạo từ fragment_calendar.xml
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.firebase.auth.FirebaseAuth;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import com.example.habittracker.ui.home.HabitCheckInDialogFragment;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.util.Log;
 
 public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Listener {
 
@@ -35,12 +42,29 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
 
     private CalendarDayAdapter calendarAdapter;
     private final List<HabitCompletion> allHabits = new ArrayList<>();
-    private int habitsLoaded = 0;
-    private static final int HABIT_BATCH_SIZE = 3;
     private final SimpleDateFormat monthFormatter = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
+    private final SimpleDateFormat dayFormatter = new SimpleDateFormat("EEEE, d MMMM yyyy", Locale.getDefault());
     private final Calendar currentMonth = Calendar.getInstance();
     private final Calendar selectedDate = Calendar.getInstance();
     private HabitRepository habitRepository;
+
+    private HabitCompletionAdapter habitAdapter;
+    private BottomSheetBehavior<View> sheetBehavior;
+
+    // Fade mapping bounds in parent coordinates
+    private int fadeStartTopPx = 0; // sheet top when calendar is fully visible
+    private int fadeEndTopPx = 0;   // sheet top when it reaches month_label
+
+    private boolean isMonthAnimating = false;
+
+    // Overlay TextView defined in XML (stacked in a FrameLayout over monthLabel)
+    private TextView dayIndicatorLabel;
+
+    private static final String TAG_FADE = "CalendarSheetFade";
+    private static final boolean DEBUG_FADE = false;
+
+    // Cache the actual view that BottomSheetBehavior controls.
+    private View habitBottomSheetView;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -66,40 +90,480 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         binding.calendarDaysRecycler.setLayoutManager(layoutManager);
         binding.calendarDaysRecycler.setAdapter(calendarAdapter);
 
-        binding.btnPrevMonth.setOnClickListener(v -> moveMonth(-1));
-        binding.btnNextMonth.setOnClickListener(v -> moveMonth(1));
-        binding.btnBack.setOnClickListener(v -> navController.popBackStack());
+        binding.btnPrevMonth.setOnClickListener(v -> moveMonthAnimated(-1));
+        binding.btnNextMonth.setOnClickListener(v -> moveMonthAnimated(1));
 
-        setupHabitList();
+        setupMonthLabelMorph();
+        setupHabitSheetAndList();
+
         updateMonth();
         loadHabitsForDate(selectedDate);
     }
 
-    private void setupHabitList() {
-        if (binding == null || binding.habitCompletionSection == null) {
+    private void setupMonthLabelMorph() {
+        if (binding == null) return;
+
+        // Use the overlay label from XML (no manual positioning needed)
+        dayIndicatorLabel = binding.dayIndicatorLabel;
+
+        updateMonthLabelText();
+        updateDayIndicatorText();
+
+        // Make sure initial state is collapsed
+        applyMonthLabelMorph(0f);
+    }
+
+    private void updateMonthLabelText() {
+        if (binding == null) return;
+        binding.monthLabel.setText(monthFormatter.format(currentMonth.getTime()));
+    }
+
+    private void updateDayIndicatorText() {
+        if (binding == null || dayIndicatorLabel == null) return;
+        dayIndicatorLabel.setText(dayFormatter.format(selectedDate.getTime()));
+    }
+
+    private void applyMonthLabelMorph(float expandedProgress) {
+        if (binding == null || dayIndicatorLabel == null) return;
+        float t = Math.max(0f, Math.min(1f, expandedProgress));
+        // Crossfade between month label (collapsed) and day indicator (expanded)
+        binding.monthLabel.setAlpha(1f - t);
+        dayIndicatorLabel.setAlpha(t);
+    }
+
+    private void setupHabitSheetAndList() {
+        if (binding == null) {
             return;
         }
-        ScrollView scrollView = binding.habitCompletionSection.habitCompletionScroll;
-        scrollView.getViewTreeObserver().addOnScrollChangedListener(() -> {
-            if (binding == null || binding.habitCompletionSection == null) {
-                return;
+
+        // Ensure the bottom sheet list dodges both:
+        // 1) system navigation bar (gesture bar)
+        // 2) the app's BottomNavigationView (home/calendar/achievements/settings)
+        final int baseBottom = (int) (16f * requireContext().getResources().getDisplayMetrics().density);
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.habitCompletionSection.habitCompletionRecycler, (v, insets) -> {
+            int navBottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom;
+
+            int appBottomNavHeight = 0;
+            View activityBottomNav = requireActivity().findViewById(R.id.bottom_navigation_view);
+            if (activityBottomNav instanceof BottomNavigationView && activityBottomNav.getVisibility() == View.VISIBLE) {
+                // Ensure we have a measured height
+                appBottomNavHeight = activityBottomNav.getHeight();
             }
-            if (!scrollView.canScrollVertically(1)) {
-                appendMoreHabits();
+
+            int left = v.getPaddingLeft();
+            int top = v.getPaddingTop();
+            int right = v.getPaddingRight();
+            v.setPadding(left, top, right, baseBottom + navBottom + appBottomNavHeight);
+            return insets;
+        });
+
+        // Also re-apply once after layout, because bottom nav height can be 0 before first measure.
+        binding.habitCompletionSection.habitCompletionRecycler.post(() ->
+                ViewCompat.requestApplyInsets(binding.habitCompletionSection.habitCompletionRecycler)
+        );
+
+        // RecyclerView adapter
+        habitAdapter = new HabitCompletionAdapter(
+                habit -> {
+                    if (habit.getHabitId() == null) return;
+                    Bundle bundle = new Bundle();
+                    bundle.putString("EXTRA_HABIT_ID", habit.getHabitId());
+                    navController.navigate(com.example.habittracker.R.id.action_analyticsFragment_to_habitDetailsFragment, bundle);
+                },
+                habit -> {
+                    if (habit.getHabitId() == null) return;
+
+                    // Open the same check-in dialog used on Home.
+                    HabitCheckInDialogFragment dialog = HabitCheckInDialogFragment.newInstance(
+                            habit.getHabitId(),
+                            habit.getName(),
+                            habit.getTargetValue(),
+                            habit.getCurrentValue(),
+                            habit.getUnit(),
+                            habit.getRawStatus() != null ? habit.getRawStatus() : "PENDING"
+                    );
+
+                    dialog.setOnCheckInListener(() -> loadHabitsForDate(selectedDate));
+                    dialog.show(getChildFragmentManager(), "CheckInDialog");
+                }
+        );
+        binding.habitCompletionSection.habitCompletionRecycler.setAdapter(habitAdapter);
+
+        // Bottom sheet behavior
+        habitBottomSheetView = binding.habitCompletionSection.getRoot();
+        sheetBehavior = BottomSheetBehavior.from(habitBottomSheetView);
+
+        // We only want 2 positions: COLLAPSED (calendar bottom) and EXPANDED (month_label bottom)
+        sheetBehavior.setHideable(false);
+
+        // IMPORTANT:
+        // expandedOffset is only respected when fitToContents=false.
+        // (With fitToContents=true, EXPANDED is computed from content height and may ignore expandedOffset.)
+        sheetBehavior.setFitToContents(false);
+
+        // Compute expandedOffset + peekHeight after first layout.
+        binding.getRoot().post(this::configureSheetHeights);
+
+        // Drag handle / header can toggle state for convenience
+        binding.habitCompletionSection.habitSheetHeader.setOnClickListener(v -> toggleSheet());
+
+        // Fade calendar elements as sheet expands - fade range: calendar bottom -> month_label.
+        sheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            private int lastState = BottomSheetBehavior.STATE_COLLAPSED;
+            private Integer dragStartTop = null;
+
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if (sheetBehavior == null) return;
+
+                // Some OEMs pass a different reference here; always use the real sheet view.
+                final View sheet = habitBottomSheetView != null ? habitBottomSheetView : bottomSheet;
+
+                if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+                    cancelCalendarFadeAnimations();
+                    dragStartTop = sheet.getTop();
+
+                    if (DEBUG_FADE) {
+                        Log.d(TAG_FADE, "DRAGGING startTop=" + dragStartTop + " fadeStart=" + fadeStartTopPx + " fadeEnd=" + fadeEndTopPx);
+                    }
+                }
+
+                // Direction based toggle on release:
+                // - dragging up from collapsed => EXPANDED
+                // - dragging down from expanded => COLLAPSED
+                if (lastState == BottomSheetBehavior.STATE_DRAGGING
+                        && newState == BottomSheetBehavior.STATE_SETTLING) {
+
+                    int endTop = sheet.getTop();
+                    int startTop = dragStartTop != null ? dragStartTop : endTop;
+                    boolean movedUp = endTop < startTop;
+                    boolean movedDown = endTop > startTop;
+
+                    if (DEBUG_FADE) {
+                        Log.d(TAG_FADE, "SETTLING startTop=" + startTop + " endTop=" + endTop + " movedUp=" + movedUp + " movedDown=" + movedDown);
+                    }
+
+                    if (lastStateStableWasCollapsed() && movedUp) {
+                        sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    } else if (lastStateStableWasExpanded() && movedDown) {
+                        sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    } else {
+                        // Fallback: if direction isn't clear, snap to nearest end.
+                        int top = bottomSheet.getTop();
+                        int mid = (fadeStartTopPx + fadeEndTopPx) / 2;
+                        sheetBehavior.setState(top <= mid
+                                ? BottomSheetBehavior.STATE_EXPANDED
+                                : BottomSheetBehavior.STATE_COLLAPSED);
+                    }
+
+                    dragStartTop = null;
+                }
+
+                // If some other path still results in half-expanded, force to nearest end.
+                if (newState == BottomSheetBehavior.STATE_HALF_EXPANDED) {
+                    int top = bottomSheet.getTop();
+                    int mid = (fadeStartTopPx + fadeEndTopPx) / 2;
+                    sheetBehavior.setState(top <= mid
+                            ? BottomSheetBehavior.STATE_EXPANDED
+                            : BottomSheetBehavior.STATE_COLLAPSED);
+                }
+
+                // IMPORTANT: Month/day indicator switching only occurs in stable end states.
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    applyMonthLabelMorph(0f);
+                } else if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    applyMonthLabelMorph(1f);
+                }
+
+                // Track last stable state for direction-based toggling.
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED || newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    lastStableState = newState;
+                }
+
+                lastState = newState;
+            }
+
+            private int lastStableState = BottomSheetBehavior.STATE_COLLAPSED;
+
+            private boolean lastStateStableWasCollapsed() {
+                return lastStableState == BottomSheetBehavior.STATE_COLLAPSED;
+            }
+
+            private boolean lastStateStableWasExpanded() {
+                return lastStableState == BottomSheetBehavior.STATE_EXPANDED;
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                if (binding == null) return;
+
+                cancelCalendarFadeAnimations();
+
+                // Always read from the actual controlled sheet view.
+                final View sheet = habitBottomSheetView != null ? habitBottomSheetView : bottomSheet;
+                int top = sheet.getTop();
+
+                // If bounds got stale (rotation / month header size), recompute once.
+                if (fadeEndTopPx <= 0 || fadeStartTopPx <= 0 || fadeEndTopPx >= fadeStartTopPx) {
+                    binding.getRoot().post(AnalyticsFragment.this::configureSheetHeights);
+                }
+
+                float t = computeFadeProgress(top);
+                float alpha = 1f - t;
+
+                binding.weekdaysRow.setAlpha(alpha);
+                binding.calendarDaysRecycler.setAlpha(alpha);
+
+                if (DEBUG_FADE) {
+                    Log.d(TAG_FADE, "onSlide top=" + top + " t=" + t + " alpha=" + alpha
+                            + " fadeStart=" + fadeStartTopPx + " fadeEnd=" + fadeEndTopPx
+                            + " slideOffset=" + slideOffset);
+                }
             }
         });
+    }
+
+    private void cancelCalendarFadeAnimations() {
+        if (binding == null) return;
+        binding.calendarDaysRecycler.animate().cancel();
+        binding.weekdaysRow.animate().cancel();
+        // monthLabel/dayIndicatorLabel are animated during month switch too.
+        binding.monthLabel.animate().cancel();
+        if (dayIndicatorLabel != null) {
+            dayIndicatorLabel.animate().cancel();
+        }
+    }
+
+    private float computeFadeProgress(int sheetTop) {
+        return CalendarFadeMath.computeProgress(sheetTop, fadeStartTopPx, fadeEndTopPx);
+    }
+
+    private void configureSheetHeights() {
+        if (binding == null || sheetBehavior == null) {
+            return;
+        }
+
+        final View root = binding.getRoot();
+        final View bottomSheet = habitBottomSheetView != null
+                ? habitBottomSheetView
+                : binding.habitCompletionSection.getRoot();
+
+        // If we run too early, measurements can be 0 which breaks the math.
+        if (root.getHeight() == 0 || bottomSheet.getHeight() == 0) {
+            root.post(this::configureSheetHeights);
+            return;
+        }
+
+        int calendarBottomInRoot = getBottomInAncestorCoords(binding.calendarContainer, root);
+        int navRowBottomInRoot = getBottomInAncestorCoords(binding.monthNavigationRow, root);
+
+        // Expanded offset: sheet top should stop at bottom of month navigation row.
+        // Clamp >= 0.
+        int expandedOffset = Math.max(0, navRowBottomInRoot);
+        sheetBehavior.setExpandedOffset(expandedOffset);
+
+        // Collapsed (lowest) position should be exactly at the bottom of calendar.
+        int parentHeight = root.getHeight();
+        int peekHeight = Math.max(0, parentHeight - calendarBottomInRoot);
+        sheetBehavior.setPeekHeight(peekHeight, true);
+
+        // Save fade bounds (sheet.getTop() is in the same root coords)
+        fadeStartTopPx = calendarBottomInRoot;
+        fadeEndTopPx = expandedOffset;
+
+        // Safety: if something odd happens (layout changes, wrong ancestor), prevent inverted bounds
+        // which would lock alpha at 1.
+        if (fadeEndTopPx >= fadeStartTopPx) {
+            // Try a last-resort recompute using window coordinates consistently.
+            int[] rootLoc = new int[2];
+            int[] calLoc = new int[2];
+            int[] navLoc = new int[2];
+            root.getLocationInWindow(rootLoc);
+            binding.calendarContainer.getLocationInWindow(calLoc);
+            binding.monthNavigationRow.getLocationInWindow(navLoc);
+
+            int rootY = rootLoc[1];
+            int calBottom = (calLoc[1] + binding.calendarContainer.getHeight()) - rootY;
+            int navBottom = (navLoc[1] + binding.monthNavigationRow.getHeight()) - rootY;
+
+            fadeStartTopPx = calBottom;
+            fadeEndTopPx = navBottom;
+
+            expandedOffset = Math.max(0, fadeEndTopPx);
+            sheetBehavior.setExpandedOffset(expandedOffset);
+
+            peekHeight = Math.max(0, parentHeight - fadeStartTopPx);
+            sheetBehavior.setPeekHeight(peekHeight, true);
+        }
+
+        // Force to collapsed on (re)configure so visuals are deterministic.
+        sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+        // Ensure alpha + label reflect current position after state set.
+        float t = computeFadeProgress(bottomSheet.getTop());
+        float alpha = 1f - t;
+        binding.weekdaysRow.setAlpha(alpha);
+        binding.calendarDaysRecycler.setAlpha(alpha);
+
+        if (DEBUG_FADE) {
+            Log.d(TAG_FADE, "configureSheetHeights rootH=" + root.getHeight()
+                    + " sheetTop=" + bottomSheet.getTop()
+                    + " fadeStart=" + fadeStartTopPx
+                    + " fadeEnd=" + fadeEndTopPx);
+        }
+
+        applyMonthLabelMorph(0f);
+    }
+
+    /**
+     * Returns descendant's bottom Y in ancestor's coordinate system.
+     * Works even if views aren't direct parent/child.
+     */
+    private int getBottomInAncestorCoords(@NonNull View descendant, @NonNull View ancestor) {
+        int[] descLoc = new int[2];
+        int[] ancLoc = new int[2];
+        descendant.getLocationInWindow(descLoc);
+        ancestor.getLocationInWindow(ancLoc);
+        return (descLoc[1] - ancLoc[1]) + descendant.getHeight();
+    }
+
+    private void toggleSheet() {
+        if (sheetBehavior == null) return;
+        int state = sheetBehavior.getState();
+        if (state == BottomSheetBehavior.STATE_EXPANDED) {
+            sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        } else {
+            sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        }
+    }
+
+    private void moveMonthAnimated(int offset) {
+        if (binding == null || isMonthAnimating) {
+            return;
+        }
+
+        // Only animate month transitions when the sheet is fully collapsed.
+        // Otherwise, our drag-fade callback owns alpha and animations will "win" over it.
+        if (sheetBehavior != null && sheetBehavior.getState() != BottomSheetBehavior.STATE_COLLAPSED) {
+            // Still honor the behavior rule: switching months collapses the sheet.
+            sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            applyMonthLabelMorph(0f);
+
+            // Cancel anything in-flight and switch immediately.
+            cancelCalendarFadeAnimations();
+            moveMonth(offset);
+
+            // Recompute anchors since month header height may change.
+            binding.getRoot().post(this::configureSheetHeights);
+
+            isMonthAnimating = false;
+            return;
+        }
+
+        isMonthAnimating = true;
+
+        // Always collapse the habit sheet when switching months to avoid header label overlap.
+        if (sheetBehavior != null) {
+            sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        }
+        // Force label to collapsed state immediately.
+        applyMonthLabelMorph(0f);
+
+        // Ensure previous anims don't keep controlling alpha.
+        cancelCalendarFadeAnimations();
+
+        // Fade the calendar grid/weekday row; keep month label readable but animate it separately
+        View fadeTarget = binding.calendarDaysRecycler;
+        View fadeWeekdays = binding.weekdaysRow;
+        View monthLabel = binding.monthLabel;
+
+        // Directional slide: next month slides left, prev month slides right
+        float slideDistance = monthLabel.getResources().getDisplayMetrics().density * 12f;
+        float dir = offset > 0 ? -1f : 1f;
+
+        // Stop any in-flight animations to avoid stacking if the user taps quickly
+        fadeTarget.animate().cancel();
+        fadeWeekdays.animate().cancel();
+        monthLabel.animate().cancel();
+        if (dayIndicatorLabel != null) {
+            dayIndicatorLabel.animate().cancel();
+            // Ensure overlay stays hidden during month change
+            dayIndicatorLabel.setAlpha(0f);
+        }
+
+        // Phase 1: fade/slide out current month label and fade out grid
+        monthLabel.animate()
+                .alpha(0f)
+                .translationX(dir * slideDistance)
+                .setDuration(140)
+                .start();
+
+        fadeWeekdays.animate()
+                .alpha(0f)
+                .setDuration(140)
+                .start();
+
+        fadeTarget.animate()
+                .alpha(0f)
+                .setDuration(140)
+                .withEndAction(() -> {
+                    if (binding == null) {
+                        return;
+                    }
+
+                    // Apply the month change once the old month is faded out.
+                    moveMonth(offset);
+
+                    // Recompute anchors since month header height may change.
+                    binding.getRoot().post(this::configureSheetHeights);
+
+                    // Month switching always collapses the sheet, so restore to fully visible.
+                    float targetAlpha = 1f;
+
+                    // Reset label to opposite side before sliding it in
+                    monthLabel.setTranslationX(-dir * slideDistance);
+                    monthLabel.setAlpha(0f);
+
+                    // Reset grid elements to 0 before fading in
+                    fadeWeekdays.setAlpha(0f);
+                    fadeTarget.setAlpha(0f);
+
+                    // Phase 2: fade/slide in new month label and fade in grid
+                    monthLabel.animate()
+                            .alpha(1f)
+                            .translationX(0f)
+                            .setDuration(180)
+                            .start();
+
+                    fadeWeekdays.animate()
+                            .alpha(targetAlpha)
+                            .setDuration(180)
+                            .start();
+
+                    fadeTarget.animate()
+                            .alpha(targetAlpha)
+                            .setDuration(180)
+                            .withEndAction(() -> isMonthAnimating = false)
+                            .start();
+                })
+                .start();
     }
 
     private void moveMonth(int offset) {
         currentMonth.add(Calendar.MONTH, offset);
         currentMonth.set(Calendar.DAY_OF_MONTH, 1);
         selectedDate.setTime(currentMonth.getTime());
+
+        // Update day indicator too since selected day changed
+        updateDayIndicatorText();
+
         updateMonth();
         loadHabitsForDate(selectedDate);
     }
 
     private void updateMonth() {
-        binding.monthLabel.setText(monthFormatter.format(currentMonth.getTime()));
+        updateMonthLabelText();
         List<CalendarDay> days = buildMonthDays();
         calendarAdapter.submitDays(days);
         calendarAdapter.setToday(Calendar.getInstance().getTime());
@@ -152,7 +616,15 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
 
     private HabitCompletion mapToCompletion(HabitDailyView view) {
         HabitCompletion.Status status = resolveStatus(view);
-        return new HabitCompletion(view.getTitle(), status);
+        return new HabitCompletion(
+                view.getHabitId(),
+                view.getTitle(),
+                status,
+                view.getTargetValue(),
+                view.getCurrentValue(),
+                view.getUnit(),
+                view.getStatus()
+        );
     }
 
     private HabitCompletion.Status resolveStatus(HabitDailyView view) {
@@ -165,23 +637,45 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
             if ("MISSED".equals(normalized) || "SKIPPED".equals(normalized)) {
                 return HabitCompletion.Status.MISSED;
             }
+            // If viewing a past date, treat still-pending habits as missed.
+            if ("PENDING".equals(normalized) && isSelectedDateInPast()) {
+                return HabitCompletion.Status.MISSED;
+            }
         }
         if (view.getTargetValue() > 0 && view.getCurrentValue() >= view.getTargetValue()) {
             return HabitCompletion.Status.COMPLETED;
         }
+        // If no explicit status, still apply the "pending in past -> missed" rule.
+        if (isSelectedDateInPast()) {
+            return HabitCompletion.Status.MISSED;
+        }
         return HabitCompletion.Status.PENDING;
+    }
+
+    private boolean isSelectedDateInPast() {
+        Calendar today = Calendar.getInstance();
+        // Normalize to start of day
+        today.set(Calendar.HOUR_OF_DAY, 0);
+        today.set(Calendar.MINUTE, 0);
+        today.set(Calendar.SECOND, 0);
+        today.set(Calendar.MILLISECOND, 0);
+
+        Calendar selected = (Calendar) selectedDate.clone();
+        selected.set(Calendar.HOUR_OF_DAY, 0);
+        selected.set(Calendar.MINUTE, 0);
+        selected.set(Calendar.SECOND, 0);
+        selected.set(Calendar.MILLISECOND, 0);
+
+        return selected.before(today);
     }
 
     private void applyHabitData(List<HabitCompletion> completions) {
         allHabits.clear();
         allHabits.addAll(completions);
-        habitsLoaded = 0;
-        if (binding == null || binding.habitCompletionSection == null) {
-            return;
+
+        if (habitAdapter != null) {
+            habitAdapter.submitList(new ArrayList<>(allHabits));
         }
-        LinearLayout container = binding.habitCompletionSection.habitCompletionListContainer;
-        container.removeAllViews();
-        appendMoreHabits();
     }
 
     private void seedSampleHabits() {
@@ -195,58 +689,15 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         applyHabitData(samples);
     }
 
-    private void appendMoreHabits() {
-        if (binding == null || binding.habitCompletionSection == null) {
-            return;
-        }
-        LinearLayout container = binding.habitCompletionSection.habitCompletionListContainer;
-        int nextLimit = Math.min(allHabits.size(), habitsLoaded + HABIT_BATCH_SIZE);
-        LayoutInflater inflater = LayoutInflater.from(requireContext());
-        for (int i = habitsLoaded; i < nextLimit; i++) {
-            HabitCompletion habit = allHabits.get(i);
-            View item = inflater.inflate(R.layout.item_habit_completion, container, false);
-            TextView name = item.findViewById(R.id.tv_habit_name);
-            TextView statusText = item.findViewById(R.id.tv_habit_status);
-            View icon = item.findViewById(R.id.img_status);
-            TextView pendingMarker = item.findViewById(R.id.tv_pending_marker);
-            name.setText(habit.getName());
-            statusText.setText(habit.getStatus().name());
-            updateStatusIcon(habit.getStatus(), icon, pendingMarker);
-            container.addView(item);
-        }
-        habitsLoaded = nextLimit;
-        binding.habitCompletionSection.habitFooterMessage.setVisibility(
-                habitsLoaded >= allHabits.size() ? View.GONE : View.VISIBLE
-        );
-    }
-
-    private void updateStatusIcon(HabitCompletion.Status status, View imageView, TextView pendingMarker) {
-        if (!(imageView instanceof android.widget.ImageView)) {
-            return;
-        }
-        android.widget.ImageView icon = (android.widget.ImageView) imageView;
-        switch (status) {
-            case COMPLETED:
-                pendingMarker.setVisibility(View.GONE);
-                icon.setVisibility(View.VISIBLE);
-                icon.setImageResource(R.drawable.ic_circle_check);
-                break;
-            case MISSED:
-                pendingMarker.setVisibility(View.GONE);
-                icon.setVisibility(View.VISIBLE);
-                icon.setImageResource(R.drawable.ic_close_circle);
-                break;
-            case PENDING:
-                icon.setVisibility(View.GONE);
-                pendingMarker.setVisibility(View.VISIBLE);
-                break;
-        }
-    }
 
     @Override
     public void onDaySelected(Date date) {
         selectedDate.setTime(date);
         calendarAdapter.setSelectedDate(date);
+
+        // Update the day indicator immediately when a new day is selected.
+        updateDayIndicatorText();
+
         loadHabitsForDate(selectedDate);
     }
 
@@ -254,5 +705,6 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+        dayIndicatorLabel = null;
     }
 }

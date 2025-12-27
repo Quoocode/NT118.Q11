@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider; // [MỚI]
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -21,6 +22,10 @@ import com.example.habittracker.data.repository.HabitRepository;
 import com.example.habittracker.R;
 import com.example.habittracker.data.repository.callback.StatsCallback;
 import com.example.habittracker.data.repository.callback.StreakCallback;
+// [MỚI] Import DataCallback và ViewModel
+import com.example.habittracker.data.repository.callback.DataCallback;
+import com.example.habittracker.ui.ViewModel.HabitViewModel;
+
 import com.example.habittracker.databinding.FragmentHabitDetailsBinding;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -42,6 +47,8 @@ public class HabitDetailsFragment extends Fragment {
     private FragmentHabitDetailsBinding binding;
     private NavController navController;
     private HabitRepository habitRepository;
+    // [MỚI] Thêm ViewModel để xử lý logic xóa an toàn
+    private HabitViewModel habitViewModel;
     private String habitId;
 
     private LineChart lineChart;
@@ -58,9 +65,12 @@ public class HabitDetailsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         navController = NavHostFragment.findNavController(this);
 
-        // Khởi tạo Repository
+        // Khởi tạo Repository (Giữ nguyên để load dữ liệu)
         String uid = FirebaseAuth.getInstance().getUid();
         habitRepository = new HabitRepository(uid);
+
+        // [MỚI] Khởi tạo ViewModel (Để xử lý xóa + hủy báo thức)
+        habitViewModel = new ViewModelProvider(requireActivity()).get(HabitViewModel.class);
 
         // Lấy Habit ID được gửi từ HomeFragment
         if (getArguments() != null) {
@@ -183,14 +193,20 @@ public class HabitDetailsFragment extends Fragment {
     private void performDelete() {
         if (habitId == null) return;
 
-        // Gọi hàm archiveHabit (Xóa mềm) trong Repository
-        habitRepository.archiveHabit(habitId, new SimpleCallback() {
+        // [SỬA ĐỔI QUAN TRỌNG]
+        // Thay vì gọi habitRepository.archiveHabit, ta gọi ViewModel để nó xử lý cả Hủy Báo Thức
+        habitViewModel.archiveHabit(habitId, new DataCallback<Boolean>() {
             @Override
-            public void onComplete(boolean success, Exception e) {
-                if (success) {
-                    Toast.makeText(getContext(), "Đã xóa thói quen", Toast.LENGTH_SHORT).show();
+            public void onSuccess(Boolean data) {
+                if (getContext() != null) {
+                    Toast.makeText(getContext(), "Đã xóa thói quen & hủy nhắc nhở", Toast.LENGTH_SHORT).show();
                     navController.popBackStack(); // Quay về Home sau khi xóa thành công
-                } else {
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                if (getContext() != null) {
                     Toast.makeText(getContext(), "Lỗi khi xóa: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -305,8 +321,6 @@ public class HabitDetailsFragment extends Fragment {
             }
         });
     }
-
-
 
     @Override
     public void onDestroyView() {
