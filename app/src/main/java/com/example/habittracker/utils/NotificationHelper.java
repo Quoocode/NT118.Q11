@@ -192,14 +192,18 @@ public class NotificationHelper {
         while (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
             if ("WEEKLY".equals(frequency)) {
                 calendar.add(Calendar.WEEK_OF_YEAR, 1);
-                Log.e("ALARM_DEBUG", ">> HACK WEEKLY: Cộng 1 tuần");
+                Log.d("ALARM_DEBUG", ">> HACK WEEKLY: Cộng 1 tuần");
+            }
+            else if ("MONTHLY".equals(frequency)) { // [MỚI] Xử lý Monthly riêng
+                calendar.add(Calendar.MONTH, 1);
+                Log.d("ALARM_DEBUG", ">> HACK MONTHLY: Cộng 1 tháng");
             }
             else if ("ONCE".equals(frequency)) {
-                return; // ONCE qua rồi thì thôi
+                return;
             }
-            else {
+            else { // DAILY
                 calendar.add(Calendar.DAY_OF_YEAR, 1);
-                Log.e("ALARM_DEBUG", ">> HACK DAILY/MONTHLY: Cộng 1 ngày");
+                Log.d("ALARM_DEBUG", ">> HACK DAILY: Cộng 1 ngày");
             }
         }
         // --------------------------------
@@ -407,23 +411,30 @@ public class NotificationHelper {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
-        // Bước 1: Chạy logic đuổi bắt thời gian như bình thường
+        // Bước 1: Logic đuổi bắt thời gian (SỬA LOGIC MONTHLY)
         while (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
             if ("WEEKLY".equals(frequency)) {
                 calendar.add(Calendar.WEEK_OF_YEAR, 1);
-            } else {
+            }
+            else if ("MONTHLY".equals(frequency)) { // [MỚI]
+                calendar.add(Calendar.MONTH, 1);
+            }
+            else {
                 calendar.add(Calendar.DAY_OF_YEAR, 1);
             }
         }
 
-        // Bước 2: LOGIC NHẢY CÓC (QUAN TRỌNG)
-        // Nếu sau khi tính xong mà ngày báo thức vẫn là HÔM NAY (tức là báo thức chưa kêu, user hoàn thành sớm)
-        // Thì ta bắt buộc phải cộng thêm 1 chu kỳ nữa để dời sang ngày mai/tuần sau.
+        // Bước 2: Logic nhảy cóc (Completed sớm) (SỬA LOGIC MONTHLY)
         if (isSameDay(calendar, now)) {
             if ("WEEKLY".equals(frequency)) {
                 calendar.add(Calendar.WEEK_OF_YEAR, 1);
                 Log.d("ALARM_DEBUG", "Completed sớm -> Dời Weekly sang tuần sau");
-            } else {
+            }
+            else if ("MONTHLY".equals(frequency)) { // [MỚI]
+                calendar.add(Calendar.MONTH, 1);
+                Log.d("ALARM_DEBUG", "Completed sớm -> Dời Monthly sang tháng sau");
+            }
+            else {
                 calendar.add(Calendar.DAY_OF_YEAR, 1);
                 Log.d("ALARM_DEBUG", "Completed sớm -> Dời Daily sang ngày mai");
             }
