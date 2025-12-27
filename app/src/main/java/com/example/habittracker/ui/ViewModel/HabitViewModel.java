@@ -140,4 +140,36 @@ public class HabitViewModel extends AndroidViewModel {
             }
         });
     }
+
+    // =========================================================================
+    // SOFT DELETE + HỦY BÁO THỨC
+
+    public void archiveHabit(String habitId, final DataCallback<Boolean> callback) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) return;
+
+        if (repository == null) {
+            repository = new HabitRepository(currentUser.getUid());
+        }
+
+        // 1. Gọi Repository để đánh dấu archived = true
+        // (Lưu ý: HabitRepository cần có hàm archiveHabit, tôi thấy file bạn gửi đã có hàm này dùng SimpleCallback)
+        // Chúng ta sẽ bọc nó lại để dùng DataCallback cho đồng bộ hoặc dùng trực tiếp SimpleCallback nếu muốn.
+        // Ở đây tôi viết giả định Repository dùng SimpleCallback như bạn đã có.
+
+        repository.archiveHabit(habitId, (success, error) -> {
+            if (success) {
+                Log.d("ALARM_DEBUG", "Archive DB thành công -> Tiến hành hủy báo thức.");
+
+                // 2. QUAN TRỌNG: Hủy báo thức ngay lập tức
+                NotificationHelper.cancelHabitReminder(getApplication(), habitId);
+
+                if (callback != null) callback.onSuccess(true);
+            } else {
+                Log.e("ALARM_DEBUG", "Lỗi Archive DB: " + (error != null ? error.getMessage() : "Unknown"));
+                if (callback != null) callback.onFailure(error);
+            }
+        });
+    }
+    // =========================================================================
 }
