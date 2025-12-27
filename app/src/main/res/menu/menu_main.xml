@@ -17,6 +17,11 @@
         android:title="Calendar" />
 
     <item
+        android:id="@+id/achievementsFragment"
+        android:icon="@drawable/ic_achiv_medal_badge_achievement"
+        android:title="Achievements" />
+
+    <item
         android:id="@+id/settingsFragment"
         android:icon="@drawable/ic_settings"
         android:title="Settings" />

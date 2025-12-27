@@ -31,6 +31,8 @@ import java.util.concurrent.Executors;
 import androidx.credentials.CustomCredential;
 import androidx.credentials.GetCredentialResponse;
 import androidx.credentials.CredentialManagerCallback;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 public class LoginFragment extends Fragment {
 
@@ -59,7 +61,12 @@ public class LoginFragment extends Fragment {
         // 4. Khởi tạo NavController
         // (Rất quan trọng! Nếu 'navController' bị null, app sẽ crash)
         navController = NavHostFragment.findNavController(this);
-
+        // AUTO LOGIN
+//        FirebaseUser currentUser = mAuth.getCurrentUser();
+//        if (currentUser != null) {
+//            navController.navigate(R.id.action_loginFragment_to_homeFragment);
+//            return;
+//        }
         // TODO: Khởi tạo AuthViewModel
         // authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
 
@@ -79,12 +86,23 @@ public class LoginFragment extends Fragment {
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Toast.makeText(getContext(), "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
-                            navController.navigate(R.id.action_loginFragment_to_homeFragment);
+
+                            if (user != null && user.isEmailVerified()) {
+                                Toast.makeText(getContext(), "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+                                navController.navigate(R.id.action_loginFragment_to_homeFragment);
+                            } else {
+                                Toast.makeText(
+                                        getContext(),
+                                        "Vui lòng xác thực email trước khi đăng nhập!",
+                                        Toast.LENGTH_LONG
+                                ).show();
+                                mAuth.signOut();
+                            }
                         } else {
-                            Toast.makeText(getContext(), "Đăng nhập thất bại!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Sai email hoặc mật khẩu!", Toast.LENGTH_SHORT).show();
                         }
                     });
+
 //            // TODO: Gọi authViewModel.login(email, password)
 //            Toast.makeText(getContext(), "Đang đăng nhập...", Toast.LENGTH_SHORT).show();
 //
@@ -120,16 +138,38 @@ public class LoginFragment extends Fragment {
         // === ĐÂY LÀ PHẦN SỬA LỖI CỦA BẠN ===
         // Chữ "Continue as Guest" (ID: container_login_40)
         binding.containerLogin40.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Tiếp tục với tư cách Khách", Toast.LENGTH_SHORT).show();
-
-            // Chuyển đến trang chính (HomeFragment)
-            // (ID 'action_loginFragment_to_homeFragment' phải tồn tại trong nav_graph.xml)
-            navController.navigate(R.id.action_loginFragment_to_homeFragment);
+            mAuth.signInAnonymously()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            Toast.makeText(getContext(), "Đăng nhập với tư cách Khách", Toast.LENGTH_SHORT).show();
+                            navController.navigate(R.id.action_loginFragment_to_homeFragment);
+                        } else {
+                            Toast.makeText(getContext(), "Guest login thất bại!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
         });
+
     }
 
+    private boolean isPlayServicesAvailable() {
+        try {
+            int status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(requireContext());
+            return status == ConnectionResult.SUCCESS;
+        } catch (Throwable t) {
+            // Very defensive: in case Play Services libs are missing/misconfigured.
+            Log.e(TAG, "Play Services availability check failed", t);
+            return false;
+        }
+    }
 
     private void signInWithGoogle() {
+        // If device/emulator doesn't have working Google Play services, Google sign-in will fail.
+        if (!isPlayServicesAvailable()) {
+            Toast.makeText(getContext(), "Thiết bị chưa có Google Play services (hoặc bị lỗi). Hãy dùng Email/Guest hoặc thử emulator 'Google Play'.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         String serverClientId = getString(R.string.default_web_client_id);
 
         // 🌟 SỬ DỤNG API CHO NÚT SIGN-IN (dialog)

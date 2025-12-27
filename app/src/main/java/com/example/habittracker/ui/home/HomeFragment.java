@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +20,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.habittracker.R;
+import com.example.habittracker.data.achievements.AchievementService;
 import com.example.habittracker.data.repository.callback.StreakCallback;
 import com.example.habittracker.databinding.FragmentHomeBinding;
 
@@ -36,8 +36,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import android.widget.GridLayout;
-
 public class HomeFragment extends Fragment {
 
     private static final String TAG = "HomeFragment";
@@ -49,59 +47,13 @@ public class HomeFragment extends Fragment {
     private DashboardHabitAdapter habitAdapter;
     private final List<HabitDailyView> todayHabitList = new ArrayList<>();
     private String currentUserId;
+    private AchievementService achievementService;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         return binding.getRoot();
-    }
-
-    private void setupAchievementsToggle() {
-        if (binding == null) return;
-        View achievementsRoot = binding.getRoot().findViewById(R.id.include_achievements);
-        if (achievementsRoot == null) return;
-
-        // dummy placeholder
-        DummyBadgeForTesting(achievementsRoot);
-
-        View horizontalContainer = achievementsRoot.findViewById(R.id.badges_list_container);
-        View gridContainer = achievementsRoot.findViewById(R.id.badge_grid_container);
-        ImageButton expandButton = achievementsRoot.findViewById(R.id.btn_badge_expand);
-        Button collapseButton = achievementsRoot.findViewById(R.id.btn_badge_collapse);
-
-        if (horizontalContainer == null || gridContainer == null || expandButton == null || collapseButton == null) {
-            return;
-        }
-
-        collapseButton.setOnClickListener(v -> collapseBadges(horizontalContainer, gridContainer, expandButton));
-        expandButton.setOnClickListener(v -> expandBadges(horizontalContainer, gridContainer, expandButton));
-    }
-
-    private void expandBadges(View horizontalContainer, View gridContainer, ImageButton expandButton) {
-        horizontalContainer.animate().alpha(0f).setDuration(150).withEndAction(() -> {
-            horizontalContainer.setVisibility(View.GONE);
-            gridContainer.setAlpha(0f);
-            gridContainer.setTranslationY(16f);
-            gridContainer.setVisibility(View.VISIBLE);
-            gridContainer.animate().alpha(1f).translationY(0f).setDuration(200).start();
-        }).start();
-        rotateChevron(expandButton, 180f);
-    }
-
-    private void collapseBadges(View horizontalContainer, View gridContainer, ImageButton expandButton) {
-        gridContainer.animate().alpha(0f).translationY(16f).setDuration(150).withEndAction(() -> {
-            gridContainer.setVisibility(View.GONE);
-            horizontalContainer.setAlpha(0f);
-            horizontalContainer.setVisibility(View.VISIBLE);
-            horizontalContainer.animate().alpha(1f).setDuration(200).start();
-        }).start();
-        rotateChevron(expandButton, 0f);
-    }
-
-    private void rotateChevron(ImageButton button, float toDegrees) {
-        if (button == null) return;
-        button.animate().rotation(toDegrees).setDuration(150).start();
     }
 
     @Override
@@ -113,6 +65,8 @@ public class HomeFragment extends Fragment {
         currentUserId = FirebaseAuth.getInstance().getUid();
         habitRepository = new HabitRepository(currentUserId);
 
+        achievementService = new AchievementService(requireContext());
+
         // 2. Thiết lập RecyclerView
         setupRecyclerView();
 
@@ -123,7 +77,6 @@ public class HomeFragment extends Fragment {
         );
         loadStreakData();
         loadDailyProgress();
-        setupAchievementsToggle();
     }
 
     private void setupRecyclerView() {
@@ -182,6 +135,11 @@ public class HomeFragment extends Fragment {
                     if (item instanceof HabitDailyView) {
                         todayHabitList.add((HabitDailyView) item);
                     }
+                }
+
+                // Achievement: evaluate today's snapshot (all done, perfect day tracking, streak thresholds)
+                if (achievementService != null) {
+                    achievementService.onDaySnapshot(Calendar.getInstance(), todayHabitList);
                 }
 
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -275,72 +233,5 @@ public class HomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
-    }
-
-    private void DummyBadgeForTesting(View achievementsRoot) {
-        LinearLayout list = achievementsRoot.findViewById(R.id.badges_horizontal_list);
-        if (list == null || getContext() == null) return;
-
-        list.removeAllViews();
-
-        int[] icons = new int[]{
-                R.drawable.ic_cup,
-                R.drawable.ic_fire,
-                R.drawable.ic_plus,
-                R.drawable.ic_cup,
-                R.drawable.ic_fire,
-                R.drawable.ic_plus,
-                R.drawable.ic_cup,
-                R.drawable.ic_fire,
-                R.drawable.ic_plus
-        };
-        String[] titles = new String[]{
-                "Starter",
-                "3-day",
-                "Creator",
-                "Consistency",
-                "7-day",
-                "Upgrader",
-                "Milestone",
-                "Streaker",
-                "Collector"
-        };
-
-        LayoutInflater inflater = LayoutInflater.from(requireContext());
-        for (int i = 0; i < titles.length; i++) {
-            View item = inflater.inflate(R.layout.item_badge_placeholder, list, false);
-
-            ImageView icon = item.findViewById(R.id.badge_icon);
-            TextView title = item.findViewById(R.id.badge_title);
-
-            if (icon != null) icon.setImageResource(icons[i % icons.length]);
-            if (title != null) title.setText(titles[i]);
-
-            list.addView(item);
-        }
-
-        GridLayout grid = achievementsRoot.findViewById(R.id.badges_grid);
-        if (grid != null) {
-            grid.removeAllViews();
-
-            for (int i = 0; i < titles.length; i++) {
-                View gridItem = inflater.inflate(R.layout.item_badge_placeholder, grid, false);
-
-                ImageView icon = gridItem.findViewById(R.id.badge_icon);
-                TextView title = gridItem.findViewById(R.id.badge_title);
-
-                if (icon != null) icon.setImageResource(icons[i % icons.length]);
-                if (title != null) title.setText(titles[i]);
-
-                GridLayout.LayoutParams lp = new GridLayout.LayoutParams();
-                lp.width = 0;
-                lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-                lp.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
-                lp.setMargins(8, 8, 8, 8);
-                gridItem.setLayoutParams(lp);
-
-                grid.addView(gridItem);
-            }
-        }
     }
 }

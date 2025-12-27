@@ -45,7 +45,6 @@
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
     <string name="habit_completion_title">Habit Completion</string>
-    <string name="habit_scroll_hint">Scroll to load more habits</string>
     <string name="error_auth_required">Please sign in to view your calendar.</string>
     <string name="error_load_habits">Unable to load habits: %1$s</string>
 </resources>

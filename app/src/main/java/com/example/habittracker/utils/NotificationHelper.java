@@ -105,20 +105,14 @@ public class NotificationHelper {
         // -------------------------------------------
 
         if (alarmManager != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                alarmManager.setExactAndAllowWhileIdle(
-                        AlarmManager.RTC_WAKEUP,
-                        calendar.getTimeInMillis(),
-                        pendingIntent
-                );
-            } else {
-                alarmManager.setExact(
-                        AlarmManager.RTC_WAKEUP,
-                        calendar.getTimeInMillis(),
-                        pendingIntent
-                );
-            }
-            Log.d("ALARM_DEBUG", "Đã đặt lịch Daily Briefing chính xác lúc " + calendar.getTime().toString());
+            scheduleAlarmSafely(
+                    context,
+                    alarmManager,
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.getTimeInMillis(),
+                    pendingIntent
+            );
+            Log.d("ALARM_DEBUG", "Đã đặt lịch Daily Briefing lúc " + calendar.getTime().toString());
         }
     }
 
@@ -178,6 +172,7 @@ public class NotificationHelper {
         calendar.setTime(startDate); // Lấy ngày tháng năm bắt đầu làm gốc
 
         // Gán giờ nhắc vào ngày đó
+        // Lưu ý: Logic này sẽ lấy ngày/tháng/năm hiện tại để làm mốc so sánh cho lần chạy đầu tiên
         Calendar now = Calendar.getInstance();
         calendar.set(Calendar.YEAR, now.get(Calendar.YEAR));
         calendar.set(Calendar.MONTH, now.get(Calendar.MONTH));
@@ -186,11 +181,15 @@ public class NotificationHelper {
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, minute);
         calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0); // Reset mili giây để so sánh chuẩn
 
         // --- ĐOẠN HACK LOGIC THỜI GIAN ---
+        // Sử dụng WHILE để đảm bảo thời gian tính ra luôn ở tương lai (Fix lỗi lặp vô tận)
         while (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
+
             if ("WEEKLY".equals(frequency)) {
+                // Code thật: calendar.add(Calendar.WEEK_OF_YEAR, 1);
+//                calendar.add(Calendar.MINUTE, 1); // HACK: 1 Tuần = 1 Phút
                 calendar.add(Calendar.WEEK_OF_YEAR, 1);
                 Log.d("ALARM_DEBUG", ">> HACK WEEKLY: Cộng 1 tuần");
             }
@@ -199,11 +198,14 @@ public class NotificationHelper {
                 Log.d("ALARM_DEBUG", ">> HACK MONTHLY: Cộng 1 tháng");
             }
             else if ("ONCE".equals(frequency)) {
-                return;
+                return; // ONCE qua rồi thì thôi
             }
-            else { // DAILY
+            else {
+                // DAILY và MONTHLY
+                // Code thật: calendar.add(Calendar.DAY_OF_YEAR, 1);
+//                calendar.add(Calendar.MINUTE, 1); // HACK: 1 Ngày = 1 Phút
                 calendar.add(Calendar.DAY_OF_YEAR, 1);
-                Log.d("ALARM_DEBUG", ">> HACK DAILY: Cộng 1 ngày");
+                Log.e("ALARM_DEBUG", ">> HACK DAILY/MONTHLY: Cộng 1 phút (giả lập 1 ngày)");
             }
         }
         // --------------------------------
@@ -214,8 +216,10 @@ public class NotificationHelper {
         intent.putExtra("HABIT_ID", habitId);
         intent.putExtra("HABIT_FREQ_TYPE", frequency);
         intent.putExtra("HABIT_START_DATE", startDate.getTime());
+        // Truyền timeString để Receiver biết đường gọi lại hàm này
         intent.putExtra("HABIT_TIME_STRING", timeString);
 
+        // ID Báo thức duy nhất
         int alarmId = habitId.hashCode();
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
@@ -227,31 +231,18 @@ public class NotificationHelper {
 
         long triggerTime = calendar.getTimeInMillis();
 
-        // --- [FIX CRASH] LOGIC KIỂM TRA QUYỀN VÀ PHIÊN BẢN ---
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            // Android 12 (API 31) trở lên: Bắt buộc kiểm tra quyền canScheduleExactAlarms
-            if (alarmManager.canScheduleExactAlarms()) {
-                Log.d("ALARM_DEBUG", "Android 12+: Có quyền Exact Alarm -> Đặt chính xác.");
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
-            } else {
-                Log.w("ALARM_DEBUG", "Android 12+: Thiếu quyền Exact Alarm -> Fallback sang setAndAllowWhileIdle (Kém chính xác hơn) để tránh Crash.");
-                // Fallback an toàn: Không chính xác tuyệt đối nhưng đảm bảo App không chết
-                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
-            }
-        }
-        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            // Android 6 đến 11: Thoải mái dùng setExactAndAllowWhileIdle
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
-        }
-        else {
-            // Android cũ hơn
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
-        }
+        scheduleAlarmSafely(
+                context,
+                alarmManager,
+                AlarmManager.RTC_WAKEUP,
+                triggerTime,
+                pendingIntent
+        );
 
         Log.d("ALARM_DEBUG", "Đã đặt lịch Habit (" + frequency + ") cho: " + title + " lúc " + calendar.getTime().toString());
     }
 
-    // Hủy lịch cho Thói quen
+    // Hủy lịch cho Thói quen (Dùng khi Edit/Delete)
     public static void cancelHabitReminder(Context context, String habitId) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, HabitAlarmReceiver.class);
@@ -269,7 +260,10 @@ public class NotificationHelper {
         }
     }
 
-    // Hủy hàng loạt khi Logout
+    // =========================================================================
+    // 4. [MỚI] HÀM HỖ TRỢ LOGOUT/LOGIN HÀNG LOẠT
+    // =========================================================================
+
     public static void cancelAllHabitReminders(Context context, List<Habit> habitList) {
         if (habitList == null || habitList.isEmpty()) return;
 
@@ -283,6 +277,7 @@ public class NotificationHelper {
 
     // Đặt lại hàng loạt khi Login
     public static void scheduleAllHabitReminders(Context context, List<Habit> habitList) {
+        // 1. Log ngay khi vào hàm để biết hàm có ĐƯỢC GỌI hay không
         if (habitList == null) {
             Log.e("ALARM_DEBUG", "!!! scheduleAllHabitReminders bị gọi với habitList là NULL");
             return;
@@ -290,6 +285,7 @@ public class NotificationHelper {
 
         Log.d("ALARM_DEBUG", "--> Bắt đầu scheduleAllHabitReminders. Số lượng: " + habitList.size());
 
+        // 2. Kiểm tra danh sách rỗng (Nguyên nhân chính thường gặp)
         if (habitList.isEmpty()) {
             Log.w("ALARM_DEBUG", "!!! Danh sách thói quen RỖNG. Không có gì để đặt báo thức.");
             return;
@@ -297,6 +293,7 @@ public class NotificationHelper {
 
         int count = 0;
         for (Habit habit : habitList) {
+            // Log kiểm tra từng phần tử xem có bị lọt điều kiện if không
             if (habit.getId() != null &&
                     habit.getReminderTime() != null &&
                     !habit.getReminderTime().isEmpty() &&
@@ -317,7 +314,8 @@ public class NotificationHelper {
                 );
                 count++;
             } else {
-                Log.d("ALARM_DEBUG", "Bỏ qua thói quen: " + habit.getTitle());
+                // Log nếu thói quen bị bỏ qua (để biết tại sao count không tăng)
+                Log.d("ALARM_DEBUG", "Bỏ qua thói quen: " + habit.getTitle() + " (Do thiếu ID, ReminderTime hoặc đã Archive)");
             }
         }
         Log.d("ALARM_DEBUG", "Đã đặt lại báo thức thành công cho " + count + " thói quen.");
@@ -503,4 +501,102 @@ public class NotificationHelper {
         }
     }
 
+    // =========================================================================
+    // 0. EXACT ALARM SAFETY (Android 12+)
+    // =========================================================================
+
+    private static boolean canScheduleExactAlarms(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            return alarmManager != null && alarmManager.canScheduleExactAlarms();
+        }
+        return true;
+    }
+
+    /** Public helper so UI layers can check whether exact alarms are currently allowed (Android 12+). */
+    public static boolean isExactAlarmAllowed(Context context) {
+        return canScheduleExactAlarms(context);
+    }
+
+    /**
+     * Show a dialog that deep-links to the system screen to allow exact alarms (Android 12+).
+     *
+     * Safe no-op on Android < 12.
+     */
+    public static void showExactAlarmPermissionDialog(Context context) {
+        if (context == null) return;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return;
+
+        // If already allowed, no need to interrupt.
+        if (canScheduleExactAlarms(context)) return;
+
+        try {
+            new androidx.appcompat.app.AlertDialog.Builder(context)
+                    .setTitle("Cho phép báo thức đúng giờ")
+                    .setMessage("Để nhắc thói quen đúng giờ, ứng dụng cần quyền 'Báo thức chính xác'. Bạn có muốn mở Cài đặt để bật không?")
+                    .setPositiveButton("Mở cài đặt", (dialog, which) -> {
+                        try {
+                            Intent intent = new Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                            intent.setData(android.net.Uri.parse("package:" + context.getPackageName()));
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            context.startActivity(intent);
+                        } catch (Throwable t) {
+                            Log.e("ALARM_DEBUG", "Failed to open exact alarm settings", t);
+                        }
+                    })
+                    .setNegativeButton("Để sau", null)
+                    .show();
+        } catch (Throwable t) {
+            // If context isn't an Activity-themed context, AlertDialog can fail.
+            Log.e("ALARM_DEBUG", "Failed to show exact alarm permission dialog", t);
+        }
+    }
+
+    /**
+     * Schedules an alarm without crashing on Android 12+ when exact-alarm permission is denied.
+     *
+     * If exact alarms are allowed -> uses setExactAndAllowWhileIdle/setExact.
+     * Otherwise -> uses an inexact fallback (setAndAllowWhileIdle/set).
+     */
+    @SuppressLint("ScheduleExactAlarm")
+    private static void scheduleAlarmSafely(Context context,
+                                           AlarmManager alarmManager,
+                                           int alarmType,
+                                           long triggerAtMillis,
+                                           PendingIntent pendingIntent) {
+        if (alarmManager == null) return;
+
+        boolean allowExact = canScheduleExactAlarms(context);
+        try {
+            if (allowExact) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alarmManager.setExactAndAllowWhileIdle(alarmType, triggerAtMillis, pendingIntent);
+                } else {
+                    alarmManager.setExact(alarmType, triggerAtMillis, pendingIntent);
+                }
+            } else {
+                // Fallback: still schedule a reminder, but not exact.
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alarmManager.setAndAllowWhileIdle(alarmType, triggerAtMillis, pendingIntent);
+                } else {
+                    alarmManager.set(alarmType, triggerAtMillis, pendingIntent);
+                }
+                Log.w("ALARM_DEBUG", "Exact alarm permission denied; scheduled inexact alarm instead.");
+            }
+        } catch (SecurityException se) {
+            // Double safety: some OEMs/devices can still throw even if canScheduleExactAlarms() returns true.
+            Log.e("ALARM_DEBUG", "SecurityException while scheduling alarm; falling back to inexact.", se);
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alarmManager.setAndAllowWhileIdle(alarmType, triggerAtMillis, pendingIntent);
+                } else {
+                    alarmManager.set(alarmType, triggerAtMillis, pendingIntent);
+                }
+            } catch (Throwable t) {
+                Log.e("ALARM_DEBUG", "Failed to schedule even fallback alarm.", t);
+            }
+        }
+    }
+
 }
+
