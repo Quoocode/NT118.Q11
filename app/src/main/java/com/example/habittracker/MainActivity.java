@@ -42,6 +42,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
 
+        // Local-only achievement: record app open for Welcome Back.
+        // This must run from app lifecycle, not from the Achievements screen.
+        try {
+            new com.example.habittracker.data.achievements.AchievementsRepository(this)
+                    .recordAppOpenAndMaybeWelcomeBack();
+        } catch (Exception ignored) {
+            // avoid crash loops if prefs are corrupted
+        }
+
         // 1. Sử dụng ViewBinding để liên kết layout "activity_main.xml"
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -146,6 +155,14 @@ public class MainActivity extends AppCompatActivity {
             if (user != null) {
                 // Đây là "Cái Chuông" reo khi Login (kể cả Hot Swap)
                 Log.d("ALARM_DEBUG", "AuthStateListener: Phát hiện User mới đăng nhập: " + user.getUid());
+
+                // Also record an open event scoped to this user (so Welcome Back works per-account).
+                try {
+                    new com.example.habittracker.data.achievements.AchievementsRepository(MainActivity.this)
+                            .recordAppOpenAndMaybeWelcomeBack();
+                } catch (Exception ignored) {
+                    // ignore
+                }
 
                 // Gọi ViewModel tải lại dữ liệu ngay lập tức
                 if (habitViewModel != null) {

@@ -156,7 +156,7 @@ public class AchievementsFragment extends Fragment {
         horizontal.removeAllViews();
         grid.removeAllViews();
 
-        // Requirement: show 3 achieved ones first on the collapsed view.
+        // Split unlocked vs locked (used for the grid ordering).
         List<AchievementUiModel> unlocked = new ArrayList<>();
         List<AchievementUiModel> locked = new ArrayList<>();
         for (AchievementUiModel m : list) {
@@ -164,18 +164,16 @@ public class AchievementsFragment extends Fragment {
             else locked.add(m);
         }
 
-        List<AchievementUiModel> collapsedList = new ArrayList<>();
-        for (int i = 0; i < Math.min(3, unlocked.size()); i++) collapsedList.add(unlocked.get(i));
-        collapsedList.addAll(locked);
-
         LayoutInflater inflater = LayoutInflater.from(requireContext());
 
-        for (AchievementUiModel m : collapsedList) {
+        // Collapsed horizontal preview: show the full ordered list (no artificial "top 3" limit).
+        for (AchievementUiModel m : list) {
             View item = inflater.inflate(R.layout.item_badge_placeholder, horizontal, false);
             bindBadgeItem(item, m);
             horizontal.addView(item);
         }
 
+        // Expanded grid: keep unlocked first then locked.
         List<AchievementUiModel> gridList = new ArrayList<>();
         gridList.addAll(unlocked);
         gridList.addAll(locked);

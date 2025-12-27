@@ -53,12 +53,7 @@ public class AchievementsViewModel extends AndroidViewModel {
 
         sharedPreferences.registerOnSharedPreferenceChangeListener(listener);
 
-        try {
-            // Welcome-back check is a local-only event.
-            repo.recordAppOpenAndMaybeWelcomeBack();
-        } catch (Exception ignored) {
-            // Avoid crash loop on corrupted prefs.
-        }
+        // Welcome-back check is triggered from app lifecycle (MainActivity), not from this tab.
 
         refresh();
     }
