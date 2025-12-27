@@ -86,6 +86,11 @@ public class AddEditHabitFragment extends Fragment {
 
         // 1. Init Repository
         String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null || uid.trim().isEmpty()) {
+            Toast.makeText(getContext(), "Please sign in again.", Toast.LENGTH_SHORT).show();
+            navController.popBackStack();
+            return;
+        }
         habitRepository = new HabitRepository(uid);
 
         selectedStartDate = Calendar.getInstance();
@@ -366,6 +371,21 @@ public class AddEditHabitFragment extends Fragment {
             NotificationHelper.debugAlarmPermission(requireContext());
             Log.d("TEST_REMINDER", ">> ID OK: " + habitId);
 
+            // Build a Habit instance for alarm helpers that require the whole object.
+            Map<String, Object> freqMap = new HashMap<>();
+            freqMap.put("type", selectedFrequency);
+            Habit habitForAlarm = new Habit(
+                    habitTitle,
+                    binding.editHabitDesc.getText() != null ? binding.editHabitDesc.getText().toString().trim() : "",
+                    selectedIconName,
+                    binding.editHabitUnit.getText() != null ? binding.editHabitUnit.getText().toString().trim() : "",
+                    freqMap,
+                    selectedReminderTime,
+                    new Timestamp(selectedStartDate.getTime()),
+                    0
+            );
+            habitForAlarm.setId(habitId);
+
             // Kiểm tra xem user có đặt giờ không
             if (selectedReminderTime != null && !selectedReminderTime.isEmpty()) {
 
@@ -380,7 +400,7 @@ public class AddEditHabitFragment extends Fragment {
                         if (isCompleted) {
                             Log.d("TEST_REMINDER", ">> Đã làm xong -> Dời lịch sang ngày mai với giờ mới.");
                             // Tự động tính toán ngày mai với giờ mới
-                            NotificationHelper.updateAlarmBasedOnStatus(requireContext(), habit, true);
+                            NotificationHelper.updateAlarmBasedOnStatus(requireContext(), habitForAlarm, true);
                         } else {
                             Log.d("TEST_REMINDER", ">> Chưa làm -> Đặt lịch bình thường (Hôm nay nếu kịp).");
                             // Đặt lịch bình thường
@@ -423,7 +443,7 @@ public class AddEditHabitFragment extends Fragment {
         }
         Log.d("TEST_REMINDER", "--------------------------");
 
-        navController.popBackStack();
+        // NOTE: Don't pop here; we already pop in the branches above.
     }
 
     private void updateStartDateText() {
@@ -437,3 +457,4 @@ public class AddEditHabitFragment extends Fragment {
         binding = null;
     }
 }
+

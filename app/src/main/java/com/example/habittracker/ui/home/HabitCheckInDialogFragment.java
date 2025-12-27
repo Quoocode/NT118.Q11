@@ -202,6 +202,11 @@ public class HabitCheckInDialogFragment extends DialogFragment {
                 @Override
                 public void onSuccess(Boolean data) {
                     Toast.makeText(getContext(), "Updated!", Toast.LENGTH_SHORT).show();
+                    double targetValue = args.getDouble(ARG_TARGET);
+
+                    if (achievementService != null) {
+                        achievementService.onCheckInCommitted(newStatus, newValue, targetValue);
+                    }
                     if (listener != null) {
                         listener.onCheckInCompleted();
                     }
