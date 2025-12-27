@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- === MÀU GỐC (Copy sang để tránh lỗi reference) === -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="blue">#FF1280ED</color>
+    <color name="navi">#FF243647</color>
+
+    <!-- === MÀU CHỨC NĂNG (Override giá trị cho Dark Mode) === -->
+
+    <!-- 1. Màu Thương Hiệu -->
+    <color name="brand_blue">@color/blue</color>
+
+    <!-- 2. Nền (Backgrounds) - TỐI -->
+    <color name="app_background_color">#111827</color>       <!-- Đen xanh thẫm -->
+    <color name="card_background_color">@color/navi</color>  <!-- Xanh navi -->
+
+    <!-- 3. Chữ (Texts) - TỐI -->
+    <color name="text_primary_color">#FFFFFF</color>         <!-- Trắng -->
+    <color name="text_secondary_color">#91ADC9</color>       <!-- Xám xanh -->
+
+    <!-- 4. Selector & Icon (Nút chọn) - TỐI -->
+    <color name="selector_selected_color">@color/brand_blue</color>
+    <color name="selector_unselected_color">#2D3748</color>  <!-- Xám đậm -->
+
+    <!-- 5. Progress Bar - TỐI -->
+    <color name="progress_track_color">#37474F</color>       <!-- Nền thanh tối -->
+    <color name="progress_indicator_color">@color/brand_blue</color>
+
+</resources>

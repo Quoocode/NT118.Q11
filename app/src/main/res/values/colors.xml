@@ -1,8 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- === MÀU GỐC (Base Colors) === -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="blue">#FF1280ED</color>
     <color name="navi">#FF243647</color>
-</resources>
 
+    <!-- === MÀU CHỨC NĂNG (Dùng chung tên biến) === -->
+
+    <!-- 1. Màu Thương Hiệu -->
+    <color name="brand_blue">@color/blue</color>
+
+    <!-- 2. Nền (Backgrounds) - SÁNG -->
+    <color name="app_background_color">#FFFFFF</color>       <!-- Trắng -->
+    <color name="card_background_color">#F5F5F5</color>      <!-- Xám rất nhạt -->
+
+    <!-- 3. Chữ (Texts) - SÁNG -->
+    <color name="text_primary_color">#000000</color>         <!-- Đen -->
+    <color name="text_secondary_color">#757575</color>       <!-- Xám -->
+
+    <!-- 4. Selector & Icon (Nút chọn) - SÁNG -->
+    <color name="selector_selected_color">@color/brand_blue</color>
+    <color name="selector_unselected_color">#E0E0E0</color>  <!-- Xám nhạt -->
+
+    <!-- 5. Progress Bar - SÁNG -->
+    <color name="progress_track_color">#E0E0E0</color>       <!-- Nền thanh sáng -->
+    <color name="progress_indicator_color">@color/brand_blue</color>
+
+</resources>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="72dp"
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
@@ -9,7 +10,11 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="72dp"
-        android:background="@drawable/container_navi">
+        android:background="@drawable/container_navi"
+        android:backgroundTint="?attr/colorSurfaceContainer">
+        <!--
+             backgroundTint: Đổi màu nền container theo theme
+        -->
 
         <ImageView
             android:id="@+id/badge_icon"
@@ -19,7 +24,9 @@
             android:contentDescription="Badge placeholder"
             android:padding="6dp"
             android:scaleType="centerInside"
-            android:src="@drawable/ic_cup" />
+            android:src="@drawable/ic_cup"
+            app:tint="?android:attr/textColorPrimary"/>
+        <!-- Tint icon theo màu chữ chính -->
     </FrameLayout>
 
     <TextView
@@ -30,8 +37,8 @@
         android:gravity="center"
         android:maxLines="1"
         android:text="Badge title"
-        android:textColor="#FFFFFFFF"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="12sp" />
+    <!-- textColorPrimary -> Sáng: Đen / Tối: Trắng -->
 
 </LinearLayout>
-

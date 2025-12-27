@@ -4,16 +4,27 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
     android:background="@drawable/container_login_2"
+    android:backgroundTint="?attr/colorSurface"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:padding="12dp">
+
+    <!--
+         backgroundTint="?attr/colorSurface"
+         -> Sáng: Xám nhạt (#F5F5F5) / Tối: Xanh đen navi
+    -->
 
     <LinearLayout
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:background="@drawable/container_navi"
+        android:backgroundTint="?attr/colorSurfaceContainer"
         android:gravity="center"
         android:orientation="vertical">
+        <!--
+             backgroundTint="?attr/colorSurfaceContainer"
+             -> Đổi màu nền icon container theo theme
+        -->
 
         <ImageView
             android:id="@+id/img_status"
@@ -21,7 +32,9 @@
             android:layout_height="24dp"
             android:contentDescription="@null"
             android:scaleType="centerInside"
-            android:src="@drawable/ic_circle_check" />
+            android:src="@drawable/ic_circle_check"
+            android:tint="?android:attr/textColorPrimary"/>
+        <!-- Tint icon theo màu chữ chính -->
 
         <TextView
             android:id="@+id/tv_pending_marker"
@@ -29,7 +42,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="-"
-            android:textColor="@android:color/white"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="16sp"
             android:visibility="gone" />
     </LinearLayout>
@@ -46,17 +59,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Habit name"
-            android:textColor="@android:color/white"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="16sp"
             android:textStyle="bold" />
+        <!-- textColorPrimary -> Sáng: Đen / Tối: Trắng -->
 
         <TextView
             android:id="@+id/tv_habit_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Completed"
-            android:textColor="#FF91ADC9"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp" />
+        <!-- textColorSecondary -> Sáng: Xám / Tối: Xám xanh -->
     </LinearLayout>
 </LinearLayout>
-

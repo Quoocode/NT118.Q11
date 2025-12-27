@@ -6,8 +6,13 @@
     android:id="@+id/container_summary_scroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/container_login_2"
+    android:background="?android:attr/windowBackground"
     android:fillViewport="true">
+
+    <!--
+         android:background="?android:attr/windowBackground"
+         -> Sáng: Trắng / Tối: Đen xanh (#111827)
+    -->
 
     <LinearLayout
         android:id="@+id/container_summary"
@@ -23,6 +28,7 @@
             android:gravity="left|top"
             android:orientation="vertical">
 
+            <!-- Header: Back & Title -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -35,7 +41,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_arrow_left"
-                    app:tint="@color/white"
+                    app:tint="?android:attr/textColorPrimary"
                     android:background="?attr/selectableItemBackgroundBorderless"/>
 
                 <TextView
@@ -45,33 +51,37 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     tools:text="Morning Run"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="20sp"
                     android:textStyle="bold"/>
 
                 <View android:layout_width="24dp" android:layout_height="24dp"/>
             </LinearLayout>
 
+            <!-- Stats Row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="16dp">
 
+                <!-- Current Streak -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@drawable/container_navi"
+                    android:backgroundTint="?attr/colorSurfaceContainer"
                     android:orientation="vertical"
                     android:padding="16dp"
                     android:layout_marginEnd="4dp">
+                    <!-- backgroundTint: Đổi màu nền container theo theme -->
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="This\nWeek"
-                        android:textColor="#B0B0B0"
+                        android:textColor="?android:attr/textColorSecondary"
                         android:textSize="12sp" />
 
                     <TextView
@@ -80,16 +90,18 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         tools:text="3"
-                        android:textColor="#FFFFFF"
+                        android:textColor="?android:attr/textColorPrimary"
                         android:textSize="24sp"
                         android:textStyle="bold"/>
                 </LinearLayout>
 
+                <!-- This Month -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@drawable/container_navi"
+                    android:backgroundTint="?attr/colorSurfaceContainer"
                     android:orientation="vertical"
                     android:padding="16dp"
                     android:layout_marginHorizontal="4dp">
@@ -98,7 +110,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="This\nMonth"
-                        android:textColor="#B0B0B0"
+                        android:textColor="?android:attr/textColorSecondary"
                         android:textSize="12sp" />
 
                     <TextView
@@ -107,16 +119,18 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         tools:text="12"
-                        android:textColor="#FFFFFF"
+                        android:textColor="?android:attr/textColorPrimary"
                         android:textSize="24sp"
                         android:textStyle="bold"/>
                 </LinearLayout>
 
+                <!-- Total Done -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@drawable/container_navi"
+                    android:backgroundTint="?attr/colorSurfaceContainer"
                     android:orientation="vertical"
                     android:padding="16dp"
                     android:layout_marginStart="4dp">
@@ -125,7 +139,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Total\nDone"
-                        android:textColor="#B0B0B0"
+                        android:textColor="?android:attr/textColorSecondary"
                         android:textSize="12sp" />
 
                     <TextView
@@ -134,7 +148,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         tools:text="35"
-                        android:textColor="#FFFFFF"
+                        android:textColor="?android:attr/textColorPrimary"
                         android:textSize="24sp"
                         android:textStyle="bold"/>
                 </LinearLayout>
@@ -142,15 +156,17 @@
 
             <View android:layout_width="match_parent" android:layout_height="16dp"/>
 
+            <!-- Statistics Title -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:text="Statistics"
-                android:textColor="#FFFFFF"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold"/>
 
+            <!-- RadioGroup (Time Filter) -->
             <RadioGroup
                 android:id="@+id/rg_time_filter"
                 android:layout_width="match_parent"
@@ -158,9 +174,11 @@
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="16dp"
                 android:background="@drawable/container_navi"
+                android:backgroundTint="?attr/colorSurfaceContainer"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:padding="4dp">
+                <!-- colorSurfaceContainer cho nền RadioGroup -->
 
                 <RadioButton
                     android:id="@+id/rb_day"
@@ -172,9 +190,10 @@
                     android:gravity="center"
                     android:checked="true"
                     android:text="Day"
-                    android:textColor="@color/white"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="14sp"
                     android:textStyle="bold"/>
+                <!-- Giữ màu trắng cho nút được chọn nếu selector đổi màu nền đậm -->
 
                 <RadioButton
                     android:id="@+id/rb_week"
@@ -185,7 +204,7 @@
                     android:button="@null"
                     android:gravity="center"
                     android:text="Week"
-                    android:textColor="@color/white"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="14sp"
                     android:textStyle="bold"/>
 
@@ -198,11 +217,12 @@
                     android:button="@null"
                     android:gravity="center"
                     android:text="Month"
-                    android:textColor="@color/white"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="14sp"
                     android:textStyle="bold"/>
             </RadioGroup>
 
+            <!-- Chart Section -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -214,7 +234,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Weekly Completions"
-                    android:textColor="#FFFFFFFF"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="16sp" />
 
                 <LinearLayout
@@ -228,7 +248,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="3"
-                        android:textColor="#FFFFFFFF"
+                        android:textColor="?android:attr/textColorPrimary"
                         android:textSize="32sp" />
 
                     <Space android:layout_width="16dp" android:layout_height="wrap_content"/>
@@ -256,22 +276,23 @@
 
                 </FrameLayout>
 
-
-
             </LinearLayout>
 
+            <!-- Spacer -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:minHeight="40dp"/>
 
+            <!-- Action Buttons: Edit & Delete -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="16dp">
 
+                <!-- Edit Button -->
                 <LinearLayout
                     android:id="@+id/btn_edit_habit"
                     android:layout_width="0dp"
@@ -290,8 +311,10 @@
                         android:textColor="#FFFFFF"
                         android:textSize="16sp"
                         android:textStyle="bold"/>
+                    <!-- Nút xanh chữ trắng -->
                 </LinearLayout>
 
+                <!-- Delete Button -->
                 <LinearLayout
                     android:id="@+id/btn_delete_habit"
                     android:layout_width="0dp"

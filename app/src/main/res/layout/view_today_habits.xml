@@ -26,7 +26,8 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:text="Show more"
-        android:textColor="#FF91ADC9"
+        android:textColor="?android:attr/textColorSecondary"
         android:textSize="14sp" />
+    <!-- textColorSecondary -> Sáng: Xám / Tối: Xám xanh -->
 
 </LinearLayout>

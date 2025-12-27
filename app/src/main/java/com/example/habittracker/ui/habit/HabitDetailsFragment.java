@@ -197,6 +197,15 @@ public class HabitDetailsFragment extends Fragment {
         });
     }
 
+    private int getThemeColor(int attrId) {
+        android.util.TypedValue typedValue = new android.util.TypedValue();
+        if (getContext() != null) {
+            getContext().getTheme().resolveAttribute(attrId, typedValue, true);
+            return typedValue.data;
+        }
+        return android.graphics.Color.GRAY; // Màu fallback
+    }
+
     // HÀM 1: Trang trí biểu đồ cho đẹp (Tắt lưới, làm mờ...)
     private void setupChartStyle() {
         if (lineChart == null) return;

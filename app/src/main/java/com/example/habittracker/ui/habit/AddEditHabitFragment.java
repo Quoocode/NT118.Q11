@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,16 +22,22 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 
-import com.example.habittracker.data.repository.callback.HabitQueryCallback;
-import com.example.habittracker.ui.adapter.IconAdapter; // Adapter Icon cũ
-import com.example.habittracker.R; // Resource ID
-import com.example.habittracker.data.repository.callback.SimpleCallback;
-import com.example.habittracker.data.repository.callback.DataCallback;
+// Import Adapter Icon
+import com.example.habittracker.ui.adapter.IconAdapter;
+
+// Import Model và Repository
 import com.example.habittracker.data.model.Habit;
 import com.example.habittracker.data.repository.HabitRepository;
-import com.example.habittracker.databinding.FragmentAddEditHabitBinding; // Binding
+import com.example.habittracker.data.repository.callback.DataCallback;
+import com.example.habittracker.data.repository.callback.HabitQueryCallback;
+import com.example.habittracker.data.repository.callback.SimpleCallback;
 
+// Import Binding
+import com.example.habittracker.databinding.FragmentAddEditHabitBinding;
+
+// Import Notification Helper
 import com.example.habittracker.utils.NotificationHelper;
+
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -58,15 +63,13 @@ public class AddEditHabitFragment extends Fragment {
     private String selectedFrequency = "DAILY"; // Mặc định
     private String selectedIconName = "ic_menu_book"; // Mặc định
 
-    // Danh sách Icon (Tên file drawable)
+    // Danh sách Icon
     private final List<String> iconList = Arrays.asList(
             "ic_menu_bed", "ic_menu_book", "ic_menu_dinner",
             "ic_menu_shopping", "ic_menu_thinking", "ic_menu_cooking",
             "ic_menu_running", "ic_menu_gym", "ic_menu_football",
             "ic_menu_water", "ic_menu_coffee", "ic_menu_game",
             "ic_menu_hospital"
-
-            // Thêm icon của bạn vào đây (VD: ic_gym, ic_water...)
     );
 
     @Override
@@ -99,14 +102,14 @@ public class AddEditHabitFragment extends Fragment {
 
             // Update UI cho Edit Mode
             binding.tvScreenTitle.setText("Edit Habit");
-            binding.btnConfirmAction.setText("Save Changes"); // Nút duy nhất
+            binding.btnConfirmAction.setText("Save Changes");
 
             loadHabitData(currentHabitId);
         } else {
             isEditMode = false;
             // Update UI cho Add Mode
             binding.tvScreenTitle.setText("New Habit");
-            binding.btnConfirmAction.setText("Create Habit"); // Nút duy nhất
+            binding.btnConfirmAction.setText("Create Habit");
 
             updateStartDateText();
         }
@@ -116,8 +119,6 @@ public class AddEditHabitFragment extends Fragment {
 
     private void setupIconRecyclerView() {
         binding.recyclerIcons.setLayoutManager(new GridLayoutManager(getContext(), 5));
-
-        // Khởi tạo Adapter
         IconAdapter adapter = new IconAdapter(getContext(), iconList, selectedIconName, iconName -> {
             selectedIconName = iconName; // Callback khi chọn icon
         });
@@ -125,18 +126,14 @@ public class AddEditHabitFragment extends Fragment {
     }
 
     private void setupFrequencyButtons() {
-        // Helper để reset và highlight nút được chọn
         View.OnClickListener freqListener = v -> {
-            // 1. Reset tất cả (setSelected = false để XML selector đổi màu về xám)
             binding.btnFreqOnce.setSelected(false);
             binding.btnFreqDaily.setSelected(false);
             binding.btnFreqWeekly.setSelected(false);
             binding.btnFreqMonthly.setSelected(false);
 
-            // 2. Highlight nút được click
             v.setSelected(true);
 
-            // 3. Lưu giá trị chuỗi để gửi lên Firebase
             if (v == binding.btnFreqOnce) selectedFrequency = "ONCE";
             else if (v == binding.btnFreqDaily) selectedFrequency = "DAILY";
             else if (v == binding.btnFreqWeekly) selectedFrequency = "WEEKLY";
@@ -148,7 +145,6 @@ public class AddEditHabitFragment extends Fragment {
         binding.btnFreqWeekly.setOnClickListener(freqListener);
         binding.btnFreqMonthly.setOnClickListener(freqListener);
 
-        // Mặc định chọn Daily khi mở màn hình
         binding.btnFreqDaily.performClick();
     }
 
@@ -176,17 +172,14 @@ public class AddEditHabitFragment extends Fragment {
         binding.editHabitValue.setText(String.valueOf(habit.getTargetValue()));
         binding.editHabitUnit.setText(habit.getUnit());
 
-        // Time
         selectedReminderTime = habit.getReminderTime();
         binding.tvTime.setText(selectedReminderTime);
 
-        // Date
         if (habit.getStartDate() != null) {
             selectedStartDate.setTime(habit.getStartDate().toDate());
             updateStartDateText();
         }
 
-        // Frequency (Khôi phục trạng thái nút bấm)
         if (habit.getFrequency() != null) {
             String type = (String) habit.getFrequency().get("type");
             if ("ONCE".equals(type)) binding.btnFreqOnce.performClick();
@@ -195,7 +188,6 @@ public class AddEditHabitFragment extends Fragment {
             else binding.btnFreqDaily.performClick();
         }
 
-        // Icon (Khôi phục icon đã chọn)
         selectedIconName = habit.getIconName();
         if (binding.recyclerIcons.getAdapter() instanceof IconAdapter) {
             ((IconAdapter) binding.recyclerIcons.getAdapter()).setSelectedIcon(selectedIconName);
@@ -205,10 +197,8 @@ public class AddEditHabitFragment extends Fragment {
     // --- LISTENERS ---
 
     private void setupClickListeners() {
-        // Nút Back
         binding.btnBack.setOnClickListener(v -> navController.popBackStack());
 
-        // Date Picker
         binding.btnStartDate.setOnClickListener(v -> {
             new DatePickerDialog(requireContext(), (view, year, month, dayOfMonth) -> {
                 selectedStartDate.set(year, month, dayOfMonth);
@@ -216,7 +206,6 @@ public class AddEditHabitFragment extends Fragment {
             }, selectedStartDate.get(Calendar.YEAR), selectedStartDate.get(Calendar.MONTH), selectedStartDate.get(Calendar.DAY_OF_MONTH)).show();
         });
 
-        // Time Picker
         binding.btnTime.setOnClickListener(v -> {
             String[] parts = selectedReminderTime.split(":");
             int hour = 9;
@@ -232,11 +221,10 @@ public class AddEditHabitFragment extends Fragment {
             }, hour, minute, DateFormat.is24HourFormat(getContext())).show();
         });
 
-        // Nút Hành Động Duy Nhất (Create/Save)
         binding.btnConfirmAction.setOnClickListener(v -> saveHabit());
     }
 
-    // --- HÀM KIỂM TRA QUYỀN (MỚI) ---
+    // --- PERMISSION CHECKS ---
     private boolean checkExactAlarmPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             android.app.AlarmManager alarmManager = (android.app.AlarmManager) requireContext().getSystemService(android.content.Context.ALARM_SERVICE);
@@ -252,7 +240,6 @@ public class AddEditHabitFragment extends Fragment {
                 .setTitle("Cấp quyền Báo thức")
                 .setMessage("Để nhận nhắc nhở thói quen đúng giờ, bạn cần cho phép ứng dụng đặt báo thức. Nhấn OK để mở Cài đặt.")
                 .setPositiveButton("OK", (dialog, which) -> {
-                    // Mở màn hình cài đặt quyền
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                         Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
                         intent.setData(Uri.parse("package:" + requireContext().getPackageName()));
@@ -262,42 +249,52 @@ public class AddEditHabitFragment extends Fragment {
                 .setNegativeButton("Để sau", null)
                 .show();
     }
-    // --------------------------------
 
+    // --- SAVE LOGIC ---
     private void saveHabit() {
-        // 1. Validate dữ liệu (Giữ nguyên code cũ của mày)
+        // 1. Validate Tên
         String title = binding.editHabitName.getText().toString().trim();
         if (title.isEmpty()) {
             binding.editHabitName.setError("Required");
+            binding.editHabitName.requestFocus();
+            return;
+        }
+
+        // 2. Validate Target Value
+        String valueStr = binding.editHabitValue.getText().toString().trim();
+        if (valueStr.isEmpty()) {
+            binding.editHabitValue.setError("Required");
+            binding.editHabitValue.requestFocus();
             return;
         }
 
         double target = 0;
         try {
-            target = Double.parseDouble(binding.editHabitValue.getText().toString());
-        } catch (Exception e) {
-            // Mặc định 0
+            target = Double.parseDouble(valueStr);
+            if (target <= 0) { // Bắt buộc > 0
+                binding.editHabitValue.setError("Must be > 0");
+                binding.editHabitValue.requestFocus();
+                return;
+            }
+        } catch (NumberFormatException e) {
+            binding.editHabitValue.setError("Invalid number");
+            return;
         }
 
         String unit = binding.editHabitUnit.getText().toString().trim();
         String desc = binding.editHabitDesc.getText().toString().trim();
 
-        // Map Frequency (Giữ nguyên)
         Map<String, Object> freqMap = new HashMap<>();
         freqMap.put("type", selectedFrequency);
 
-        // --- KIỂM TRA QUYỀN TRƯỚC KHI LƯU ---
-        // Chỉ kiểm tra nếu người dùng có đặt giờ nhắc
+        // Kiểm tra quyền báo thức nếu có giờ nhắc
         if (selectedReminderTime != null && !selectedReminderTime.isEmpty()) {
             if (!checkExactAlarmPermission()) {
-                Log.e("ALARM_PERMISSION", "Bị chặn quyền Exact Alarm. Đang yêu cầu user cấp quyền...");
                 showPermissionDialog();
-                return; // Dừng lại, không lưu
+                return;
             }
         }
-        // -------------------------------------
 
-        // Tạo Object Habit (Giữ nguyên)
         Habit habit = new Habit(
                 title,
                 desc,
@@ -309,34 +306,24 @@ public class AddEditHabitFragment extends Fragment {
                 target
         );
 
-        // 2. Gọi Repository (CODE MỚI - TÁCH LUỒNG)
         if (isEditMode) {
             habit.setId(currentHabitId);
-
-            // Trường hợp UPDATE: Dùng DataCallback<Boolean>
             habitRepository.updateHabit(habit, new DataCallback<Boolean>() {
                 @Override
                 public void onSuccess(Boolean data) {
-                    // Update thành công -> ID chính là currentHabitId
                     handleSaveSuccess(currentHabitId, title);
                 }
-
                 @Override
                 public void onFailure(Exception e) {
                     Toast.makeText(getContext(), "Update Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
-
         } else {
-            // Trường hợp ADD: Dùng DataCallback<String> để hứng cái ID mới về
             habitRepository.addHabit(habit, new DataCallback<String>() {
                 @Override
                 public void onSuccess(String newHabitId) {
-                    // Add thành công -> Có ID mới toanh -> Truyền vào handleSaveSuccess
                     handleSaveSuccess(newHabitId, title);
                 }
-
-
                 @Override
                 public void onFailure(Exception e) {
                     Toast.makeText(getContext(), "Add Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -345,7 +332,6 @@ public class AddEditHabitFragment extends Fragment {
         }
     }
 
-    // Hàm xử lý chung sau khi Lưu thành công
     private void handleSaveSuccess(String habitId, String habitTitle) {
         String msg = isEditMode ? "Saved Changes" : "Habit Created";
         Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();

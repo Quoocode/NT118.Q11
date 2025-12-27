@@ -6,16 +6,21 @@
     android:id="@+id/container_sign_up"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/container_login"
+    android:background="?android:attr/windowBackground"
     android:fillViewport="true">
+
+    <!--
+         android:background="?android:attr/windowBackground"
+         -> Sáng: Trắng / Tối: Đen xanh
+    -->
 
     <LinearLayout
         android:id="@+id/container_sign_up_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/container_login_2"
         android:orientation="vertical">
 
+        <!-- Header: Back Button + Title -->
         <LinearLayout
             android:id="@+id/container_depth_frame2"
             android:layout_width="match_parent"
@@ -38,7 +43,9 @@
                 android:src="@drawable/ic_arrow_left"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="?attr/selectableItemBackgroundBorderless" />
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="?android:attr/textColorPrimary"/>
+            <!-- Tint icon theo màu chữ chính -->
 
             <TextView
                 android:id="@+id/container_depth_frame5"
@@ -51,10 +58,12 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 android:text="Sign Up"
-                android:textColor="#FFFFFFFF"
-                android:textSize="18dp" />
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
         </LinearLayout>
 
+        <!-- Email Input -->
         <LinearLayout
             android:id="@+id/container_depth_frame7"
             android:layout_width="match_parent"
@@ -64,6 +73,7 @@
             android:layout_marginTop="12dp"
             android:layout_marginBottom="12dp"
             android:background="@drawable/container_navi"
+            android:backgroundTint="?attr/colorSurfaceContainer"
             android:clipToPadding="false"
             android:gravity="left|center_vertical"
             android:orientation="horizontal"
@@ -71,6 +81,7 @@
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:paddingTop="16dp">
+            <!-- backgroundTint: Đổi màu nền container theo theme -->
 
             <EditText
                 android:id="@+id/edit_email"
@@ -80,12 +91,13 @@
                 android:background="@android:color/transparent"
                 android:hint="Email"
                 android:inputType="textEmailAddress"
-                android:textColor="#FFFFFFFF"
-                android:textColorHint="#FF91ADC9"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textColorHint="?android:attr/textColorSecondary"
                 android:textSize="16sp"
                 android:padding="0dp" />
         </LinearLayout>
 
+        <!-- Password Input -->
         <LinearLayout
             android:id="@+id/container_depth_frame10"
             android:layout_width="match_parent"
@@ -95,6 +107,7 @@
             android:layout_marginTop="12dp"
             android:layout_marginBottom="12dp"
             android:background="@drawable/container_navi"
+            android:backgroundTint="?attr/colorSurfaceContainer"
             android:clipToPadding="false"
             android:gravity="left|center_vertical"
             android:orientation="horizontal"
@@ -111,12 +124,13 @@
                 android:background="@android:color/transparent"
                 android:hint="Password"
                 android:inputType="textPassword"
-                android:textColor="#FFFFFFFF"
-                android:textColorHint="#FF91ADC9"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textColorHint="?android:attr/textColorSecondary"
                 android:textSize="16sp"
                 android:padding="0dp" />
         </LinearLayout>
 
+        <!-- Confirm Password Input -->
         <LinearLayout
             android:id="@+id/container_depth_frame13"
             android:layout_width="match_parent"
@@ -126,6 +140,7 @@
             android:layout_marginTop="12dp"
             android:layout_marginBottom="12dp"
             android:background="@drawable/container_navi"
+            android:backgroundTint="?attr/colorSurfaceContainer"
             android:clipToPadding="false"
             android:gravity="left|center_vertical"
             android:orientation="horizontal"
@@ -142,12 +157,13 @@
                 android:background="@android:color/transparent"
                 android:hint="Confirm Password"
                 android:inputType="textPassword"
-                android:textColor="#FFFFFFFF"
-                android:textColorHint="#FF91ADC9"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textColorHint="?android:attr/textColorSecondary"
                 android:textSize="16sp"
                 android:padding="0dp" />
         </LinearLayout>
 
+        <!-- Sign Up Button -->
         <LinearLayout
             android:id="@+id/container_depth_frame15"
             android:layout_width="match_parent"
@@ -165,6 +181,7 @@
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground">
+            <!-- Nút xanh giữ nguyên -->
 
             <TextView
                 android:id="@+id/container_depth_frame17"
@@ -177,8 +194,10 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 android:text="Sign Up"
-                android:textColor="#FFFFFFFF"
-                android:textSize="16dp" />
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:textSize="16sp" />
+            <!-- Chữ trắng trên nền xanh -->
         </LinearLayout>
 
         <View
@@ -186,6 +205,7 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
+        <!-- Already have account -->
         <TextView
             android:id="@+id/text_sign_in"
             android:layout_width="match_parent"
@@ -199,10 +219,11 @@
             android:maxLines="1"
             android:singleLine="true"
             android:text="Already have an account? Sign In"
-            android:textColor="#FF91ADC9"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp"
             android:clickable="true"
             android:focusable="true" />
+        <!-- Màu chữ phụ -->
 
         <ImageView
             android:id="@+id/image_depth_frame2"

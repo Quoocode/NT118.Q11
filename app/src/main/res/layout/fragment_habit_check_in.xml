@@ -3,9 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="300dp"
     android:layout_height="wrap_content"
-    android:background="#212121"
+    android:background="?attr/colorSurface"
     android:orientation="vertical"
     android:padding="24dp">
+
+    <!--
+         background="?attr/colorSurface"
+         -> Sáng: Xám nhạt / Tối: Xanh đen (navi)
+    -->
 
     <!-- Tiêu đề -->
     <TextView
@@ -13,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Update Progress"
-        android:textColor="#FFFFFF"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="20sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -25,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Target: 5.0 km"
-        android:textColor="#B0B0B0"
+        android:textColor="?android:attr/textColorSecondary"
         android:gravity="center"
         android:layout_marginBottom="24dp"/>
 
@@ -35,16 +40,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Current Value"
-        android:textColorHint="#B0B0B0"
-        app:boxStrokeColor="@color/white"
-        app:hintTextColor="@color/white">
+        android:textColorHint="?android:attr/textColorSecondary"
+        app:boxStrokeColor="?attr/colorPrimary"
+        app:hintTextColor="?attr/colorPrimary">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edt_current_value"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="numberDecimal"
-            android:textColor="@color/white"
+            android:textColor="?android:attr/textColorPrimary"
             android:text="0" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -53,7 +58,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="km"
-        android:textColor="#B0B0B0"
+        android:textColor="?android:attr/textColorSecondary"
         android:gravity="end"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="24dp"/>
@@ -72,7 +77,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Pending"
-            android:textColor="#FFFFFF"
+            android:textColor="?android:attr/textColorPrimary"
+            android:buttonTint="?android:attr/textColorSecondary"
             android:layout_marginEnd="16dp"/>
 
         <RadioButton
@@ -81,7 +87,9 @@
             android:layout_height="wrap_content"
             android:text="Done"
             android:textColor="#4CAF50"
+            android:buttonTint="#4CAF50"
             android:textStyle="bold"/>
+        <!-- Giữ màu xanh lá cho Done để nổi bật -->
     </RadioGroup>
 
     <!-- Nút Lưu -->
@@ -90,6 +98,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Update"
-        android:backgroundTint="#2196F3"/>
+        android:textColor="?attr/colorOnPrimary"
+        android:backgroundTint="?attr/colorPrimary"/>
 
 </LinearLayout>

@@ -12,9 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Achievements"
-        android:textColor="#FFFFFFFF"
-        android:textSize="22dp"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="22sp"
         android:textStyle="bold" />
+    <!-- Đổi sp cho textSize, dùng textColorPrimary -->
 
     <LinearLayout
         android:id="@+id/certificate_section"
@@ -22,16 +23,18 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:background="@drawable/container_navi"
+        android:backgroundTint="?attr/colorSurfaceContainer"
         android:orientation="vertical"
         android:padding="16dp">
+        <!-- Thêm backgroundTint để đổi màu nền container -->
 
         <TextView
             android:id="@+id/tv_certificate_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Certificate"
-            android:textColor="#FFFFFFFF"
-            android:textSize="16dp"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <FrameLayout
@@ -39,8 +42,9 @@
             android:layout_width="match_parent"
             android:layout_height="160dp"
             android:layout_marginTop="8dp"
-            android:background="@drawable/container_login_2"
+            android:background="?attr/colorSurface"
             android:foregroundGravity="center">
+            <!-- Đổi background cứng thành colorSurface -->
 
             <TextView
                 android:id="@+id/tv_no_certificate"
@@ -48,7 +52,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="No certificate"
-                android:textColor="#FFFFFFFF"
+                android:textColor="?android:attr/textColorSecondary"
                 android:textSize="14sp" />
         </FrameLayout>
     </LinearLayout>
@@ -65,8 +69,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Badges"
-            android:textColor="#FFFFFFFF"
-            android:textSize="16dp"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <FrameLayout
@@ -86,10 +90,12 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:background="@drawable/container_navi"
+                    android:backgroundTint="?attr/colorSurfaceContainer"
                     android:contentDescription="Expand badges"
                     android:padding="12dp"
                     android:src="@drawable/ic_chevron_down"
-                    app:tint="#FFFFFFFF" />
+                    app:tint="?android:attr/textColorPrimary" />
+                <!-- Thêm backgroundTint và tint icon -->
 
                 <FrameLayout
                     android:id="@+id/badge_blur_target"
@@ -130,10 +136,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:background="@drawable/container_login_2"
+            android:background="?attr/colorSurface"
             android:orientation="vertical"
             android:padding="12dp"
             android:visibility="gone">
+            <!-- Đổi background cứng thành colorSurface -->
 
             <GridLayout
                 android:id="@+id/badges_grid"
@@ -151,10 +158,11 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="12dp"
                 android:background="@drawable/container_navi"
+                android:backgroundTint="?attr/colorSurfaceContainer"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:text="Show less"
-                android:textColor="#FFFFFFFF" />
+                android:textColor="?android:attr/textColorPrimary" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

@@ -4,8 +4,14 @@
     android:layout_height="match_parent"
     android:layout_margin="16dp"
     android:background="@drawable/container_login_2"
+    android:backgroundTint="?attr/colorSurfaceContainer"
     android:orientation="vertical"
     android:padding="16dp">
+
+    <!--
+         backgroundTint="?attr/colorSurfaceContainer"
+         -> Tự động đổi màu nền container (Xám nhạt / Xanh đen)
+    -->
 
     <TextView
         android:id="@+id/habit_completion_title"
@@ -14,9 +20,10 @@
         android:layout_marginBottom="12dp"
         android:gravity="start"
         android:text="@string/habit_completion_title"
-        android:textColor="@android:color/white"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="18sp"
         android:textStyle="bold" />
+    <!-- textColorPrimary -> Sáng: Đen / Tối: Trắng -->
 
     <ScrollView
         android:id="@+id/habit_completion_scroll"
@@ -39,8 +46,8 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:paddingTop="12dp"
-        android:textColor="@android:color/white"
+        android:textColor="?android:attr/textColorSecondary"
         android:textSize="14sp"
         android:text="@string/habit_scroll_hint" />
+    <!-- textColorSecondary -> Sáng: Xám / Tối: Xám xanh -->
 </LinearLayout>
-

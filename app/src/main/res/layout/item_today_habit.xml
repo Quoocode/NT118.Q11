@@ -1,29 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="72dp"
-    android:background="@drawable/container_login_2"
+    android:background="?attr/colorSurface"
     android:gravity="left|center_vertical"
     android:orientation="horizontal"
-    android:paddingBottom="8dp"
     android:paddingLeft="16dp"
+    android:paddingTop="8dp"
     android:paddingRight="16dp"
-    android:paddingTop="8dp">
+    android:paddingBottom="8dp">
+
+    <!--
+        android:background="?attr/colorSurface"
+        -> Sáng: Xám nhạt / Tối: Xanh đen (navi)
+    -->
 
     <LinearLayout
         android:id="@+id/layout_icon_bg"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:background="@drawable/container_navi"
+        android:backgroundTint="?attr/colorSurfaceContainer"
         android:gravity="center"
         android:orientation="horizontal">
+        <!--
+             backgroundTint="?attr/colorSurfaceContainer"
+             -> Giúp đổi màu nền icon container theo theme
+        -->
 
         <ImageView
             android:id="@+id/img_icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:scaleType="centerInside"></ImageView>
-<!--            android:src="@drawable/ic_drink_water" />-->
+            android:scaleType="centerInside"
+            app:tint="?android:attr/textColorPrimary" />
+        <!-- Tint icon theo màu chữ chính -->
     </LinearLayout>
 
     <LinearLayout
@@ -41,10 +53,9 @@
             android:includeFontPadding="false"
             android:maxLines="1"
             android:singleLine="true"
-            android:textColor="#FFFFFFFF"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="16dp" />
-        <!--            android:text="Drink water"-->
-
+        <!-- textColorPrimary -> Sáng: Đen / Tối: Trắng -->
 
         <TextView
             android:id="@+id/tv_time"
@@ -54,9 +65,9 @@
             android:includeFontPadding="false"
             android:maxLines="1"
             android:singleLine="true"
-
-            android:textColor="#FF91ADC9"
-            android:textSize="14dp" /> <!--            android:text="10:37"-->
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="14dp" />
+        <!-- textColorSecondary -> Sáng: Xám / Tối: Xám xanh -->
     </LinearLayout>
 
     <View
@@ -71,6 +82,8 @@
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
         android:src="@drawable/ic_ellipsis"
-        android:scaleType="centerInside" />
+        android:scaleType="centerInside"
+        app:tint="?android:attr/textColorSecondary" />
+    <!-- Tint icon check (3 chấm) theo màu phụ -->
 
 </LinearLayout>
