@@ -368,20 +368,55 @@ public class AddEditHabitFragment extends Fragment {
 
             // Kiểm tra xem user có đặt giờ không
             if (selectedReminderTime != null && !selectedReminderTime.isEmpty()) {
-                Log.d("TEST_REMINDER", ">> Calling Scheduler for: " + selectedReminderTime);
 
-                // [QUAN TRỌNG] GỌI HÀM ĐẶT BÁO THỨC THẬT SỰ
-                NotificationHelper.scheduleHabitReminder(
-                        requireContext(),
-                        habitId,
-                        habitTitle,
-                        selectedReminderTime,
-                        selectedFrequency,
-                        selectedStartDate.getTime() // Chuyển Calendar thành Date
-                );
+                // [THÔNG MINH] Kiểm tra trạng thái hôm nay trước khi đặt lịch
+                habitRepository.getHabitHistoryStatus(habitId, Calendar.getInstance(), new DataCallback<String>() {
+                    @Override
+                    public void onSuccess(String status) {
+                        boolean isCompleted = "DONE".equalsIgnoreCase(status) || "COMPLETED".equalsIgnoreCase(status);
+
+                        Log.d("TEST_REMINDER", ">> Habit Status Today: " + status);
+
+                        if (isCompleted) {
+                            Log.d("TEST_REMINDER", ">> Đã làm xong -> Dời lịch sang ngày mai với giờ mới.");
+                            // Tự động tính toán ngày mai với giờ mới
+                            NotificationHelper.updateAlarmBasedOnStatus(requireContext(), habit, true);
+                        } else {
+                            Log.d("TEST_REMINDER", ">> Chưa làm -> Đặt lịch bình thường (Hôm nay nếu kịp).");
+                            // Đặt lịch bình thường
+                            NotificationHelper.scheduleHabitReminder(
+                                    requireContext(),
+                                    habitId,
+                                    habitTitle,
+                                    selectedReminderTime,
+                                    selectedFrequency,
+                                    selectedStartDate.getTime() // Chuyển Calendar thành Date
+                            );
+                        }
+                        // Thoát màn hình sau khi xử lý xong Alarm
+                        navController.popBackStack();
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        // Nếu lỗi check status -> Cứ đặt lịch bình thường cho an toàn
+                        Log.e("TEST_REMINDER", ">> Lỗi check status, fallback về lịch thường.");
+                        NotificationHelper.scheduleHabitReminder(
+                                requireContext(),
+                                habitId,
+                                habitTitle,
+                                selectedReminderTime,
+                                selectedFrequency,
+                                selectedStartDate.getTime() // Chuyển Calendar thành Date
+                        );
+                        navController.popBackStack();
+                    }
+                });
 
             } else {
-                Log.d("TEST_REMINDER", ">> No Reminder Time set. Skipping alarm.");
+                // Không đặt giờ -> Thoát luôn
+                Log.d("TEST_REMINDER", ">> No Reminder Time set.");
+                navController.popBackStack();
             }
         } else {
             Log.e("TEST_REMINDER", ">> FAIL: ID is null! Cannot schedule alarm.");

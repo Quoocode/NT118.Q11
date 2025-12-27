@@ -18,8 +18,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProvider; // Mới
 
 import com.example.habittracker.R;
+import com.example.habittracker.data.repository.callback.DataCallback; // Mới
+import com.example.habittracker.ui.ViewModel.HabitViewModel; // Mới
 import com.example.habittracker.data.achievements.AchievementService;
 import com.example.habittracker.data.repository.HabitRepository; // Sửa lại package import cho đúng với dự án của bạn
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,8 +39,9 @@ public class HabitCheckInDialogFragment extends DialogFragment {
     private static final String ARG_UNIT = "ARG_UNIT";
     private static final String ARG_STATUS = "ARG_STATUS";
 
-    private HabitRepository habitRepository;
     private AchievementService achievementService;
+    // Thay Repository bằng ViewModel
+    private HabitViewModel habitViewModel;
 
     private OnCheckInListener listener;
 
@@ -77,8 +81,9 @@ public class HabitCheckInDialogFragment extends DialogFragment {
         super.onViewCreated(view, savedInstanceState);
 
         String userId = FirebaseAuth.getInstance().getUid();
-        habitRepository = new HabitRepository(userId);
         achievementService = new AchievementService(requireContext());
+        // [MỚI] Khởi tạo ViewModel (Liên kết với Activity cha để đồng bộ)
+        habitViewModel = new ViewModelProvider(requireActivity()).get(HabitViewModel.class);
 
         TextView tvTitle = view.findViewById(R.id.tv_habit_title);
         TextView tvTarget = view.findViewById(R.id.tv_habit_target);
@@ -178,7 +183,7 @@ public class HabitCheckInDialogFragment extends DialogFragment {
             }
         });
 
-        // Xử lý Lưu
+        // [MỚI] Xử lý Lưu thông qua ViewModel
         btnConfirm.setOnClickListener(v -> {
             Bundle args = getArguments();
             if (args == null) return;
@@ -188,30 +193,26 @@ public class HabitCheckInDialogFragment extends DialogFragment {
             if (valueStr.isEmpty()) return;
 
             double newValue = Double.parseDouble(valueStr);
+
+            // Lấy trạng thái cuối cùng từ RadioButton
             String newStatus = radioDone.isChecked() ? "DONE" : "PENDING";
 
-            habitRepository.updateHistoryStatus(
-                    habitId,
-                    Calendar.getInstance(),
-                    newStatus,
-                    newValue,
-                    (success, e) -> {
-                        if (success) {
-                            if (achievementService != null) {
-                                double target = args.getDouble(ARG_TARGET);
-                                achievementService.onCheckInCommitted(newStatus, newValue, target);
-                            }
-
-                            Toast.makeText(getContext(), "Updated!", Toast.LENGTH_SHORT).show();
-                            if (listener != null) {
-                                listener.onCheckInCompleted();
-                            }
-                            dismiss();
-                        } else {
-                            Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+            // Gọi ViewModel để xử lý cả DB và Alarm
+            habitViewModel.performCheckIn(habitId, newValue, newStatus, new DataCallback<Boolean>() {
+                @Override
+                public void onSuccess(Boolean data) {
+                    Toast.makeText(getContext(), "Updated!", Toast.LENGTH_SHORT).show();
+                    if (listener != null) {
+                        listener.onCheckInCompleted();
                     }
-            );
+                    dismiss();
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         });
     }
 
