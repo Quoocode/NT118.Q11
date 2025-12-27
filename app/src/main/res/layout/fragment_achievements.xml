@@ -136,7 +136,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:background="@drawable/container_login_2"
                 android:orientation="vertical"
                 android:padding="12dp"
                 android:visibility="gone">
