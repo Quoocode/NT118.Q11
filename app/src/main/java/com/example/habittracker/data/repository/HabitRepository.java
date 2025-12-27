@@ -597,4 +597,24 @@ public class HabitRepository {
             return -1;
         }
     }
+
+    // [MỚI - BƯỚC 1] HÀM KIỂM TRA TRẠNG THÁI HISTORY TRONG NGÀY
+    // Dùng để quyết định có đặt báo thức cho hôm nay hay ngày mai khi Edit
+    // =========================================================================
+    public void getHabitHistoryStatus(String habitId, Calendar date, DataCallback<String> callback) {
+        String historyId = generateHistoryId(habitId, date);
+
+        historyRef.document(historyId).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String status = documentSnapshot.getString("status");
+                        callback.onSuccess(status != null ? status : "PENDING");
+                    } else {
+                        // Chưa có bản ghi history -> Coi như chưa làm (PENDING)
+                        callback.onSuccess("PENDING");
+                    }
+                })
+                .addOnFailureListener(callback::onFailure);
+    }
+
 }
