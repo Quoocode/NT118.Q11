@@ -1,26 +1,26 @@
 package com.example.habittracker.ui.analytics;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
+
 import com.example.habittracker.R;
-import com.example.habittracker.databinding.FragmentCalendarBinding; // Tạo từ fragment_calendar.xml
-import com.example.habittracker.data.repository.HabitRepository;
 import com.example.habittracker.data.model.HabitDailyView;
+import com.example.habittracker.data.repository.HabitRepository;
 import com.example.habittracker.data.repository.callback.HabitQueryCallback;
+import com.example.habittracker.databinding.FragmentCalendarBinding; // Tạo từ fragment_calendar.xml
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.firebase.auth.FirebaseAuth;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -35,12 +35,17 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
 
     private CalendarDayAdapter calendarAdapter;
     private final List<HabitCompletion> allHabits = new ArrayList<>();
-    private int habitsLoaded = 0;
-    private static final int HABIT_BATCH_SIZE = 3;
     private final SimpleDateFormat monthFormatter = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
     private final Calendar currentMonth = Calendar.getInstance();
     private final Calendar selectedDate = Calendar.getInstance();
     private HabitRepository habitRepository;
+
+    private HabitCompletionAdapter habitAdapter;
+    private BottomSheetBehavior<View> sheetBehavior;
+
+    // Fade mapping bounds in parent coordinates
+    private int fadeStartTopPx = 0; // sheet top when calendar is fully visible
+    private int fadeEndTopPx = 0;   // sheet top when it reaches month_label
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -70,25 +75,116 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         binding.btnNextMonth.setOnClickListener(v -> moveMonth(1));
         binding.btnBack.setOnClickListener(v -> navController.popBackStack());
 
-        setupHabitList();
+        setupHabitSheetAndList();
+
         updateMonth();
         loadHabitsForDate(selectedDate);
     }
 
-    private void setupHabitList() {
-        if (binding == null || binding.habitCompletionSection == null) {
+    private void setupHabitSheetAndList() {
+        if (binding == null) {
             return;
         }
-        ScrollView scrollView = binding.habitCompletionSection.habitCompletionScroll;
-        scrollView.getViewTreeObserver().addOnScrollChangedListener(() -> {
-            if (binding == null || binding.habitCompletionSection == null) {
-                return;
+
+        // RecyclerView adapter
+        habitAdapter = new HabitCompletionAdapter();
+        binding.habitCompletionSection.habitCompletionRecycler.setAdapter(habitAdapter);
+
+        // Bottom sheet behavior
+        View bottomSheet = binding.habitCompletionSection.getRoot();
+        sheetBehavior = BottomSheetBehavior.from(bottomSheet);
+
+        // Compute expandedOffset + peekHeight after first layout.
+        binding.getRoot().post(this::configureSheetHeights);
+
+        // Drag handle / header can toggle state for convenience
+        binding.habitCompletionSection.habitSheetHeader.setOnClickListener(v -> toggleSheet());
+
+        // Fade calendar elements as sheet expands - fade range: calendar bottom -> month_label.
+        sheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                // no-op
             }
-            if (!scrollView.canScrollVertically(1)) {
-                appendMoreHabits();
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                if (binding == null) return;
+
+                // Use actual sheet top position (more robust than slideOffset when using custom peekHeight).
+                int top = bottomSheet.getTop();
+                float t = computeFadeProgress(top);
+                float alpha = 1f - t;
+
+                // Keep header (month label/nav) readable; fade only weekday row + day grid.
+                binding.weekdaysRow.setAlpha(alpha);
+                binding.calendarDaysRecycler.setAlpha(alpha);
             }
         });
     }
+
+    private float computeFadeProgress(int sheetTop) {
+        if (fadeEndTopPx <= fadeStartTopPx) {
+            // Fallback if layout not ready.
+            return 0f;
+        }
+
+        // When collapsed (sheetTop ~= fadeStartTopPx): t = 0.
+        // When expanded (sheetTop ~= fadeEndTopPx): t = 1.
+        float t = (fadeStartTopPx - sheetTop) / (float) (fadeStartTopPx - fadeEndTopPx);
+        if (t < 0f) return 0f;
+        if (t > 1f) return 1f;
+        return t;
+    }
+
+    private void configureSheetHeights() {
+        if (binding == null || sheetBehavior == null) {
+            return;
+        }
+
+        // Expanded offset: top of sheet should stop at month_label bottom.
+        int[] rootLoc = new int[2];
+        int[] monthLoc = new int[2];
+        binding.getRoot().getLocationOnScreen(rootLoc);
+        binding.monthLabel.getLocationOnScreen(monthLoc);
+
+        int rootY = rootLoc[1];
+        int monthBottomY = monthLoc[1] + binding.monthLabel.getHeight();
+        int expandedOffset = Math.max(0, monthBottomY - rootY);
+        sheetBehavior.setExpandedOffset(expandedOffset);
+
+        // Collapsed (lowest) position should be exactly at the bottom of calendar.
+        // That means the sheet top == calendar_container bottom.
+        int calendarBottom = binding.calendarContainer.getBottom(); // parent-coordinates pixels
+        int parentHeight = binding.getRoot().getHeight();
+        int peekHeight = Math.max(0, parentHeight - calendarBottom);
+        sheetBehavior.setPeekHeight(peekHeight, true);
+
+        // Save fade bounds based on the defined behavior positions.
+        fadeStartTopPx = calendarBottom;
+        fadeEndTopPx = expandedOffset;
+
+        // Start collapsed.
+        sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+        // Ensure alpha reflects current position (important after rotation/layout changes)
+        View bottomSheet = binding.habitCompletionSection.getRoot();
+        float t = computeFadeProgress(bottomSheet.getTop());
+        float alpha = 1f - t;
+        binding.weekdaysRow.setAlpha(alpha);
+        binding.calendarDaysRecycler.setAlpha(alpha);
+    }
+
+    private void toggleSheet() {
+        if (sheetBehavior == null) return;
+        int state = sheetBehavior.getState();
+        if (state == BottomSheetBehavior.STATE_EXPANDED) {
+            sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        } else {
+            sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        }
+    }
+
 
     private void moveMonth(int offset) {
         currentMonth.add(Calendar.MONTH, offset);
@@ -175,13 +271,10 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
     private void applyHabitData(List<HabitCompletion> completions) {
         allHabits.clear();
         allHabits.addAll(completions);
-        habitsLoaded = 0;
-        if (binding == null || binding.habitCompletionSection == null) {
-            return;
+
+        if (habitAdapter != null) {
+            habitAdapter.submitList(new ArrayList<>(allHabits));
         }
-        LinearLayout container = binding.habitCompletionSection.habitCompletionListContainer;
-        container.removeAllViews();
-        appendMoreHabits();
     }
 
     private void seedSampleHabits() {
@@ -195,53 +288,6 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         applyHabitData(samples);
     }
 
-    private void appendMoreHabits() {
-        if (binding == null || binding.habitCompletionSection == null) {
-            return;
-        }
-        LinearLayout container = binding.habitCompletionSection.habitCompletionListContainer;
-        int nextLimit = Math.min(allHabits.size(), habitsLoaded + HABIT_BATCH_SIZE);
-        LayoutInflater inflater = LayoutInflater.from(requireContext());
-        for (int i = habitsLoaded; i < nextLimit; i++) {
-            HabitCompletion habit = allHabits.get(i);
-            View item = inflater.inflate(R.layout.item_habit_completion, container, false);
-            TextView name = item.findViewById(R.id.tv_habit_name);
-            TextView statusText = item.findViewById(R.id.tv_habit_status);
-            View icon = item.findViewById(R.id.img_status);
-            TextView pendingMarker = item.findViewById(R.id.tv_pending_marker);
-            name.setText(habit.getName());
-            statusText.setText(habit.getStatus().name());
-            updateStatusIcon(habit.getStatus(), icon, pendingMarker);
-            container.addView(item);
-        }
-        habitsLoaded = nextLimit;
-        binding.habitCompletionSection.habitFooterMessage.setVisibility(
-                habitsLoaded >= allHabits.size() ? View.GONE : View.VISIBLE
-        );
-    }
-
-    private void updateStatusIcon(HabitCompletion.Status status, View imageView, TextView pendingMarker) {
-        if (!(imageView instanceof android.widget.ImageView)) {
-            return;
-        }
-        android.widget.ImageView icon = (android.widget.ImageView) imageView;
-        switch (status) {
-            case COMPLETED:
-                pendingMarker.setVisibility(View.GONE);
-                icon.setVisibility(View.VISIBLE);
-                icon.setImageResource(R.drawable.ic_circle_check);
-                break;
-            case MISSED:
-                pendingMarker.setVisibility(View.GONE);
-                icon.setVisibility(View.VISIBLE);
-                icon.setImageResource(R.drawable.ic_close_circle);
-                break;
-            case PENDING:
-                icon.setVisibility(View.GONE);
-                pendingMarker.setVisibility(View.VISIBLE);
-                break;
-        }
-    }
 
     @Override
     public void onDaySelected(Date date) {
