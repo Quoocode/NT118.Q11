@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -36,6 +37,7 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
     private CalendarDayAdapter calendarAdapter;
     private final List<HabitCompletion> allHabits = new ArrayList<>();
     private final SimpleDateFormat monthFormatter = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
+    private final SimpleDateFormat dayFormatter = new SimpleDateFormat("EEEE, d MMMM yyyy", Locale.getDefault());
     private final Calendar currentMonth = Calendar.getInstance();
     private final Calendar selectedDate = Calendar.getInstance();
     private HabitRepository habitRepository;
@@ -46,6 +48,11 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
     // Fade mapping bounds in parent coordinates
     private int fadeStartTopPx = 0; // sheet top when calendar is fully visible
     private int fadeEndTopPx = 0;   // sheet top when it reaches month_label
+
+    private boolean isMonthAnimating = false;
+
+    // Overlay TextView defined in XML (stacked in a FrameLayout over monthLabel)
+    private TextView dayIndicatorLabel;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -71,14 +78,45 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         binding.calendarDaysRecycler.setLayoutManager(layoutManager);
         binding.calendarDaysRecycler.setAdapter(calendarAdapter);
 
-        binding.btnPrevMonth.setOnClickListener(v -> moveMonth(-1));
-        binding.btnNextMonth.setOnClickListener(v -> moveMonth(1));
-        binding.btnBack.setOnClickListener(v -> navController.popBackStack());
+        binding.btnPrevMonth.setOnClickListener(v -> moveMonthAnimated(-1));
+        binding.btnNextMonth.setOnClickListener(v -> moveMonthAnimated(1));
 
+        setupMonthLabelMorph();
         setupHabitSheetAndList();
 
         updateMonth();
         loadHabitsForDate(selectedDate);
+    }
+
+    private void setupMonthLabelMorph() {
+        if (binding == null) return;
+
+        // Use the overlay label from XML (no manual positioning needed)
+        dayIndicatorLabel = binding.dayIndicatorLabel;
+
+        updateMonthLabelText();
+        updateDayIndicatorText();
+
+        // Make sure initial state is collapsed
+        applyMonthLabelMorph(0f);
+    }
+
+    private void updateMonthLabelText() {
+        if (binding == null) return;
+        binding.monthLabel.setText(monthFormatter.format(currentMonth.getTime()));
+    }
+
+    private void updateDayIndicatorText() {
+        if (binding == null || dayIndicatorLabel == null) return;
+        dayIndicatorLabel.setText(dayFormatter.format(selectedDate.getTime()));
+    }
+
+    private void applyMonthLabelMorph(float expandedProgress) {
+        if (binding == null || dayIndicatorLabel == null) return;
+        float t = Math.max(0f, Math.min(1f, expandedProgress));
+        // Crossfade between month label (collapsed) and day indicator (expanded)
+        binding.monthLabel.setAlpha(1f - t);
+        dayIndicatorLabel.setAlpha(t);
     }
 
     private void setupHabitSheetAndList() {
@@ -111,49 +149,91 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         // Fade calendar elements as sheet expands - fade range: calendar bottom -> month_label.
         sheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             private int lastState = BottomSheetBehavior.STATE_COLLAPSED;
+            private Integer dragStartTop = null;
 
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 if (sheetBehavior == null) return;
 
-                // Enforce exactly two resting states:
-                // when the user releases (DRAGGING -> SETTLING), snap to the nearest end.
+                if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+                    // Record where the drag started so we can infer direction on release.
+                    dragStartTop = bottomSheet.getTop();
+                }
+
+                // Direction based toggle on release:
+                // - dragging up from collapsed => EXPANDED
+                // - dragging down from expanded => COLLAPSED
                 if (lastState == BottomSheetBehavior.STATE_DRAGGING
                         && newState == BottomSheetBehavior.STATE_SETTLING) {
 
-                    int top = bottomSheet.getTop();
-                    int mid = (fadeStartTopPx + fadeEndTopPx) / 2;
-                    if (top <= mid) {
+                    int endTop = bottomSheet.getTop();
+                    int startTop = dragStartTop != null ? dragStartTop : endTop;
+                    boolean movedUp = endTop < startTop;
+                    boolean movedDown = endTop > startTop;
+
+                    if (lastStateStableWasCollapsed() && movedUp) {
                         sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                    } else {
+                    } else if (lastStateStableWasExpanded() && movedDown) {
                         sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    } else {
+                        // Fallback: if direction isn't clear, snap to nearest end.
+                        int top = bottomSheet.getTop();
+                        int mid = (fadeStartTopPx + fadeEndTopPx) / 2;
+                        sheetBehavior.setState(top <= mid
+                                ? BottomSheetBehavior.STATE_EXPANDED
+                                : BottomSheetBehavior.STATE_COLLAPSED);
                     }
+
+                    dragStartTop = null;
                 }
 
                 // If some other path still results in half-expanded, force to nearest end.
                 if (newState == BottomSheetBehavior.STATE_HALF_EXPANDED) {
                     int top = bottomSheet.getTop();
                     int mid = (fadeStartTopPx + fadeEndTopPx) / 2;
-                    if (top <= mid) {
-                        sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                    } else {
-                        sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                    }
+                    sheetBehavior.setState(top <= mid
+                            ? BottomSheetBehavior.STATE_EXPANDED
+                            : BottomSheetBehavior.STATE_COLLAPSED);
+                }
+
+                // IMPORTANT: Month/day indicator switching only occurs in stable end states.
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    applyMonthLabelMorph(0f);
+                } else if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    applyMonthLabelMorph(1f);
+                }
+
+                // Track last stable state for direction-based toggling.
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED || newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    lastStableState = newState;
                 }
 
                 lastState = newState;
+            }
+
+            private int lastStableState = BottomSheetBehavior.STATE_COLLAPSED;
+
+            private boolean lastStateStableWasCollapsed() {
+                return lastStableState == BottomSheetBehavior.STATE_COLLAPSED;
+            }
+
+            private boolean lastStateStableWasExpanded() {
+                return lastStableState == BottomSheetBehavior.STATE_EXPANDED;
             }
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
                 if (binding == null) return;
 
+                // Fade calendar grid based on current sheet top.
                 int top = bottomSheet.getTop();
                 float t = computeFadeProgress(top);
                 float alpha = 1f - t;
 
                 binding.weekdaysRow.setAlpha(alpha);
                 binding.calendarDaysRecycler.setAlpha(alpha);
+
+                // DO NOT morph the month/day label during drag; only switch when stable.
             }
         });
     }
@@ -177,17 +257,17 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
             return;
         }
 
-        // Expanded offset: top of sheet should stop at month_label bottom.
+        // Expanded offset: top of sheet should stop at month navigation row bottom.
         // IMPORTANT: expandedOffset is in the parent CoordinatorLayout's coordinate system.
         // We use getLocationInWindow for consistent coordinates.
         int[] rootLoc = new int[2];
-        int[] monthLoc = new int[2];
+        int[] navRowLoc = new int[2];
         binding.getRoot().getLocationInWindow(rootLoc);
-        binding.monthLabel.getLocationInWindow(monthLoc);
+        binding.monthNavigationRow.getLocationInWindow(navRowLoc);
 
         int rootY = rootLoc[1];
-        int monthBottomY = monthLoc[1] + binding.monthLabel.getHeight();
-        int expandedOffset = Math.max(0, monthBottomY - rootY);
+        int navRowBottomY = navRowLoc[1] + binding.monthNavigationRow.getHeight();
+        int expandedOffset = Math.max(0, navRowBottomY - rootY);
         sheetBehavior.setExpandedOffset(expandedOffset);
 
         // Collapsed (lowest) position should be exactly at the bottom of calendar.
@@ -202,12 +282,15 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
 
         sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
-        // Ensure alpha reflects current position (important after rotation/layout changes)
+        // Ensure alpha + label reflect current position after state set
         View bottomSheet = binding.habitCompletionSection.getRoot();
         float t = computeFadeProgress(bottomSheet.getTop());
         float alpha = 1f - t;
         binding.weekdaysRow.setAlpha(alpha);
         binding.calendarDaysRecycler.setAlpha(alpha);
+
+        // Since we force collapsed here, make sure label is in collapsed state.
+        applyMonthLabelMorph(0f);
     }
 
     private void toggleSheet() {
@@ -220,17 +303,107 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         }
     }
 
+    private void moveMonthAnimated(int offset) {
+        if (binding == null || isMonthAnimating) {
+            return;
+        }
+        isMonthAnimating = true;
+
+        // Always collapse the habit sheet when switching months to avoid header label overlap.
+        if (sheetBehavior != null) {
+            sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        }
+        // Force label to collapsed state immediately.
+        applyMonthLabelMorph(0f);
+
+        // Fade the calendar grid/weekday row; keep month label readable but animate it separately
+        View fadeTarget = binding.calendarDaysRecycler;
+        View fadeWeekdays = binding.weekdaysRow;
+        View monthLabel = binding.monthLabel;
+
+        // Directional slide: next month slides left, prev month slides right
+        float slideDistance = monthLabel.getResources().getDisplayMetrics().density * 12f;
+        float dir = offset > 0 ? -1f : 1f;
+
+        // Stop any in-flight animations to avoid stacking if the user taps quickly
+        fadeTarget.animate().cancel();
+        fadeWeekdays.animate().cancel();
+        monthLabel.animate().cancel();
+        if (dayIndicatorLabel != null) {
+            dayIndicatorLabel.animate().cancel();
+            // Ensure overlay stays hidden during month change
+            dayIndicatorLabel.setAlpha(0f);
+        }
+
+        // Phase 1: fade/slide out current month label and fade out grid
+        monthLabel.animate()
+                .alpha(0f)
+                .translationX(dir * slideDistance)
+                .setDuration(140)
+                .start();
+
+        fadeWeekdays.animate()
+                .alpha(0f)
+                .setDuration(140)
+                .start();
+
+        fadeTarget.animate()
+                .alpha(0f)
+                .setDuration(140)
+                .withEndAction(() -> {
+                    if (binding == null) {
+                        return;
+                    }
+
+                    // Apply the month change once the old month is faded out.
+                    moveMonth(offset);
+
+                    // Month switching always collapses the sheet, so restore to fully visible.
+                    float targetAlpha = 1f;
+
+                    // Reset label to opposite side before sliding it in
+                    monthLabel.setTranslationX(-dir * slideDistance);
+                    monthLabel.setAlpha(0f);
+
+                    // Reset grid elements to 0 before fading in
+                    fadeWeekdays.setAlpha(0f);
+                    fadeTarget.setAlpha(0f);
+
+                    // Phase 2: fade/slide in new month label and fade in grid
+                    monthLabel.animate()
+                            .alpha(1f)
+                            .translationX(0f)
+                            .setDuration(180)
+                            .start();
+
+                    fadeWeekdays.animate()
+                            .alpha(targetAlpha)
+                            .setDuration(180)
+                            .start();
+
+                    fadeTarget.animate()
+                            .alpha(targetAlpha)
+                            .setDuration(180)
+                            .withEndAction(() -> isMonthAnimating = false)
+                            .start();
+                })
+                .start();
+    }
 
     private void moveMonth(int offset) {
         currentMonth.add(Calendar.MONTH, offset);
         currentMonth.set(Calendar.DAY_OF_MONTH, 1);
         selectedDate.setTime(currentMonth.getTime());
+
+        // Update day indicator too since selected day changed
+        updateDayIndicatorText();
+
         updateMonth();
         loadHabitsForDate(selectedDate);
     }
 
     private void updateMonth() {
-        binding.monthLabel.setText(monthFormatter.format(currentMonth.getTime()));
+        updateMonthLabelText();
         List<CalendarDay> days = buildMonthDays();
         calendarAdapter.submitDays(days);
         calendarAdapter.setToday(Calendar.getInstance().getTime());
@@ -328,6 +501,10 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
     public void onDaySelected(Date date) {
         selectedDate.setTime(date);
         calendarAdapter.setSelectedDate(date);
+
+        // Update the day indicator immediately when a new day is selected.
+        updateDayIndicatorText();
+
         loadHabitsForDate(selectedDate);
     }
 
@@ -335,5 +512,7 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+        dayIndicatorLabel = null;
     }
 }
+
