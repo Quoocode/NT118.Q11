@@ -19,6 +19,7 @@ import com.example.habittracker.data.model.HabitDailyView;
 import com.example.habittracker.data.repository.HabitRepository;
 import com.example.habittracker.data.repository.callback.HabitQueryCallback;
 import com.example.habittracker.databinding.FragmentCalendarBinding; // Tạo từ fragment_calendar.xml
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -28,6 +29,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import com.example.habittracker.ui.home.HabitCheckInDialogFragment;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Listener {
 
@@ -124,8 +129,58 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
             return;
         }
 
+        // Ensure the bottom sheet list dodges both:
+        // 1) system navigation bar (gesture bar)
+        // 2) the app's BottomNavigationView (home/calendar/achievements/settings)
+        final int baseBottom = (int) (16f * requireContext().getResources().getDisplayMetrics().density);
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.habitCompletionSection.habitCompletionRecycler, (v, insets) -> {
+            int navBottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom;
+
+            int appBottomNavHeight = 0;
+            View activityBottomNav = requireActivity().findViewById(R.id.bottom_navigation_view);
+            if (activityBottomNav instanceof BottomNavigationView && activityBottomNav.getVisibility() == View.VISIBLE) {
+                // Ensure we have a measured height
+                appBottomNavHeight = activityBottomNav.getHeight();
+            }
+
+            int left = v.getPaddingLeft();
+            int top = v.getPaddingTop();
+            int right = v.getPaddingRight();
+            v.setPadding(left, top, right, baseBottom + navBottom + appBottomNavHeight);
+            return insets;
+        });
+
+        // Also re-apply once after layout, because bottom nav height can be 0 before first measure.
+        binding.habitCompletionSection.habitCompletionRecycler.post(() ->
+                ViewCompat.requestApplyInsets(binding.habitCompletionSection.habitCompletionRecycler)
+        );
+
         // RecyclerView adapter
-        habitAdapter = new HabitCompletionAdapter();
+        habitAdapter = new HabitCompletionAdapter(
+                habit -> {
+                    if (habit.getHabitId() == null) return;
+                    Bundle bundle = new Bundle();
+                    bundle.putString("EXTRA_HABIT_ID", habit.getHabitId());
+                    navController.navigate(com.example.habittracker.R.id.action_analyticsFragment_to_habitDetailsFragment, bundle);
+                },
+                habit -> {
+                    if (habit.getHabitId() == null) return;
+
+                    // Open the same check-in dialog used on Home.
+                    HabitCheckInDialogFragment dialog = HabitCheckInDialogFragment.newInstance(
+                            habit.getHabitId(),
+                            habit.getName(),
+                            habit.getTargetValue(),
+                            habit.getCurrentValue(),
+                            habit.getUnit(),
+                            habit.getRawStatus() != null ? habit.getRawStatus() : "PENDING"
+                    );
+
+                    dialog.setOnCheckInListener(() -> loadHabitsForDate(selectedDate));
+                    dialog.show(getChildFragmentManager(), "CheckInDialog");
+                }
+        );
         binding.habitCompletionSection.habitCompletionRecycler.setAdapter(habitAdapter);
 
         // Bottom sheet behavior
@@ -456,7 +511,15 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
 
     private HabitCompletion mapToCompletion(HabitDailyView view) {
         HabitCompletion.Status status = resolveStatus(view);
-        return new HabitCompletion(view.getTitle(), status);
+        return new HabitCompletion(
+                view.getHabitId(),
+                view.getTitle(),
+                status,
+                view.getTargetValue(),
+                view.getCurrentValue(),
+                view.getUnit(),
+                view.getStatus()
+        );
     }
 
     private HabitCompletion.Status resolveStatus(HabitDailyView view) {
@@ -469,11 +532,36 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
             if ("MISSED".equals(normalized) || "SKIPPED".equals(normalized)) {
                 return HabitCompletion.Status.MISSED;
             }
+            // If viewing a past date, treat still-pending habits as missed.
+            if ("PENDING".equals(normalized) && isSelectedDateInPast()) {
+                return HabitCompletion.Status.MISSED;
+            }
         }
         if (view.getTargetValue() > 0 && view.getCurrentValue() >= view.getTargetValue()) {
             return HabitCompletion.Status.COMPLETED;
         }
+        // If no explicit status, still apply the "pending in past -> missed" rule.
+        if (isSelectedDateInPast()) {
+            return HabitCompletion.Status.MISSED;
+        }
         return HabitCompletion.Status.PENDING;
+    }
+
+    private boolean isSelectedDateInPast() {
+        Calendar today = Calendar.getInstance();
+        // Normalize to start of day
+        today.set(Calendar.HOUR_OF_DAY, 0);
+        today.set(Calendar.MINUTE, 0);
+        today.set(Calendar.SECOND, 0);
+        today.set(Calendar.MILLISECOND, 0);
+
+        Calendar selected = (Calendar) selectedDate.clone();
+        selected.set(Calendar.HOUR_OF_DAY, 0);
+        selected.set(Calendar.MINUTE, 0);
+        selected.set(Calendar.SECOND, 0);
+        selected.set(Calendar.MILLISECOND, 0);
+
+        return selected.before(today);
     }
 
     private void applyHabitData(List<HabitCompletion> completions) {
@@ -515,4 +603,3 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         dayIndicatorLabel = null;
     }
 }
-

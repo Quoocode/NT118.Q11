@@ -79,7 +79,12 @@
         android:id="@+id/analyticsFragment"
         android:name="com.example.habittracker.ui.analytics.AnalyticsFragment"
         android:label="fragment_calendar"
-        tools:layout="@layout/fragment_calendar" />
+        tools:layout="@layout/fragment_calendar" >
+
+        <action
+            android:id="@+id/action_analyticsFragment_to_habitDetailsFragment"
+            app:destination="@id/habitDetailsFragment" />
+    </fragment>
 
     <!-- Màn hình Thêm/Sửa -->
     <fragment
