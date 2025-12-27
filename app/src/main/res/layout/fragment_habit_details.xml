@@ -70,7 +70,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="This\nWeek"
+                        android:text="@string/label_this_week"
                         android:textColor="#B0B0B0"
                         android:textSize="12sp" />
 
@@ -97,7 +97,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="This\nMonth"
+                        android:text="@string/label_this_month"
                         android:textColor="#B0B0B0"
                         android:textSize="12sp" />
 
@@ -124,7 +124,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Total\nDone"
+                        android:text="@string/label_total_done"
                         android:textColor="#B0B0B0"
                         android:textSize="12sp" />
 
@@ -146,7 +146,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
-                android:text="Statistics"
+                android:text="@string/statistics"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
                 android:textStyle="bold"/>
@@ -171,7 +171,7 @@
                     android:button="@null"
                     android:gravity="center"
                     android:checked="true"
-                    android:text="Day"
+                    android:text="@string/filter_day"
                     android:textColor="@color/white"
                     android:textSize="14sp"
                     android:textStyle="bold"/>
@@ -184,7 +184,7 @@
                     android:background="@drawable/bg_segment_selector"
                     android:button="@null"
                     android:gravity="center"
-                    android:text="Week"
+                    android:text="@string/filter_week"
                     android:textColor="@color/white"
                     android:textSize="14sp"
                     android:textStyle="bold"/>
@@ -197,7 +197,7 @@
                     android:background="@drawable/bg_segment_selector"
                     android:button="@null"
                     android:gravity="center"
-                    android:text="Month"
+                    android:text="@string/filter_month"
                     android:textColor="@color/white"
                     android:textSize="14sp"
                     android:textStyle="bold"/>
@@ -213,7 +213,7 @@
                     android:id="@+id/tv_chart_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Weekly Completions"
+                    android:text="@string/chart_weekly_completions"
                     android:textColor="#FFFFFFFF"
                     android:textSize="16sp" />
 
@@ -239,7 +239,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
                         android:paddingBottom="6dp"
-                        android:text="+10% vs last week"
+                        android:text="@string/chart_trend_format"
                         android:textColor="#FF0AD95C"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -286,7 +286,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Edit Habit"
+                        android:text="@string/btn_edit_habit"
                         android:textColor="#FFFFFF"
                         android:textSize="16sp"
                         android:textStyle="bold"/>
@@ -306,7 +306,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Delete Habit"
+                        android:text="@string/btn_delete_habit"
                         android:textColor="#FF5252"
                         android:textSize="16sp"
                         android:textStyle="bold"/>

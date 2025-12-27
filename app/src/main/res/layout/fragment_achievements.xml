@@ -11,7 +11,7 @@
         android:id="@+id/tv_achievements_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Achievements"
+        android:text="@string/achievements"
         android:textColor="#FFFFFFFF"
         android:textSize="22dp"
         android:textStyle="bold" />
@@ -29,7 +29,7 @@
             android:id="@+id/tv_certificate_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Certificate"
+            android:text="@string/certificate"
             android:textColor="#FFFFFFFF"
             android:textSize="16dp"
             android:textStyle="bold" />
@@ -47,7 +47,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="No certificate"
+                android:text="@string/no_certificate"
                 android:textColor="#FFFFFFFF"
                 android:textSize="14sp" />
         </FrameLayout>
@@ -64,7 +64,7 @@
             android:id="@+id/tv_badges_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Badges"
+            android:text="@string/badges"
             android:textColor="#FFFFFFFF"
             android:textSize="16dp"
             android:textStyle="bold" />
@@ -86,7 +86,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:background="@drawable/container_navi"
-                    android:contentDescription="Expand badges"
+                    android:contentDescription="@string/expand_badges"
                     android:padding="12dp"
                     android:src="@drawable/ic_chevron_down"
                     app:tint="#FFFFFFFF" />
@@ -153,7 +153,7 @@
                 android:background="@drawable/container_navi"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:text="Show less"
+                android:text="@string/show_less"
                 android:textColor="#FFFFFFFF" />
         </LinearLayout>
     </LinearLayout>

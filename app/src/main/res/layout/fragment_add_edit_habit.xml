@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="New Habit"
+                android:text="@string/title_new_habit"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
                 android:textStyle="bold"/>
@@ -74,7 +74,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
-                    android:hint="Habit name"
+                    android:hint="@string/hint_habit_name"
                     android:textColor="#FFFFFF"
                     android:textColorHint="#FF91ADC9"
                     android:textSize="16sp"
@@ -95,7 +95,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
-                    android:hint="Description (Optional)"
+                    android:hint="@string/hint_habit_desc"
                     android:textColor="#FFFFFF"
                     android:textColorHint="#FF91ADC9"
                     android:textSize="14sp"
@@ -110,7 +110,7 @@
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="8dp"
-                android:text="Icon"
+                android:text="@string/section_icon"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
                 android:textStyle="bold"/>
@@ -130,7 +130,7 @@
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="12dp"
-                android:text="Frequency"
+                android:text="@string/section_frequency"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
                 android:textStyle="bold"/>
@@ -149,7 +149,7 @@
                     android:layout_marginEnd="8dp"
                     android:background="@drawable/bg_freq_selector"
                     android:gravity="center"
-                    android:text="Once"
+                    android:text="@string/freq_once"
                     android:textColor="#FFFFFF"
                     android:textSize="14sp"
                     android:clickable="true"
@@ -163,7 +163,7 @@
                     android:layout_marginEnd="8dp"
                     android:background="@drawable/bg_freq_selector"
                     android:gravity="center"
-                    android:text="Daily"
+                    android:text="@string/freq_daily"
                     android:textColor="#FFFFFF"
                     android:textSize="14sp"
                     android:clickable="true"
@@ -177,7 +177,7 @@
                     android:layout_marginEnd="8dp"
                     android:background="@drawable/bg_freq_selector"
                     android:gravity="center"
-                    android:text="Weekly"
+                    android:text="@string/freq_weekly"
                     android:textColor="#FFFFFF"
                     android:textSize="14sp"
                     android:clickable="true"
@@ -190,7 +190,7 @@
                     android:layout_weight="1"
                     android:background="@drawable/bg_freq_selector"
                     android:gravity="center"
-                    android:text="Monthly"
+                    android:text="@string/freq_monthly"
                     android:textColor="#FFFFFF"
                     android:textSize="14sp"
                     android:clickable="true"
@@ -204,7 +204,7 @@
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="12dp"
-                android:text="Reminders and Target"
+                android:text="@string/section_reminder_target"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
                 android:textStyle="bold"/>
@@ -228,7 +228,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Reminder Time"
+                        android:text="@string/reminder_time"
                         android:textColor="#FFFFFF"
                         android:textSize="16sp"/>
 
@@ -267,7 +267,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Start Date"
+                        android:text="@string/start_date"
                         android:textColor="#FFFFFF"
                         android:textSize="16sp"/>
 
@@ -275,7 +275,7 @@
                         android:id="@+id/tv_start_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Today"
+                        android:text="@string/today"
                         android:textColor="#FF91ADC9"
                         android:textSize="14sp"/>
                 </LinearLayout>
@@ -307,7 +307,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Target Value"
+                        android:text="@string/target_value"
                         android:textColor="#FF91ADC9"
                         android:textSize="12sp"/>
 
@@ -333,7 +333,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Unit"
+                        android:text="@string/unit"
                         android:textColor="#FF91ADC9"
                         android:textSize="12sp"/>
 
@@ -365,7 +365,7 @@
             android:layout_height="48dp"
             android:background="@drawable/container_blue"
             android:gravity="center"
-            android:text="Create Habit"
+            android:text="@string/btn_create_habit"
             android:textColor="#FFFFFF"
             android:textSize="16sp"
             android:textStyle="bold"
