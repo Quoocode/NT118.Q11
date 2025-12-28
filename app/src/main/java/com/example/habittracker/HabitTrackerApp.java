@@ -1,8 +1,8 @@
 package com.example.habittracker;
-
+import android.app.Application;
+import com.example.habittracker.utils.ThemeHelper;
 import android.app.Application;
 import android.content.Context;
-
 import com.example.habittracker.utils.LocaleHelper;
 
 /**
@@ -23,6 +23,10 @@ public class HabitTrackerApp extends Application {
         super.onCreate();
         // Force-apply to application resources too (covers components using app context/resources).
         LocaleHelper.applyLocale(this);
+
+        // Lấy trạng thái Dark Mode đã lưu và áp dụng ngay lập tức
+        boolean isDark = ThemeHelper.isDarkMode(this);
+        ThemeHelper.applyTheme(isDark);
     }
 }
 
