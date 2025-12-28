@@ -7,44 +7,289 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
     <string name="default_web_client_id">392391623569-dootefjgroer4isdof8hk6u760upkbcb.apps.googleusercontent.com</string>
+    <string name="cancel">Cancel</string>
 
-    <string name="lorem_ipsum">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
-        volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
-        dui nec risus. Maecenas non sodales nisi, vel dictum dolor. Class aptent taciti sociosqu ad
-        litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse blandit eleifend
-        diam, vel rutrum tellus vulputate quis. Aliquam eget libero aliquet, imperdiet nisl a,
-        ornare ex. Sed rhoncus est ut libero porta lobortis. Fusce in dictum tellus.\n\n
-        Suspendisse interdum ornare ante. Aliquam nec cursus lorem. Morbi id magna felis. Vivamus
-        egestas, est a condimentum egestas, turpis nisl iaculis ipsum, in dictum tellus dolor sed
-        neque. Morbi tellus erat, dapibus ut sem a, iaculis tincidunt dui. Interdum et malesuada
-        fames ac ante ipsum primis in faucibus. Curabitur et eros porttitor, ultricies urna vitae,
-        molestie nibh. Phasellus at commodo eros, non aliquet metus. Sed maximus nisl nec dolor
-        bibendum, vel congue leo egestas.\n\n
-        Sed interdum tortor nibh, in sagittis risus mollis quis. Curabitur mi odio, condimentum sit
-        amet auctor at, mollis non turpis. Nullam pretium libero vestibulum, finibus orci vel,
-        molestie quam. Fusce blandit tincidunt nulla, quis sollicitudin libero facilisis et. Integer
-        interdum nunc ligula, et fermentum metus hendrerit id. Vestibulum lectus felis, dictum at
-        lacinia sit amet, tristique id quam. Cras eu consequat dui. Suspendisse sodales nunc ligula,
-        in lobortis sem porta sed. Integer id ultrices magna, in luctus elit. Sed a pellentesque
-        est.\n\n
-        Aenean nunc velit, lacinia sed dolor sed, ultrices viverra nulla. Etiam a venenatis nibh.
-        Morbi laoreet, tortor sed facilisis varius, nibh orci rhoncus nulla, id elementum leo dui
-        non lorem. Nam mollis ipsum quis auctor varius. Quisque elementum eu libero sed commodo. In
-        eros nisl, imperdiet vel imperdiet et, scelerisque a mauris. Pellentesque varius ex nunc,
-        quis imperdiet eros placerat ac. Duis finibus orci et est auctor tincidunt. Sed non viverra
-        ipsum. Nunc quis augue egestas, cursus lorem at, molestie sem. Morbi a consectetur ipsum, a
-        placerat diam. Etiam vulputate dignissim convallis. Integer faucibus mauris sit amet finibus
-        convallis.\n\n
-        Phasellus in aliquet mi. Pellentesque habitant morbi tristique senectus et netus et
-        malesuada fames ac turpis egestas. In volutpat arcu ut felis sagittis, in finibus massa
-        gravida. Pellentesque id tellus orci. Integer dictum, lorem sed efficitur ullamcorper,
-        libero justo consectetur ipsum, in mollis nisl ex sed nisl. Donec maximus ullamcorper
-        sodales. Praesent bibendum rhoncus tellus nec feugiat. In a ornare nulla. Donec rhoncus
-        libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
-        vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
-    </string>
+<!--    <string name="lorem_ipsum">-->
+<!--        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris-->
+<!--        volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus-->
+<!--        dui nec risus. Maecenas non sodales nisi, vel dictum dolor. Class aptent taciti sociosqu ad-->
+<!--        litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse blandit eleifend-->
+<!--        diam, vel rutrum tellus vulputate quis. Aliquam eget libero aliquet, imperdiet nisl a,-->
+<!--        ornare ex. Sed rhoncus est ut libero porta lobortis. Fusce in dictum tellus.\n\n-->
+<!--        Suspendisse interdum ornare ante. Aliquam nec cursus lorem. Morbi id magna felis. Vivamus-->
+<!--        egestas, est a condimentum egestas, turpis nisl iaculis ipsum, in dictum tellus dolor sed-->
+<!--        neque. Morbi tellus erat, dapibus ut sem a, iaculis tincidunt dui. Interdum et malesuada-->
+<!--        fames ac ante ipsum primis in faucibus. Curabitur et eros porttitor, ultricies urna vitae,-->
+<!--        molestie nibh. Phasellus at commodo eros, non aliquet metus. Sed maximus nisl nec dolor-->
+<!--        bibendum, vel congue leo egestas.\n\n-->
+<!--        Sed interdum tortor nibh, in sagittis risus mollis quis. Curabitur mi odio, condimentum sit-->
+<!--        amet auctor at, mollis non turpis. Nullam pretium libero vestibulum, finibus orci vel,-->
+<!--        molestie quam. Fusce blandit tincidunt nulla, quis sollicitudin libero facilisis et. Integer-->
+<!--        interdum nunc ligula, et fermentum metus hendrerit id. Vestibulum lectus felis, dictum at-->
+<!--        lacinia sit amet, tristique id quam. Cras eu consequat dui. Suspendisse sodales nunc ligula,-->
+<!--        in lobortis sem porta sed. Integer id ultrices magna, in luctus elit. Sed a pellentesque-->
+<!--        est.\n\n-->
+<!--        Aenean nunc velit, lacinia sed dolor sed, ultrices viverra nulla. Etiam a venenatis nibh.-->
+<!--        Morbi laoreet, tortor sed facilisis varius, nibh orci rhoncus nulla, id elementum leo dui-->
+<!--        non lorem. Nam mollis ipsum quis auctor varius. Quisque elementum eu libero sed commodo. In-->
+<!--        eros nisl, imperdiet vel imperdiet et, scelerisque a mauris. Pellentesque varius ex nunc,-->
+<!--        quis imperdiet eros placerat ac. Duis finibus orci et est auctor tincidunt. Sed non viverra-->
+<!--        ipsum. Nunc quis augue egestas, cursus lorem at, molestie sem. Morbi a consectetur ipsum, a-->
+<!--        placerat diam. Etiam vulputate dignissim convallis. Integer faucibus mauris sit amet finibus-->
+<!--        convallis.\n\n-->
+<!--        Phasellus in aliquet mi. Pellentesque habitant morbi tristique senectus et netus et-->
+<!--        malesuada fames ac turpis egestas. In volutpat arcu ut felis sagittis, in finibus massa-->
+<!--        gravida. Pellentesque id tellus orci. Integer dictum, lorem sed efficitur ullamcorper,-->
+<!--        libero justo consectetur ipsum, in mollis nisl ex sed nisl. Donec maximus ullamcorper-->
+<!--        sodales. Praesent bibendum rhoncus tellus nec feugiat. In a ornare nulla. Donec rhoncus-->
+<!--        libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus-->
+<!--        vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.-->
+<!--    </string>-->
+
     <string name="habit_completion_title">Habit Completion</string>
     <string name="error_auth_required">Please sign in to view your calendar.</string>
     <string name="error_load_habits">Unable to load habits: %1$s</string>
+
+    <!--calendar-->
+    <string name="day_sun">S</string>
+    <string name="day_mon">M</string>
+    <string name="day_tue">T</string>
+    <string name="day_wed">W</string>
+    <string name="day_thu">T</string>
+    <string name="day_fri">F</string>
+    <string name="day_sat">S</string>
+
+    <!--dialog_achivement-->
+    <string name="achievement_icon_desc">Achievement icon</string>
+    <string name="achievement_title_placeholder">Title</string>
+    <string name="achievement_description_placeholder">Description</string>
+    <string name="achievement_not_unlocked">Not yet unlocked</string>
+
+    <!--fragment achievements-->
+    <string name="achievements_title">Achievements</string>
+    <string name="achievement_unlocked">Unlocked</string>
+    <string name="achievement_progress_placeholder">0/0</string>
+    <string name="badges_title">Badges</string>
+    <string name="expand_badges_desc">Expand badges</string>
+<!--    <string name="show_less">Show less</string> (co o duoi)-->
+
+    <!--fragment calendar-->
+    <string name="calendar_title">Calendar</string>
+
+    <string name="calendar_month_placeholder">October 2024</string>
+    <string name="calendar_day_placeholder">Tuesday, 25 December 2025</string>
+
+    <string name="weekday_sun">S</string>
+    <string name="weekday_mon">M</string>
+    <string name="weekday_tue">T</string>
+    <string name="weekday_wed">W</string>
+    <string name="weekday_thu">T</string>
+    <string name="weekday_fri">F</string>
+    <string name="weekday_sat">S</string>
+
+
+    <!-- Login -->
+
+    <string name="login">Log In</string>
+    <string name="signup">Sign Up</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="forgot_password">Forgot your password?</string>
+    <string name="continue_guest">Continue as Guest</string>
+    <string name="remember_me">Remember Me</string>
+    <string name="or_continue_with">Or continue with</string>
+
+    <!-- Toast -->
+    <string name="login_success">Login successful!</string>
+    <string name="login_failed">Wrong email or password!</string>
+    <string name="guest_login">Logged in as Guest</string>
+
+    <!--register-->
+    <string name="register">Register</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="sign_up">Sign Up</string>
+
+    <!--Reset Password-->
+    <string name="reset_password_title">Reset your password</string>
+    <string name="send_verification_code">Send verification code</string>
+
+
+    <!-- Add / Edit Habit -->
+    <string name="title_new_habit">New Habit</string>
+    <string name="hint_habit_name">Habit name</string>
+    <string name="hint_habit_desc">Description (Optional)</string>
+
+    <string name="section_icon">Icon</string>
+    <string name="section_frequency">Frequency</string>
+
+    <string name="freq_once">Once</string>
+    <string name="freq_daily">Daily</string>
+    <string name="freq_weekly">Weekly</string>
+    <string name="freq_monthly">Monthly</string>
+
+    <string name="section_reminder_target">Reminders and Target</string>
+    <string name="reminder_time">Reminder Time</string>
+    <string name="start_date">Start Date</string>
+    <string name="today">Today</string>
+
+    <string name="target_value">Target Value</string>
+    <string name="unit">Unit</string>
+
+    <string name="btn_create_habit">Create Habit</string>
+    <string name="back">Back</string>
+    <string name="default_time">09:00</string>
+    <string name="hint_target_value">0</string>
+    <string name="hint_unit_km">km</string>
+
+    <string name="calendar">Calendar</string>
+
+    <!-- Achievements -->
+    <string name="achievements">Achievements</string>
+    <string name="certificate">Certificate</string>
+    <string name="no_certificate">No certificate</string>
+
+    <string name="badges">Badges</string>
+    <string name="expand_badges">Expand badges</string>
+    <string name="show_less">Show less</string>
+
+    <!-- Update Progress Dialog -->
+    <string name="update_progress">Update Progress</string>
+    <string name="target_format">Target: %1$s %2$s</string>
+    <string name="current_value">Current Value</string>
+
+    <string name="unit_km">km</string>
+    <string name="default_zero">0</string>
+
+    <string name="status_pending">Pending</string>
+    <string name="status_done">Done</string>
+    <string name="btn_update">Update</string>
+
+
+    <!-- Habit Detail / Summary -->
+    <string name="habit_detail_title">Habit Detail</string>
+
+    <string name="label_this_week">This\nWeek</string>
+    <string name="label_this_month">This\nMonth</string>
+    <string name="label_total_done">Total\nDone</string>
+
+    <string name="statistics">Statistics</string>
+
+    <string name="filter_day">Day</string>
+    <string name="filter_week">Week</string>
+    <string name="filter_month">Month</string>
+
+    <string name="chart_weekly_completions">Weekly Completions</string>
+    <string name="chart_trend_format">%1$s vs last week</string>
+
+    <string name="btn_edit_habit">Edit Habit</string>
+    <string name="btn_delete_habit">Delete Habit</string>
+
+    <!-- Home -->
+    <string name="home_dashboard">Dashboard</string>
+    <string name="home_today">Today</string>
+    <string name="home_progress">Progress</string>
+    <string name="home_daily_habits">Daily Habits</string>
+    <string name="home_streaks">Streaks</string>
+    <string name="home_current">Current</string>
+    <string name="home_longest">Longest</string>
+
+    <string name="days_format">%1$d days</string>
+    <string name="progress_count_format">%1$d/%2$d</string>
+
+    <!-- Profile -->
+    <string name="edit_profile">Edit Profile</string>
+    <string name="personal_information">Personal Information</string>
+
+    <string name="label_full_name">Full Name</string>
+    <string name="label_email_address">Email Address</string>
+    <string name="label_bio">Bio</string>
+
+    <string name="hint_full_name">Enter your full name</string>
+    <string name="hint_email">Enter your email</string>
+    <string name="hint_bio">Tell something about yourself</string>
+
+    <string name="save_changes">Save Changes</string>
+
+    <!--Reminders-->
+<!--    <string name="reminders">Reminders</string>-->
+    <string name="general">General</string>
+
+    <string name="allow_notifications">Allow Notifications</string>
+    <string name="enable_push_notifications">Enable push notifications</string>
+
+    <string name="schedule">Schedule</string>
+    <string name="daily_briefing">Daily Briefing</string>
+    <string name="morning_summary_at">Morning summary at</string>
+
+    <string name="frequency">Frequency</string>
+    <string name="select_active_days">Select active days</string>
+    <string name="every_day">Every Day</string>
+
+<!--    <string name="preferences">Preferences</string>-->
+    <string name="sound">Sound</string>
+    <string name="play_sound_notification">Play sound with notification</string>
+
+    <string name="vibration">Vibration</string>
+    <string name="vibrate_on_notification">Vibrate on notification</string>
+
+    <!--habit completion-->
+    <string name="habit_name_placeholder">Habit name</string>
+    <string name="status_completed">Completed</string>
+    <string name="status_missed">Missed</string>
+    <string name="bottom_nav_dashboard">Dashboard</string>
+
+    <!--view today's habits-->
+    <string name="show_more">Show more</string>
+
+
+    <!-- Settings -->
+    <string name="language">Language</string>
+    <string name="choose_language">Choose language</string>
+    <string name="english">English</string>
+    <string name="vietnamese">Vietnamese</string>
+
+    <string name="settings">Settings</string>
+    <string name="profile">Profile</string>
+    <string name="profile_desc">Manage your profile information</string>
+
+    <string name="preferences">Preferences</string>
+    <string name="theme">Theme</string>
+    <string name="theme_desc">Customize the app\'s appearance</string>
+
+    <string name="notifications">Notifications</string>
+    <string name="reminders">Reminders</string>
+    <string name="reminders_desc">Manage reminder settings</string>
+
+    <string name="data">Data</string>
+    <string name="export_data">Export Data</string>
+    <string name="export_data_desc">Export your habit data</string>
+
+    <string name="account">Account</string>
+    <string name="logout">Log Out</string>
+    <string name="logout_desc">Sign out of your account</string>
+
+
+    <string name="ach_first_step_title">First Step</string>
+    <string name="ach_first_checkin_title">First Check-in</string>
+    <string name="ach_perfect_day_title">Perfect Day</string>
+    <string name="ach_habit_builder_title">Habit Builder</string>
+    <string name="ach_habit_architect_title">Habit Architect</string>
+    <string name="ach_on_fire_3_title">On Fire (3)</string>
+    <string name="ach_on_fire_7_title">On Fire (7)</string>
+    <string name="ach_legendary_title">Legendary</string>
+    <string name="ach_three_perfect_days_title">Three Perfect Days</string>
+    <string name="ach_welcome_back_title">Welcome Back</string>
+
+    <string name="ach_first_step_desc">Create your first habit.</string>
+    <string name="ach_first_checkin_desc">Complete (or reach target for) a habit for the first time.</string>
+    <string name="ach_perfect_day_desc">Finish all scheduled habits in a day.</string>
+    <string name="ach_habit_builder_desc">Create 3 habits.</string>
+    <string name="ach_habit_architect_desc">Create 7 habits.</string>
+    <string name="ach_on_fire_3_desc">Reach a 3-day current streak.</string>
+    <string name="ach_on_fire_7_desc">Reach a 7-day current streak.</string>
+    <string name="ach_legendary_desc">Reach 7 days as your longest streak.</string>
+    <string name="ach_three_perfect_days_desc">Finish all scheduled habits on 3 different days.</string>
+    <string name="ach_welcome_back_desc">Open the app after being away for a day.</string>
+
+
 </resources>

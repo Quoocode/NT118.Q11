@@ -59,7 +59,7 @@
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="Settings"
+                    android:text="@string/settings"
                     android:textColor="#FFFFFFFF"
                     android:textSize="18dp" />
             </LinearLayout>
@@ -76,7 +76,7 @@
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="Profile"
+                android:text="@string/profile"
                 android:textColor="#FFFFFFFF"
                 android:textSize="22dp" />
 
@@ -114,7 +114,7 @@
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Profile"
+                        android:text="@string/profile"
                         android:textColor="#FFFFFFFF"
                         android:textSize="16dp" />
 
@@ -125,7 +125,7 @@
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Manage your profile information"
+                        android:text="@string/profile_desc"
                         android:textColor="#FF91ADC9"
                         android:textSize="14dp" />
                 </LinearLayout>
@@ -143,7 +143,7 @@
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="Preferences"
+                android:text="@string/preferences"
                 android:textColor="#FFFFFFFF"
                 android:textSize="22dp" />
 
@@ -189,7 +189,7 @@
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Theme"
+                        android:text="@string/theme"
                         android:textColor="#FFFFFFFF"
                         android:textSize="16dp" />
 
@@ -200,7 +200,7 @@
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Customize the app&#39;s appearance"
+                        android:text="@string/theme_desc"
                         android:textColor="#FF91ADC9"
                         android:textSize="14dp" />
                 </LinearLayout>
@@ -248,7 +248,7 @@
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Language"
+                        android:text="@string/language"
                         android:textColor="#FFFFFFFF"
                         android:textSize="16dp" />
 
@@ -259,7 +259,7 @@
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Set your preferred language"
+                        android:text="@string/choose_language"
                         android:textColor="#FF91ADC9"
                         android:textSize="14dp" />
                 </LinearLayout>
@@ -276,7 +276,7 @@
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="Notifications"
+                android:text="@string/notifications"
                 android:textColor="#FFFFFFFF"
                 android:textSize="22dp" />
 
@@ -322,7 +322,7 @@
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Reminders"
+                        android:text="@string/reminders"
                         android:textColor="#FFFFFFFF"
                         android:textSize="16dp" />
 
@@ -333,7 +333,7 @@
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Manage reminder settings"
+                        android:text="@string/reminders_desc"
                         android:textColor="#FF91ADC9"
                         android:textSize="14dp" />
                 </LinearLayout>
@@ -350,7 +350,7 @@
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="Data"
+                android:text="@string/data"
                 android:textColor="#FFFFFFFF"
                 android:textSize="22dp" />
 
@@ -396,7 +396,7 @@
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Export Data"
+                        android:text="@string/export_data"
                         android:textColor="#FFFFFFFF"
                         android:textSize="16dp" />
 
@@ -407,7 +407,7 @@
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Export your habit data"
+                        android:text="@string/export_data_desc"
                         android:textColor="#FF91ADC9"
                         android:textSize="14dp" />
                 </LinearLayout>
@@ -425,7 +425,7 @@
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="Account"
+                android:text="@string/account"
                 android:textColor="#FFFFFFFF"
                 android:textSize="22dp" />
 
@@ -450,7 +450,6 @@
                     android:gravity="center"
                     android:orientation="horizontal">
 
-                    <!-- Giả sử bạn có ic_logout, nếu chưa có thì dùng tạm ic_left_back hoặc tạo vector asset mới -->
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
@@ -458,7 +457,6 @@
                         android:src="@drawable/ic_arrow_left"
                         android:rotation="180"
                         app:tint="#FF5252"/>
-                    <!-- Xoay ngược icon back làm logout tạm nếu chưa có icon -->
                 </LinearLayout>
 
                 <LinearLayout
@@ -475,7 +473,7 @@
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Log Out"
+                        android:text="@string/logout"
                         android:textColor="#FF5252"
                         android:textSize="16dp"
                         android:textStyle="bold"/>
@@ -487,7 +485,7 @@
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Sign out of your account"
+                        android:text="@string/logout_desc"
                         android:textColor="#FF91ADC9"
                         android:textSize="14dp" />
                 </LinearLayout>

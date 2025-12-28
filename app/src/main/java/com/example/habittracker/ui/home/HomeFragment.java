@@ -35,7 +35,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
+import android.content.Context;
+import com.example.habittracker.utils.LocaleHelper;
 public class HomeFragment extends Fragment {
 
     private static final String TAG = "HomeFragment";
@@ -48,6 +49,13 @@ public class HomeFragment extends Fragment {
     private final List<HabitDailyView> todayHabitList = new ArrayList<>();
     private String currentUserId;
     private AchievementService achievementService;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(LocaleHelper.applyLocale(context));
+    }
+
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -80,6 +88,8 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
+        Context localeContext = LocaleHelper.applyLocale(requireContext());
+
         binding.recyclerViewHabits.setLayoutManager(new LinearLayoutManager(getContext()));
 
         habitAdapter = new DashboardHabitAdapter(getContext(), todayHabitList,
@@ -172,8 +182,8 @@ public class HomeFragment extends Fragment {
             @Override
             public void onStreakCalculated(int currentStreak, int longestStreak) {
                 if (binding != null) {
-                    String currentText = currentStreak + " days";
-                    String longestText = longestStreak + " days";
+                    String currentText = getString(R.string.days_format, currentStreak);
+                    String longestText = getString(R.string.days_format, longestStreak);
                     binding.tvDetailCurrentStreak.setText(currentText);
                     binding.tvDetailLongestStreak.setText(longestText);
                 }
@@ -188,6 +198,9 @@ public class HomeFragment extends Fragment {
 
     private void loadDailyProgress() {
         Calendar today = Calendar.getInstance();
+
+        // Lấy context đã apply locale
+        Context localeContext = LocaleHelper.applyLocale(requireContext());
 
         habitRepository.getHabitsAndHistoryForDate(today, new HabitQueryCallback() {
             @Override
@@ -207,10 +220,19 @@ public class HomeFragment extends Fragment {
                     }
                 }
 
-                String progressText = completedHabits + "/" + totalHabits;
+
+                // Set label Progress / Tiến độ bằng localeContext
+                binding.tvProgressLabel.setText(localeContext.getString(R.string.home_progress));
+
+                // Set số đã hoàn thành / tổng bằng localeContext
+                String progressText = localeContext.getString(
+                        R.string.progress_count_format, completedHabits, totalHabits
+                );
                 binding.tvProgressCount.setText(progressText);
 
-                binding.progressBarDaily.setMax(totalHabits);
+                // Animate progressBar
+                int max = Math.max(totalHabits, 1); // tránh setMax = 0
+                binding.progressBarDaily.setMax(max);
                 ObjectAnimator.ofInt(binding.progressBarDaily, "progress", completedHabits)
                         .setDuration(500)
                         .start();
@@ -223,10 +245,13 @@ public class HomeFragment extends Fragment {
         });
     }
 
+
+
     @Override
     public void onResume() {
         super.onResume();
         loadHabitsForToday();
+        loadDailyProgress();
     }
 
     @Override

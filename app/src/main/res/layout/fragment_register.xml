@@ -50,7 +50,7 @@
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="Sign Up"
+                android:text="@string/sign_up"
                 android:textColor="#FFFFFFFF"
                 android:textSize="18dp" />
         </LinearLayout>
@@ -78,7 +78,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:hint="Email"
+                android:hint="@string/email"
                 android:inputType="textEmailAddress"
                 android:textColor="#FFFFFFFF"
                 android:textColorHint="#FF91ADC9"
@@ -109,7 +109,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:hint="Password"
+                android:hint="@string/password"
                 android:inputType="textPassword"
                 android:textColor="#FFFFFFFF"
                 android:textColorHint="#FF91ADC9"
@@ -140,7 +140,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:hint="Confirm Password"
+                android:hint="@string/confirm_password"
                 android:inputType="textPassword"
                 android:textColor="#FFFFFFFF"
                 android:textColorHint="#FF91ADC9"
@@ -176,7 +176,7 @@
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="Sign Up"
+                android:text="@string/sign_up"
                 android:textColor="#FFFFFFFF"
                 android:textSize="16dp" />
         </LinearLayout>

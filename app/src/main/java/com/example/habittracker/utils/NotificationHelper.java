@@ -98,7 +98,7 @@ public class NotificationHelper {
         // --- FIX BUG LOOP: Dùng while thay vì if ---
         // Chừng nào thời gian tính ra vẫn nhỏ hơn hoặc bằng hiện tại -> Cộng tiếp
         while (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
-             calendar.add(Calendar.DAY_OF_YEAR, 1); // Code thật (Chạy thực tế dùng dòng này)
+            calendar.add(Calendar.DAY_OF_YEAR, 1); // Code thật (Chạy thực tế dùng dòng này)
 //            calendar.add(Calendar.MINUTE, 1);      // Code hack (Test lặp 1 phút)
             Log.e("ALARM_DEBUG", ">> Đã cộng thêm thời gian để đảm bảo ở tương lai!");
         }
@@ -560,10 +560,10 @@ public class NotificationHelper {
      */
     @SuppressLint("ScheduleExactAlarm")
     private static void scheduleAlarmSafely(Context context,
-                                           AlarmManager alarmManager,
-                                           int alarmType,
-                                           long triggerAtMillis,
-                                           PendingIntent pendingIntent) {
+                                            AlarmManager alarmManager,
+                                            int alarmType,
+                                            long triggerAtMillis,
+                                            PendingIntent pendingIntent) {
         if (alarmManager == null) return;
 
         boolean allowExact = canScheduleExactAlarms(context);
@@ -599,4 +599,3 @@ public class NotificationHelper {
     }
 
 }
-
