@@ -128,6 +128,9 @@
     <string name="default_zero">0</string>
 
     <string name="status_pending">Chưa hoàn thành</string>
+    <string name="status_completed">Hoàn thành</string>
+    <string name="status_missed">Bỏ lỡ</string>
+
     <string name="status_done">Hoàn thành</string>
     <string name="btn_update">Cập nhật</string>
 
@@ -201,7 +204,7 @@
 
     <!--habit completion-->
     <string name="habit_name_placeholder">Tên Habit</string>
-    <string name="status_completed">Hoàn thành</string>
+    <string name="bottom_nav_dashboard">Bảng điều khiển</string>
 
     <!--view today habit-->
     <string name="show_more">Xem thêm</string>
@@ -231,6 +234,31 @@
     <string name="account">Tài khoản</string>
     <string name="logout">Đăng xuất</string>
     <string name="logout_desc">Đăng xuất khỏi tài khoản</string>
+
+
+    <!-- Achievement titles -->
+    <string name="ach_first_step_title">Bước đầu tiên</string>
+    <string name="ach_first_checkin_title">Check-in đầu tiên</string>
+    <string name="ach_perfect_day_title">Ngày hoàn hảo</string>
+    <string name="ach_habit_builder_title">Tạo 3 thói quen</string>
+    <string name="ach_habit_architect_title">Tạo 7 thói quen</string>
+    <string name="ach_on_fire_3_title">Nhiệt huyết (3)</string>
+    <string name="ach_on_fire_7_title">Nhiệt huyết (7)</string>
+    <string name="ach_legendary_title">Huyền thoại</string>
+    <string name="ach_three_perfect_days_title">3 Ngày Hoàn Hảo</string>
+    <string name="ach_welcome_back_title">Chào mừng trở lại</string>
+
+    <!-- Achievement descriptions -->
+    <string name="ach_first_step_desc">Tạo thói quen đầu tiên của bạn.</string>
+    <string name="ach_first_checkin_desc">Hoàn thành (hoặc đạt mục tiêu) một thói quen lần đầu tiên.</string>
+    <string name="ach_perfect_day_desc">Hoàn thành tất cả thói quen trong một ngày.</string>
+    <string name="ach_habit_builder_desc">Tạo 3 thói quen.</string>
+    <string name="ach_habit_architect_desc">Tạo 7 thói quen.</string>
+    <string name="ach_on_fire_3_desc">Đạt streak 3 ngày liên tục.</string>
+    <string name="ach_on_fire_7_desc">Đạt streak 7 ngày liên tục.</string>
+    <string name="ach_legendary_desc">Đạt 7 ngày là streak dài nhất.</string>
+    <string name="ach_three_perfect_days_desc">Hoàn thành tất cả thói quen trong 3 ngày khác nhau.</string>
+    <string name="ach_welcome_back_desc">Mở ứng dụng sau khi vắng một ngày.</string>
 
 
 </resources>

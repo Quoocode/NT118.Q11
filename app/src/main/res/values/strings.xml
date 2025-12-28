@@ -235,7 +235,8 @@
     <!--habit completion-->
     <string name="habit_name_placeholder">Habit name</string>
     <string name="status_completed">Completed</string>
-
+    <string name="status_missed">Missed</string>
+    <string name="bottom_nav_dashboard">Dashboard</string>
 
     <!--view today's habits-->
     <string name="show_more">Show more</string>
@@ -266,6 +267,29 @@
     <string name="account">Account</string>
     <string name="logout">Log Out</string>
     <string name="logout_desc">Sign out of your account</string>
+
+
+    <string name="ach_first_step_title">First Step</string>
+    <string name="ach_first_checkin_title">First Check-in</string>
+    <string name="ach_perfect_day_title">Perfect Day</string>
+    <string name="ach_habit_builder_title">Habit Builder</string>
+    <string name="ach_habit_architect_title">Habit Architect</string>
+    <string name="ach_on_fire_3_title">On Fire (3)</string>
+    <string name="ach_on_fire_7_title">On Fire (7)</string>
+    <string name="ach_legendary_title">Legendary</string>
+    <string name="ach_three_perfect_days_title">Three Perfect Days</string>
+    <string name="ach_welcome_back_title">Welcome Back</string>
+
+    <string name="ach_first_step_desc">Create your first habit.</string>
+    <string name="ach_first_checkin_desc">Complete (or reach target for) a habit for the first time.</string>
+    <string name="ach_perfect_day_desc">Finish all scheduled habits in a day.</string>
+    <string name="ach_habit_builder_desc">Create 3 habits.</string>
+    <string name="ach_habit_architect_desc">Create 7 habits.</string>
+    <string name="ach_on_fire_3_desc">Reach a 3-day current streak.</string>
+    <string name="ach_on_fire_7_desc">Reach a 7-day current streak.</string>
+    <string name="ach_legendary_desc">Reach 7 days as your longest streak.</string>
+    <string name="ach_three_perfect_days_desc">Finish all scheduled habits on 3 different days.</string>
+    <string name="ach_welcome_back_desc">Open the app after being away for a day.</string>
 
 
 </resources>

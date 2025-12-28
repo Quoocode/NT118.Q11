@@ -118,7 +118,7 @@
                     tools:listitem="@layout/item_today_habit" />
 
                 <TextView
-                    android:id="@+id/container_depth_frame35"
+                    android:id="@+id/tvProgressLabel"
                     android:layout_width="match_parent"
                     android:layout_height="28dp"
                     android:layout_marginLeft="16dp"

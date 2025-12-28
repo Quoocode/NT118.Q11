@@ -122,7 +122,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="S"
+                    android:text="@string/day_sun"
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
                 <TextView
@@ -130,7 +130,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="M"
+                    android:text="@string/day_mon"
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
                 <TextView
@@ -138,7 +138,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="T"
+                    android:text="@string/day_tue"
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
                 <TextView
@@ -146,7 +146,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="W"
+                    android:text="@string/day_wed"
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
                 <TextView
@@ -154,7 +154,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="T"
+                    android:text="@string/day_thu"
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
                 <TextView
@@ -162,7 +162,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="F"
+                    android:text="@string/day_fri"
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
                 <TextView
@@ -170,7 +170,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="S"
+                    android:text="@string/day_sat"
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
             </LinearLayout>
