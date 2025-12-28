@@ -25,7 +25,7 @@
             android:layout_height="32dp"
             android:layout_gravity="center"
             android:src="@android:drawable/ic_menu_camera"
-            app:tint="#FFFFFF"/>
+            app:tint="?android:attr/textColorPrimary"/>
 
     </FrameLayout>
 

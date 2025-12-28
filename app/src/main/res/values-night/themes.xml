@@ -1,7 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.HabitTracker" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+
+        <!-- Màu chủ đạo -->
+        <item name="colorPrimary">@color/brand_blue</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <!-- Nền màn hình chính -->
+        <item name="android:windowBackground">@color/app_background_color</item>
+
+        <!-- Nền các thẻ/card/dialog -->
+        <item name="colorSurface">@color/card_background_color</item>
+        <item name="colorSurfaceContainer">@color/card_background_color</item>
+
+        <!-- Màu chữ chính -->
+        <item name="android:textColorPrimary">@color/text_primary_color</item>
+        <item name="colorOnSurface">@color/text_primary_color</item>
+
+        <!-- Màu chữ phụ -->
+        <item name="android:textColorSecondary">@color/text_secondary_color</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary_color</item>
+
+        <!-- Màu thanh trạng thái -->
+        <item name="android:statusBarColor">@color/app_background_color</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
+
+    <style name="Theme.HabitTracker" parent="Base.Theme.HabitTracker" />
 </resources>

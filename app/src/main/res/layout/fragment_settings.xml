@@ -6,7 +6,7 @@
     android:id="@+id/container_user_settings"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/container_login"
+    android:background="?android:attr/windowBackground"
     android:orientation="vertical">
 
     <ScrollView
@@ -20,10 +20,9 @@
             android:id="@+id/container_user_settings1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/container_login_2"
             android:gravity="left|top"
             android:orientation="vertical"
-            android:paddingBottom="32dp"> <!-- Tăng padding bottom để lướt xuống cuối thoáng hơn -->
+            android:paddingBottom="32dp">
 
             <!-- HEADER SECTION -->
             <LinearLayout
@@ -48,11 +47,13 @@
                     android:src="@drawable/ic_arrow_left"
                     android:clickable="true"
                     android:focusable="true"
-                    android:background="?attr/selectableItemBackgroundBorderless"/>
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    app:tint="?android:attr/textColorPrimary"/>
+                <!-- Tint icon theo màu chữ chính -->
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="23dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginRight="48dp"
                     android:layout_weight="1"
                     android:gravity="center_horizontal|center_vertical"
@@ -60,14 +61,15 @@
                     android:maxLines="1"
                     android:singleLine="true"
                     android:text="@string/settings"
-                    android:textColor="#FFFFFFFF"
-                    android:textSize="18dp" />
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <!-- PROFILE SECTION -->
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="28dp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="20dp"
@@ -77,8 +79,9 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 android:text="@string/profile"
-                android:textColor="#FFFFFFFF"
-                android:textSize="22dp" />
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="22sp"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:id="@+id/btn_profile_settings"
@@ -99,6 +102,7 @@
                     android:layout_height="56dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_avatar" />
+                <!-- Avatar giữ nguyên màu gốc -->
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -115,8 +119,8 @@
                         android:maxLines="1"
                         android:singleLine="true"
                         android:text="@string/profile"
-                        android:textColor="#FFFFFFFF"
-                        android:textSize="16dp" />
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -126,8 +130,8 @@
                         android:maxLines="1"
                         android:singleLine="true"
                         android:text="@string/profile_desc"
-                        android:textColor="#FF91ADC9"
-                        android:textSize="14dp" />
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -144,9 +148,11 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 android:text="@string/preferences"
-                android:textColor="#FFFFFFFF"
-                android:textSize="22dp" />
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="22sp"
+                android:textStyle="bold" />
 
+            <!-- Theme Settings -->
             <LinearLayout
                 android:id="@+id/btn_theme_settings"
                 android:layout_width="match_parent"
@@ -165,14 +171,18 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:background="@drawable/container_navi"
+                    android:backgroundTint="?attr/colorSurfaceContainer"
                     android:gravity="center"
                     android:orientation="horizontal">
+                    <!-- backgroundTint: Đổi màu nền icon container -->
 
                     <ImageView
+                        android:id="@+id/img_theme_icon"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:scaleType="centerInside"
-                        android:src="@drawable/ic_sun" />
+                        android:src="@drawable/ic_sun"
+                        app:tint="?android:attr/textColorPrimary"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -190,8 +200,8 @@
                         android:maxLines="1"
                         android:singleLine="true"
                         android:text="@string/theme"
-                        android:textColor="#FFFFFFFF"
-                        android:textSize="16dp" />
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -201,11 +211,12 @@
                         android:maxLines="1"
                         android:singleLine="true"
                         android:text="@string/theme_desc"
-                        android:textColor="#FF91ADC9"
-                        android:textSize="14dp" />
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
 
+            <!-- Language Settings -->
             <LinearLayout
                 android:id="@+id/btn_language_settings"
                 android:layout_width="match_parent"
@@ -224,6 +235,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:background="@drawable/container_navi"
+                    android:backgroundTint="?attr/colorSurfaceContainer"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -231,7 +243,8 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:scaleType="centerInside"
-                        android:src="@drawable/ic_world" />
+                        android:src="@drawable/ic_world"
+                        app:tint="?android:attr/textColorPrimary"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -249,8 +262,8 @@
                         android:maxLines="1"
                         android:singleLine="true"
                         android:text="@string/language"
-                        android:textColor="#FFFFFFFF"
-                        android:textSize="16dp" />
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -260,11 +273,12 @@
                         android:maxLines="1"
                         android:singleLine="true"
                         android:text="@string/choose_language"
-                        android:textColor="#FF91ADC9"
-                        android:textSize="14dp" />
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
 
+            <!-- SECTION: Notifications -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="28dp"
@@ -277,9 +291,11 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 android:text="@string/notifications"
-                android:textColor="#FFFFFFFF"
-                android:textSize="22dp" />
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="22sp"
+                android:textStyle="bold" />
 
+            <!-- Reminders Settings -->
             <LinearLayout
                 android:id="@+id/btn_reminders_settings"
                 android:layout_width="match_parent"
@@ -298,6 +314,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:background="@drawable/container_navi"
+                    android:backgroundTint="?attr/colorSurfaceContainer"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -305,7 +322,8 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:scaleType="centerInside"
-                        android:src="@drawable/ic_bell" />
+                        android:src="@drawable/ic_bell"
+                        app:tint="?android:attr/textColorPrimary"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -323,93 +341,19 @@
                         android:maxLines="1"
                         android:singleLine="true"
                         android:text="@string/reminders"
-                        android:textColor="#FFFFFFFF"
-                        android:textSize="16dp" />
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:layout_width="match_parent"
-                        android:layout_height="21dp"
+                        android:layout_height="wrap_content"
                         android:gravity="left|center_vertical"
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
                         android:text="@string/reminders_desc"
-                        android:textColor="#FF91ADC9"
-                        android:textSize="14dp" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="28dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="12dp"
-                android:gravity="left|center_vertical"
-                android:includeFontPadding="false"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:text="@string/data"
-                android:textColor="#FFFFFFFF"
-                android:textSize="22dp" />
-
-            <LinearLayout
-                android:id="@+id/btn_export_data"
-                android:layout_width="match_parent"
-                android:layout_height="72dp"
-                android:gravity="left|center_vertical"
-                android:orientation="horizontal"
-                android:paddingBottom="8dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="8dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?attr/selectableItemBackground">
-
-                <LinearLayout
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/container_navi"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/ic_file_download" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:gravity="left|center_vertical"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="146dp"
-                        android:layout_height="24dp"
-                        android:gravity="left|center_vertical"
-                        android:includeFontPadding="false"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:text="@string/export_data"
-                        android:textColor="#FFFFFFFF"
-                        android:textSize="16dp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="21dp"
-                        android:gravity="left|center_vertical"
-                        android:includeFontPadding="false"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:text="@string/export_data_desc"
-                        android:textColor="#FF91ADC9"
-                        android:textSize="14dp" />
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -426,8 +370,9 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 android:text="@string/account"
-                android:textColor="#FFFFFFFF"
-                android:textSize="22dp" />
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="22sp"
+                android:textStyle="bold"/>
 
             <LinearLayout
                 android:id="@+id/btn_logout"
@@ -447,9 +392,11 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:background="@drawable/container_navi"
+                    android:backgroundTint="?attr/colorSurfaceContainer"
                     android:gravity="center"
                     android:orientation="horizontal">
 
+                    <!-- Icon Logout (Đỏ) -->
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
@@ -475,7 +422,7 @@
                         android:singleLine="true"
                         android:text="@string/logout"
                         android:textColor="#FF5252"
-                        android:textSize="16dp"
+                        android:textSize="16sp"
                         android:textStyle="bold"/>
 
                     <TextView
@@ -486,8 +433,8 @@
                         android:maxLines="1"
                         android:singleLine="true"
                         android:text="@string/logout_desc"
-                        android:textColor="#FF91ADC9"
-                        android:textSize="14dp" />
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
 

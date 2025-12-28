@@ -6,14 +6,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.habittracker.MainActivity"
-    android:background="#FF0F172A"><include layout="@layout/content_main"
-    android:id="@+id/content_main_container"
-    android:layout_width="0dp"
-    android:layout_height="0dp"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintBottom_toTopOf="@+id/bottom_navigation_view"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent" />
+    android:background="?android:attr/windowBackground">
+
+    <!--
+         background="?android:attr/windowBackground"
+         -> Sáng: Trắng / Tối: Đen xanh (đã config trong themes.xml)
+    -->
+
+    <include layout="@layout/content_main"
+        android:id="@+id/content_main_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_view"
@@ -26,11 +33,16 @@
         app:menu="@menu/menu_main"
         tools:visibility="visible"
 
-        android:background="#FF1E293B"
+        android:background="?attr/colorSurface"
 
-        app:itemIconTint="@color/bottom_nav_color_selector"
-        app:itemTextColor="@color/bottom_nav_color_selector"
+        app:itemIconTint="?android:attr/textColorPrimary"
+        app:itemTextColor="?android:attr/textColorPrimary"
 
         app:itemRippleColor="@android:color/transparent" />
+
+    <!--
+         background="?attr/colorSurface"
+         -> Sáng: Xám nhạt / Tối: Xanh đen (navi)
+    -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

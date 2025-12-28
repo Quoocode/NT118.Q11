@@ -27,9 +27,11 @@ import com.example.habittracker.utils.NotificationHelper;
 import com.example.habittracker.R;
 import com.example.habittracker.data.model.Habit;
 import com.example.habittracker.data.repository.HabitRepository;
-// Lưu ý: Đảm bảo import đúng DataCallback. Nếu nó nằm ở Utils thì sửa lại đường dẫn.
 import com.example.habittracker.data.repository.callback.DataCallback;
 import com.example.habittracker.databinding.FragmentSettingsBinding;
+// Import ThemeHelper để xử lý giao diện Sáng/Tối
+import com.example.habittracker.utils.ThemeHelper;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -61,6 +63,24 @@ public class SettingsFragment extends Fragment {
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
+        // --- LOGIC THEME ---
+        // 1. Cập nhật icon ban đầu (Sun/Moon)
+        updateThemeIcon();
+
+        // 2. Xử lý click nút Theme
+        binding.btnThemeSettings.setOnClickListener(v -> {
+            if (getContext() != null) {
+                // Lấy trạng thái hiện tại
+                boolean isDark = ThemeHelper.isDarkMode(getContext());
+
+                // Lưu và áp dụng trạng thái mới (Đảo ngược)
+                ThemeHelper.saveThemeChoice(getContext(), !isDark);
+
+                // Cập nhật icon (thực tế Activity sẽ recreate nên hàm updateThemeIcon ở trên sẽ chạy lại)
+                updateThemeIcon();
+            }
+        });
+
         // --- CÁC NÚT ĐIỀU HƯỚNG ---
         binding.btnLanguageSettings.setOnClickListener(v -> {
             showLanguageDialog();
@@ -84,44 +104,55 @@ public class SettingsFragment extends Fragment {
         loadUserProfile();
     }
 
+    // Hàm cập nhật icon Sun/Moon dựa trên chế độ hiện tại
+    private void updateThemeIcon() {
+        if (getContext() == null || binding == null) return;
+
+        boolean isDark = ThemeHelper.isDarkMode(getContext());
+
+        if (isDark) {
+            // Nếu đang Tối -> Hiện icon Mặt Trăng
+            binding.imgThemeIcon.setImageResource(R.drawable.ic_moon);
+        } else {
+            // Nếu đang Sáng -> Hiện icon Mặt Trời
+            binding.imgThemeIcon.setImageResource(R.drawable.ic_sun);
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-        // Tải lại dữ liệu mỗi khi màn hình này hiện lên (để cập nhật Avatar mới nếu có)
+        // Tải lại dữ liệu mỗi khi màn hình này hiện lên
         loadUserProfile();
+        updateThemeIcon();
     }
 
     // =================================================================================
-    // PHẦN 1: LOGIC HIỂN THỊ PROFILE (AVATAR & TÊN) - GIỮ NGUYÊN CODE MỚI
+    // PHẦN 1: LOGIC HIỂN THỊ PROFILE (GIỮ NGUYÊN)
     // =================================================================================
 
     private void loadUserProfile() {
-        // Kiểm tra an toàn
         if (binding == null) return;
 
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) return;
 
-        // 1. Hiển thị tạm tên từ Auth
         updateNameDisplay(user.getDisplayName());
 
         String userId = user.getUid();
         db.collection("users").document(userId)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
-                    // Kiểm tra binding lần nữa vì callback là async
                     if (binding == null) return;
 
                     if (documentSnapshot.exists()) {
                         String fullName = documentSnapshot.getString("fullName");
                         String avatarBase64 = documentSnapshot.getString("avatarBase64");
 
-                        // 2. Cập nhật tên từ Firestore
                         if (fullName != null && !fullName.isEmpty()) {
                             updateNameDisplay(fullName);
                         }
 
-                        // 3. Cập nhật Avatar
                         if (avatarBase64 != null && !avatarBase64.isEmpty()) {
                             try {
                                 byte[] decodedString = Base64.decode(avatarBase64, Base64.DEFAULT);
@@ -140,19 +171,16 @@ public class SettingsFragment extends Fragment {
     private void updateNameDisplay(String name) {
         if (name == null || binding == null) return;
         try {
-            // Tìm container chứa text (thường là LinearLayout thứ 2 trong btnProfileSettings)
             LinearLayout parent = binding.btnProfileSettings;
             for (int i = 0; i < parent.getChildCount(); i++) {
                 View child = parent.getChildAt(i);
-                // Tìm LinearLayout con chứa các TextView
                 if (child instanceof LinearLayout) {
                     LinearLayout textContainer = (LinearLayout) child;
-                    // Tìm TextView đầu tiên trong container này
                     for (int j = 0; j < textContainer.getChildCount(); j++) {
                         View textChild = textContainer.getChildAt(j);
                         if (textChild instanceof TextView) {
                             ((TextView) textChild).setText(name);
-                            return; // Tìm thấy thì set và thoát luôn
+                            return;
                         }
                     }
                 }
@@ -167,7 +195,6 @@ public class SettingsFragment extends Fragment {
 
         ImageView avatarView = null;
         try {
-            // Tìm ImageView bằng cách duyệt children
             ViewGroup parent = binding.btnProfileSettings;
             for (int i = 0; i < parent.getChildCount(); i++) {
                 View child = parent.getChildAt(i);
@@ -190,17 +217,15 @@ public class SettingsFragment extends Fragment {
         roundedDrawable.setCircular(true);
         roundedDrawable.setAntiAlias(true);
 
-        // Cập nhật hiển thị
         avatarView.setImageDrawable(roundedDrawable);
-        avatarView.setBackground(null); // Xóa background nếu có
+        avatarView.setBackground(null);
         avatarView.setScaleType(ImageView.ScaleType.FIT_CENTER);
     }
 
     // =================================================================================
-    // PHẦN 2: LOGIC LOGOUT - KHÔI PHỤC LẠI
+    // PHẦN 2: LOGIC LOGOUT (GIỮ NGUYÊN)
     // =================================================================================
 
-    // 1. Hiển thị hộp thoại xác nhận
     private void showLogoutConfirmationDialog() {
         if (getContext() == null) return;
 
@@ -214,7 +239,6 @@ public class SettingsFragment extends Fragment {
                 .show();
     }
 
-    // 2. Logic Logout an toàn
     private void performSafeLogout() {
         if (getContext() != null) {
             Toast.makeText(getContext(), "Logging out...", Toast.LENGTH_SHORT).show();
@@ -228,31 +252,20 @@ public class SettingsFragment extends Fragment {
 
         HabitRepository repository = new HabitRepository(uid);
 
-        // Gọi hàm getActiveHabits từ Repository (dùng DataCallback chuẩn)
         repository.getActiveHabits(new DataCallback<List<Habit>>() {
             @Override
             public void onSuccess(List<Habit> habitList) {
                 if (getContext() != null) {
-                    // 1. Hủy báo thức riêng lẻ
                     NotificationHelper.cancelAllHabitReminders(requireContext(), habitList);
-
-                    // 2. Hủy báo thức tổng
                     NotificationHelper.cancelDailyBriefing(requireContext());
-
-                    // 3. Xóa cài đặt cục bộ
                     clearLocalPreferences();
                 }
-
-                // 4. Đăng xuất Firebase
                 FirebaseAuth.getInstance().signOut();
-
-                // 5. Chuyển màn hình
                 navigateToLogin();
             }
 
             @Override
             public void onFailure(Exception e) {
-                // Lỗi mạng vẫn cho đăng xuất để tránh kẹt user
                 FirebaseAuth.getInstance().signOut();
                 navigateToLogin();
             }
