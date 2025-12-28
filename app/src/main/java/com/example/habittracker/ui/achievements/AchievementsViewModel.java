@@ -66,7 +66,7 @@ public class AchievementsViewModel extends AndroidViewModel {
         if (isRefreshing) return;
         isRefreshing = true;
         try {
-            achievements.postValue(AchievementsUiMapper.toUi(repo.getUnlockedIds(), repo.getUnlockedAt()));
+            achievements.postValue(AchievementsUiMapper.toUi(getApplication(), repo.getUnlockedIds(), repo.getUnlockedAt()));
         } catch (Exception ignored) {
             // If prefs are corrupted (e.g., bad StringSet type), don't crash the app
             achievements.postValue(java.util.Collections.emptyList());

@@ -204,7 +204,9 @@ public class AchievementsFragment extends Fragment {
         float alpha = m.isUnlocked() ? 1f : 0.35f;
         item.setAlpha(alpha);
 
-        ViewCompat.setTooltipText(item, m.isUnlocked() ? "Unlocked" : "Locked");
+        ViewCompat.setTooltipText(item, m.isUnlocked()
+                ? getString(R.string.achievement_tooltip_unlocked)
+                : getString(R.string.achievement_tooltip_locked));
 
         item.setOnClickListener(v -> {
             AchievementDetailsDialogFragment dialog = AchievementDetailsDialogFragment.newInstance(
