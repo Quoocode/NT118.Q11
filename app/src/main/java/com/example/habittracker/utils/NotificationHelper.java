@@ -98,7 +98,7 @@ public class NotificationHelper {
         // --- FIX BUG LOOP: Dùng while thay vì if ---
         // Chừng nào thời gian tính ra vẫn nhỏ hơn hoặc bằng hiện tại -> Cộng tiếp
         while (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
-            calendar.add(Calendar.DAY_OF_YEAR, 1); // Code thật (Chạy thực tế dùng dòng này)
+             calendar.add(Calendar.DAY_OF_YEAR, 1); // Code thật (Chạy thực tế dùng dòng này)
 //            calendar.add(Calendar.MINUTE, 1);      // Code hack (Test lặp 1 phút)
             Log.e("ALARM_DEBUG", ">> Đã cộng thêm thời gian để đảm bảo ở tương lai!");
         }
@@ -191,7 +191,11 @@ public class NotificationHelper {
                 // Code thật: calendar.add(Calendar.WEEK_OF_YEAR, 1);
 //                calendar.add(Calendar.MINUTE, 1); // HACK: 1 Tuần = 1 Phút
                 calendar.add(Calendar.WEEK_OF_YEAR, 1);
-                Log.e("ALARM_DEBUG", ">> HACK WEEKLY: Cộng 1 phút (giả lập 1 tuần)");
+                Log.d("ALARM_DEBUG", ">> HACK WEEKLY: Cộng 1 tuần");
+            }
+            else if ("MONTHLY".equals(frequency)) { // [MỚI] Xử lý Monthly riêng
+                calendar.add(Calendar.MONTH, 1);
+                Log.d("ALARM_DEBUG", ">> HACK MONTHLY: Cộng 1 tháng");
             }
             else if ("ONCE".equals(frequency)) {
                 return; // ONCE qua rồi thì thôi
@@ -271,6 +275,7 @@ public class NotificationHelper {
         }
     }
 
+    // Đặt lại hàng loạt khi Login
     public static void scheduleAllHabitReminders(Context context, List<Habit> habitList) {
         // 1. Log ngay khi vào hàm để biết hàm có ĐƯỢC GỌI hay không
         if (habitList == null) {
@@ -404,23 +409,30 @@ public class NotificationHelper {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
-        // Bước 1: Chạy logic đuổi bắt thời gian như bình thường
+        // Bước 1: Logic đuổi bắt thời gian (SỬA LOGIC MONTHLY)
         while (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
             if ("WEEKLY".equals(frequency)) {
                 calendar.add(Calendar.WEEK_OF_YEAR, 1);
-            } else {
+            }
+            else if ("MONTHLY".equals(frequency)) { // [MỚI]
+                calendar.add(Calendar.MONTH, 1);
+            }
+            else {
                 calendar.add(Calendar.DAY_OF_YEAR, 1);
             }
         }
 
-        // Bước 2: LOGIC NHẢY CÓC (QUAN TRỌNG)
-        // Nếu sau khi tính xong mà ngày báo thức vẫn là HÔM NAY (tức là báo thức chưa kêu, user hoàn thành sớm)
-        // Thì ta bắt buộc phải cộng thêm 1 chu kỳ nữa để dời sang ngày mai/tuần sau.
+        // Bước 2: Logic nhảy cóc (Completed sớm) (SỬA LOGIC MONTHLY)
         if (isSameDay(calendar, now)) {
             if ("WEEKLY".equals(frequency)) {
                 calendar.add(Calendar.WEEK_OF_YEAR, 1);
                 Log.d("ALARM_DEBUG", "Completed sớm -> Dời Weekly sang tuần sau");
-            } else {
+            }
+            else if ("MONTHLY".equals(frequency)) { // [MỚI]
+                calendar.add(Calendar.MONTH, 1);
+                Log.d("ALARM_DEBUG", "Completed sớm -> Dời Monthly sang tháng sau");
+            }
+            else {
                 calendar.add(Calendar.DAY_OF_YEAR, 1);
                 Log.d("ALARM_DEBUG", "Completed sớm -> Dời Daily sang ngày mai");
             }
@@ -548,10 +560,10 @@ public class NotificationHelper {
      */
     @SuppressLint("ScheduleExactAlarm")
     private static void scheduleAlarmSafely(Context context,
-                                            AlarmManager alarmManager,
-                                            int alarmType,
-                                            long triggerAtMillis,
-                                            PendingIntent pendingIntent) {
+                                           AlarmManager alarmManager,
+                                           int alarmType,
+                                           long triggerAtMillis,
+                                           PendingIntent pendingIntent) {
         if (alarmManager == null) return;
 
         boolean allowExact = canScheduleExactAlarms(context);
@@ -587,3 +599,4 @@ public class NotificationHelper {
     }
 
 }
+

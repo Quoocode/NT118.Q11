@@ -3,15 +3,21 @@ package com.example.habittracker;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer; // Mới
-import androidx.lifecycle.ViewModelProvider; // Mới
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.navigation.NavController;
-import androidx.navigation.NavGraph;
+import androidx.navigation.NavGraph; // Import mới
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.habittracker.R;
 import com.example.habittracker.databinding.ActivityMainBinding;
 import com.example.habittracker.data.model.Habit; // Mới
 import com.example.habittracker.ui.ViewModel.HabitViewModel; // Mới: Đảm bảo package đúng với file bạn vừa tạo
@@ -21,31 +27,32 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
-import android.content.Context;
-import com.example.habittracker.utils.LocaleHelper;
-
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private NavController navController;
-    private HabitViewModel habitViewModel; // Khai báo ViewModel
+    private HabitViewModel habitViewModel;
 
-
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(LocaleHelper.applyLocale(newBase));
-    }
+    // [BỔ SUNG] Biến lắng nghe sự kiện đăng nhập/đăng xuất
+    private FirebaseAuth.AuthStateListener authListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
 
-        // 1. Sử dụng ViewBinding
+        // 1. Sử dụng ViewBinding để liên kết layout "activity_main.xml"
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.content_main_container), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
-        // 2. Tìm NavController
+        // 2. Tìm NavController từ NavHostFragment trong "content_main.xml"
+        // (Chúng ta giả sử ID của NavHostFragment là 'nav_host_fragment_content_main')
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment_content_main);
 
@@ -73,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
             // 3. Liên kết BottomNav
             NavigationUI.setupWithNavController(binding.bottomNavigationView, navController);
 
-            // 4. Quản lý ẩn/hiện thanh điều hướng
+            // 4. Gọi hàm để quản lý ẩn/hiện thanh điều hướng
             setupBottomNavVisibility();
         }
 
@@ -86,6 +93,9 @@ public class MainActivity extends AppCompatActivity {
 
         // 5. [QUAN TRỌNG] Kích hoạt quan sát dữ liệu để đặt báo thức
         setupHabitObserver();
+
+        // [BỔ SUNG] Khởi tạo Auth Listener (Chuẩn bị cho onStart)
+        setupAuthStateListener();
     }
 
     private void setupHabitObserver() {
@@ -119,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
             // B. Kích hoạt tải dữ liệu ngay nếu đã đăng nhập
             // Nếu không có dòng này, Observer ở trên sẽ ngồi chơi xơi nước mãi mãi
             if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                Log.d("ALARM_DEBUG", "MainActivity: Đã đăng nhập, gọi ViewModel tải dữ liệu ngay.");
+                Log.d("ALARM_DEBUG", "MainActivity: Đã đăng nhập (Cold Start), gọi ViewModel tải dữ liệu.");
                 habitViewModel.loadActiveHabits();
             }
 
@@ -129,21 +139,64 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // [BỔ SUNG] Hàm định nghĩa hành động khi trạng thái Auth thay đổi
+    private void setupAuthStateListener() {
+        authListener = firebaseAuth -> {
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            if (user != null) {
+                // Đây là "Cái Chuông" reo khi Login (kể cả Hot Swap)
+                Log.d("ALARM_DEBUG", "AuthStateListener: Phát hiện User mới đăng nhập: " + user.getUid());
+
+                // Gọi ViewModel tải lại dữ liệu ngay lập tức
+                if (habitViewModel != null) {
+                    habitViewModel.loadActiveHabits();
+                }
+            } else {
+                Log.d("ALARM_DEBUG", "AuthStateListener: User đã đăng xuất.");
+            }
+        };
+    }
+
+    // [BỔ SUNG] Bật lắng nghe khi App hiện lên
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (authListener != null) {
+            FirebaseAuth.getInstance().addAuthStateListener(authListener);
+        }
+    }
+
+    // [BỔ SUNG] Tắt lắng nghe khi App ẩn đi/thoát
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (authListener != null) {
+            FirebaseAuth.getInstance().removeAuthStateListener(authListener);
+        }
+    }
+
     private void setupBottomNavVisibility() {
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+
+            // Lấy ID của màn hình (Fragment) hiện tại
             int destinationId = destination.getId();
+
+            // Ẩn BottomNav ở các màn hình Xác thực và màn hình Tạo/Sửa
             if (destinationId == R.id.loginFragment ||
                     destinationId == R.id.registerFragment ||
                     destinationId == R.id.addEditHabitFragment ||
                     destinationId == R.id.habitDetailsFragment ||
-                    destinationId == R.id.forgotPasswordFragment) {
+                    destinationId == R.id.forgotPasswordFragment ||
+                    destinationId == R.id.forgotPasswordNewFragment) {
                 binding.bottomNavigationView.setVisibility(View.GONE);
             } else {
+                // Hiển thị ở các màn hình chính (Home, Calendar, Achievements, Settings...)
                 binding.bottomNavigationView.setVisibility(View.VISIBLE);
             }
         });
     }
 
+    // Hỗ trợ nút back của hệ thống để điều hướng
     @Override
     public boolean onSupportNavigateUp() {
         return navController.navigateUp() || super.onSupportNavigateUp();

@@ -35,9 +35,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
-import android.content.Intent;
-import com.example.habittracker.MainActivity;
-import com.example.habittracker.utils.LocaleHelper;
+
 public class SettingsFragment extends Fragment {
 
     private FragmentSettingsBinding binding;
@@ -62,10 +60,6 @@ public class SettingsFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
 
         // --- CÁC NÚT ĐIỀU HƯỚNG ---
-        binding.btnLanguageSettings.setOnClickListener(v -> {
-            showLanguageDialog();
-        });
-
         binding.btnBack.setOnClickListener(v -> navController.popBackStack());
 
         binding.btnProfileSettings.setOnClickListener(v -> {
@@ -260,10 +254,6 @@ public class SettingsFragment extends Fragment {
         });
     }
 
-
-
-
-
     private void clearLocalPreferences() {
         if (getContext() == null) return;
         SharedPreferences prefs = requireContext().getSharedPreferences("HabitTrackerPrefs", Context.MODE_PRIVATE);
@@ -279,46 +269,6 @@ public class SettingsFragment extends Fragment {
         if (getContext() != null) {
             Toast.makeText(getContext(), "Logged out successfully", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void changeLanguage(String langCode) {
-        // Lưu & áp dụng locale
-        com.example.habittracker.utils.LocaleHelper.setLocale(requireContext(), langCode);
-
-        // Restart app + clear toàn bộ back stack (FIX Create Habit)
-        Intent intent = new Intent(requireContext(), MainActivity.class);
-        intent.addFlags(
-                Intent.FLAG_ACTIVITY_NEW_TASK |
-                        Intent.FLAG_ACTIVITY_CLEAR_TASK
-        );
-        startActivity(intent);
-
-        // Kết thúc activity hiện tại
-        requireActivity().finish();
-    }
-
-
-
-
-
-    private void showLanguageDialog() {
-        if (getContext() == null) return;
-
-        String[] languages = {
-                getString(R.string.english),
-                getString(R.string.vietnamese)
-        };
-
-        new AlertDialog.Builder(requireContext())
-                .setTitle(getString(R.string.choose_language))
-                .setItems(languages, (dialog, which) -> {
-                    if (which == 0) {
-                        changeLanguage("en");
-                    } else {
-                        changeLanguage("vi");
-                    }
-                })
-                .show();
     }
 
     @Override

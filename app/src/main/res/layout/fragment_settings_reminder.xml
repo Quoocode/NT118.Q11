@@ -60,7 +60,7 @@
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="@string/reminders"
+                    android:text="Reminders"
                     android:textColor="#FFFFFFFF"
                     android:textSize="18dp" />
             </LinearLayout>
@@ -73,7 +73,7 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="12dp"
-                android:text="@string/general"
+                android:text="General"
                 android:textColor="#FFFFFFFF"
                 android:textSize="22dp" />
 
@@ -107,13 +107,13 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/allow_notifications"
+                        android:text="Allow Notifications"
                         android:textColor="#FFFFFFFF"
                         android:textSize="16dp" />
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/enable_push_notifications"
+                        android:text="Enable push notifications"
                         android:textColor="#FF91ADC9"
                         android:textSize="14dp" />
                 </LinearLayout>
@@ -135,7 +135,7 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="12dp"
-                android:text="@string/schedule"
+                android:text="Schedule"
                 android:textColor="#FFFFFFFF"
                 android:textSize="22dp" />
 
@@ -161,13 +161,13 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/daily_briefing"
+                        android:text="Daily Briefing"
                         android:textColor="#FFFFFFFF"
                         android:textSize="16dp" />
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/morning_summary_at"
+                        android:text="Morning summary at"
                         android:textColor="#FF91ADC9"
                         android:textSize="14dp" />
                 </LinearLayout>
@@ -177,10 +177,10 @@
                     android:id="@+id/txt_time_display"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/default_time"
+                    android:text="08:00 AM"
                     android:textColor="#FFFFFFFF"
                     android:textSize="24dp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"/>
             </LinearLayout>
 
             <!-- DAYS REPEAT ROW -->
@@ -206,13 +206,13 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/frequency"
+                        android:text="Frequency"
                         android:textColor="#FFFFFFFF"
                         android:textSize="16dp" />
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/select_active_days"
+                        android:text="Select active days"
                         android:textColor="#FF91ADC9"
                         android:textSize="14dp" />
                 </LinearLayout>
@@ -222,7 +222,7 @@
                     android:id="@+id/txt_frequency_display"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/every_day"
+                    android:text="Every Day"
                     android:textColor="#FF91ADC9"
                     android:maxWidth="150dp"
                     android:gravity="end"
@@ -239,7 +239,7 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="12dp"
-                android:text="@string/preferences"
+                android:text="Preferences"
                 android:textColor="#FFFFFFFF"
                 android:textSize="22dp" />
 
@@ -261,13 +261,13 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/sound"
+                        android:text="Sound"
                         android:textColor="#FFFFFFFF"
                         android:textSize="16dp" />
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/play_sound_notification"
+                        android:text="Play sound with notification"
                         android:textColor="#FF91ADC9"
                         android:textSize="14dp" />
                 </LinearLayout>
@@ -299,13 +299,13 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/vibration"
+                        android:text="Vibration"
                         android:textColor="#FFFFFFFF"
                         android:textSize="16dp" />
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/vibrate_on_notification"
+                        android:text="Vibrate on notification"
                         android:textColor="#FF91ADC9"
                         android:textSize="14dp" />
                 </LinearLayout>
