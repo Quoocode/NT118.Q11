@@ -13,7 +13,8 @@ public class LocaleHelper {
 
     public static void setLocale(Context context, String lang) {
         saveLanguage(context, lang);
-        updateResources(context, lang);
+        // Ensure the app also updates the application resources too, not only a returned context.
+        updateResources(context.getApplicationContext(), lang);
     }
 
     public static Context applyLocale(Context context) {
@@ -22,13 +23,20 @@ public class LocaleHelper {
     }
 
     private static Context updateResources(Context context, String lang) {
+        if (lang == null || lang.trim().isEmpty()) lang = "en";
+
         Locale locale = new Locale(lang);
         Locale.setDefault(locale);
 
-        Configuration config = context.getResources().getConfiguration();
+        Configuration config = new Configuration(context.getResources().getConfiguration());
         config.setLocale(locale);
 
-        return context.createConfigurationContext(config);
+        Context localizedContext = context.createConfigurationContext(config);
+
+        // Also update the base resources so components still using the original context (e.g. some ViewModels / singletons) see the right locale.
+        context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
+
+        return localizedContext;
     }
 
     private static void saveLanguage(Context context, String lang) {

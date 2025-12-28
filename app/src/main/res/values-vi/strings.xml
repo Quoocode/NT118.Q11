@@ -58,7 +58,6 @@
     <string name="forgot_password">Quên mật khẩu?</string>
     <string name="continue_guest">Tiếp tục với tư cách khách</string>
     <string name="habit_completion_title">Hoàn thành Habit</string>
-    <string name="habit_scroll_hint">Scroll to load more habits</string>
     <string name="error_auth_required">Please sign in to view your calendar.</string>
     <string name="error_load_habits">Unable to load habits: %1$s</string>
     <string name="remember_me">Ghi nhớ đăng nhập</string>
@@ -260,5 +259,21 @@
     <string name="ach_three_perfect_days_desc">Hoàn thành tất cả thói quen trong 3 ngày khác nhau.</string>
     <string name="ach_welcome_back_desc">Mở ứng dụng sau khi vắng một ngày.</string>
 
+    <!-- Notifications / Badges (channel + content) -->
+    <string name="notif_channel_habit_reminders_name">Nhắc nhở thói quen</string>
+    <string name="notif_channel_habit_reminders_desc">Thông báo nhắc nhở thói quen hằng ngày</string>
 
+    <string name="notif_daily_briefing_title">Tóm tắt hằng ngày</string>
+    <string name="notif_daily_briefing_text">Chào buổi sáng! Kiểm tra các thói quen của bạn ngay.</string>
+
+    <string name="notif_habit_reminder_title_format">Nhắc nhở: %1$s</string>
+    <string name="notif_habit_reminder_text">Đến giờ thực hiện mục tiêu rồi! Cố lên bạn ơi.</string>
+
+    <!-- Achievements (UI strings) -->
+    <string name="achievements_progress_count">%1$d/%2$d</string>
+    <string name="achievement_tooltip_unlocked">Đã mở khóa</string>
+    <string name="achievement_tooltip_locked">Chưa mở khóa</string>
+    <string name="achievement_unlocked_at">Đã mở khóa: %1$s</string>
+    <string name="achievement_not_yet_unlocked">Chưa mở khóa</string>
+    <string name="close">Đóng</string>
 </resources>
