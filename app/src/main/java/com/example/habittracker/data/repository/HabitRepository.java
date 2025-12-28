@@ -356,8 +356,9 @@ public class HabitRepository {
             case "DAILY":
                 // CẬP NHẬT: Hiện tất cả các ngày trong CÙNG THÁNG và CÙNG NĂM của ngày bắt đầu
                 // (Tính từ ngày bắt đầu trở đi, đã check ở trên)
-                return startCal.get(Calendar.YEAR) == targetDay.get(Calendar.YEAR) &&
-                        startCal.get(Calendar.MONTH) == targetDay.get(Calendar.MONTH);
+//                return startCal.get(Calendar.YEAR) == targetDay.get(Calendar.YEAR) &&
+//                        startCal.get(Calendar.MONTH) == targetDay.get(Calendar.MONTH);
+                return true;
 
             case "WEEKLY":
                 // Hiện vào đúng thứ đó hàng tuần (cách nhau 7, 14, 21... ngày)
@@ -365,13 +366,20 @@ public class HabitRepository {
                 return (diffDays % 7) == 0;
 
             case "MONTHLY":
-                // Hiện vào đúng NGÀY ĐÓ của tháng sau
-                // Ví dụ: Bắt đầu ngày 15/1, thì chỉ hiện vào 15/2, 15/3...
                 int startDayOfMonth = startCal.get(Calendar.DAY_OF_MONTH);
                 int targetDayOfMonth = targetDay.get(Calendar.DAY_OF_MONTH);
+                int maxDaysInTargetMonth = targetDay.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-                // Cách kiểm tra đơn giản nhất: Ngày trong tháng phải trùng nhau
-                return startDayOfMonth == targetDayOfMonth;
+                // --- SMART MONTHLY LOGIC ---
+                // 1. Nếu ngày bắt đầu <= ngày cuối cùng của tháng mục tiêu -> So sánh bình thường
+                if (startDayOfMonth <= maxDaysInTargetMonth) {
+                    return startDayOfMonth == targetDayOfMonth;
+                }
+                // 2. Nếu ngày bắt đầu (VD: 31) > ngày cuối tháng mục tiêu (VD: 28)
+                // -> Thì Habit sẽ hiện vào NGÀY CUỐI CÙNG của tháng đó (ngày 28)
+                else {
+                    return targetDayOfMonth == maxDaysInTargetMonth;
+                }
 
             default:
                 return false;
