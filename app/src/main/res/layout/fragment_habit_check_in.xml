@@ -7,17 +7,12 @@
     android:orientation="vertical"
     android:padding="24dp">
 
-    <!--
-         background="?attr/colorSurface"
-         -> Sáng: Xám nhạt / Tối: Xanh đen (navi)
-    -->
-
     <!-- Tiêu đề -->
     <TextView
         android:id="@+id/tv_habit_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Update Progress"
+        android:text="@string/update_progress"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -29,7 +24,7 @@
         android:id="@+id/tv_habit_target"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Target: 5.0 km"
+        android:text="@string/target_format"
         android:textColor="?android:attr/textColorSecondary"
         android:gravity="center"
         android:layout_marginBottom="24dp"/>
@@ -39,7 +34,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Current Value"
+        android:hint="@string/current_value"
         android:textColorHint="?android:attr/textColorSecondary"
         app:boxStrokeColor="?attr/colorPrimary"
         app:hintTextColor="?attr/colorPrimary">
@@ -50,14 +45,14 @@
             android:layout_height="wrap_content"
             android:inputType="numberDecimal"
             android:textColor="?android:attr/textColorPrimary"
-            android:text="0" />
+            android:text="@string/default_zero" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
         android:id="@+id/tv_unit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="km"
+        android:text="@string/unit_km"
         android:textColor="?android:attr/textColorSecondary"
         android:gravity="end"
         android:layout_marginTop="4dp"
@@ -76,7 +71,7 @@
             android:id="@+id/radio_pending"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pending"
+            android:text="@string/status_pending"
             android:textColor="?android:attr/textColorPrimary"
             android:buttonTint="?android:attr/textColorSecondary"
             android:layout_marginEnd="16dp"/>
@@ -85,11 +80,10 @@
             android:id="@+id/radio_done"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Done"
+            android:text="@string/status_done"
             android:textColor="#4CAF50"
             android:buttonTint="#4CAF50"
             android:textStyle="bold"/>
-        <!-- Giữ màu xanh lá cho Done để nổi bật -->
     </RadioGroup>
 
     <!-- Nút Lưu -->
@@ -97,7 +91,7 @@
         android:id="@+id/btn_confirm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Update"
+        android:text="@string/btn_update"
         android:textColor="?attr/colorOnPrimary"
         android:backgroundTint="?attr/colorPrimary"/>
 

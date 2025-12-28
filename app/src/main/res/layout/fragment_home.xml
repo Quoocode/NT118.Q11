@@ -8,11 +8,6 @@
     android:background="?android:attr/windowBackground"
     tools:context="com.example.habittracker.ui.home.HomeFragment">
 
-    <!--
-         android:background="?android:attr/windowBackground"
-         -> Sáng: Trắng / Tối: Đen xanh
-    -->
-
     <androidx.core.widget.NestedScrollView
         android:id="@+id/home_scroll_view"
         android:layout_width="match_parent"
@@ -56,7 +51,7 @@
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Dashboard"
+                        android:text="@string/home_dashboard"
                         android:textStyle="bold"
                         android:textAllCaps="false"
                         android:textColor="?android:attr/textColorPrimary"
@@ -104,7 +99,7 @@
                     android:maxLines="1"
                     android:textStyle="bold"
                     android:singleLine="true"
-                    android:text="Today"
+                    android:text="@string/home_today"
                     android:textColor="?android:attr/textColorPrimary"
                     android:textSize="22sp" />
 
@@ -118,7 +113,7 @@
                     tools:listitem="@layout/item_today_habit" />
 
                 <TextView
-                    android:id="@+id/container_depth_frame35"
+                    android:id="@+id/tvProgressLabel"
                     android:layout_width="match_parent"
                     android:layout_height="28dp"
                     android:layout_marginLeft="16dp"
@@ -129,7 +124,7 @@
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="Progress"
+                    android:text="@string/home_progress"
                     android:textColor="?android:attr/textColorPrimary"
                     android:textSize="22sp" />
 
@@ -153,7 +148,7 @@
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Daily Habits"
+                        android:text="@string/home_daily_habits"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="16sp" />
 
@@ -196,7 +191,7 @@
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="Streaks"
+                    android:text="@string/home_streaks"
                     android:textColor="?android:attr/textColorPrimary"
                     android:textSize="22sp" />
 
@@ -243,7 +238,7 @@
                             android:layout_height="24dp"
                             android:gravity="left|center_vertical"
                             android:includeFontPadding="false"
-                            android:text="0 days"
+                            android:text="@string/days_format"
                             android:maxLines="1"
                             android:singleLine="true"
                             android:textColor="?android:attr/textColorPrimary"
@@ -257,7 +252,7 @@
                             android:includeFontPadding="false"
                             android:maxLines="1"
                             android:singleLine="true"
-                            android:text="Current"
+                            android:text="@string/home_current"
                             android:textColor="?android:attr/textColorSecondary"
                             android:textSize="14sp" />
                     </LinearLayout>
@@ -308,7 +303,7 @@
                             android:includeFontPadding="false"
                             android:maxLines="1"
                             android:singleLine="true"
-                            tools:text="0 days"
+                            tools:text="@string/days_format"
                             android:textColor="?android:attr/textColorPrimary"
                             android:textSize="16sp" />
 
@@ -320,16 +315,11 @@
                             android:includeFontPadding="false"
                             android:maxLines="1"
                             android:singleLine="true"
-                            android:text="Longest"
+                            android:text="@string/home_longest"
                             android:textColor="?android:attr/textColorSecondary"
                             android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
-
-                <include
-                    android:id="@+id/include_achievements"
-                    layout="@layout/fragment_achievements" />
-
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

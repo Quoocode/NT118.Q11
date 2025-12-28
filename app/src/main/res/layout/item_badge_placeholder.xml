@@ -12,16 +12,13 @@
         android:layout_height="72dp"
         android:background="@drawable/container_navi"
         android:backgroundTint="?attr/colorSurfaceContainer">
-        <!--
-             backgroundTint: Đổi màu nền container theo theme
-        -->
 
         <ImageView
             android:id="@+id/badge_icon"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_gravity="center"
-            android:contentDescription="Badge placeholder"
+            android:contentDescription="@string/badges"
             android:padding="6dp"
             android:scaleType="centerInside"
             android:src="@drawable/ic_cup"
@@ -36,9 +33,8 @@
         android:layout_marginTop="4dp"
         android:gravity="center"
         android:maxLines="1"
-        android:text="Badge title"
+        android:text="@string/badges_title"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="12sp" />
-    <!-- textColorPrimary -> Sáng: Đen / Tối: Trắng -->
 
 </LinearLayout>

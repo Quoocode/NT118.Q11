@@ -59,7 +59,7 @@ public class AddEditHabitFragment extends Fragment {
     private String selectedFrequency = "DAILY"; // Mặc định
     private String selectedIconName = "ic_menu_book"; // Mặc định
 
-    // Danh sách Icon
+    // Danh sách Icon (Tên file drawable)
     private final List<String> iconList = Arrays.asList(
             "ic_menu_bed", "ic_menu_book", "ic_menu_dinner",
             "ic_menu_shopping", "ic_menu_thinking", "ic_menu_cooking",
@@ -107,14 +107,14 @@ public class AddEditHabitFragment extends Fragment {
 
             // Update UI cho Edit Mode
             binding.tvScreenTitle.setText("Edit Habit");
-            binding.btnConfirmAction.setText("Save Changes");
+            binding.btnConfirmAction.setText("Save Changes"); // Nút duy nhất
 
             loadHabitData(currentHabitId);
         } else {
             isEditMode = false;
             // Update UI cho Add Mode
-            binding.tvScreenTitle.setText("New Habit");
-            binding.btnConfirmAction.setText("Create Habit");
+            binding.tvScreenTitle.setText(getString(R.string.title_new_habit));
+            binding.btnConfirmAction.setText(R.string.btn_create_habit); // Nút duy nhất
 
             updateStartDateText();
         }
@@ -124,6 +124,8 @@ public class AddEditHabitFragment extends Fragment {
 
     private void setupIconRecyclerView() {
         binding.recyclerIcons.setLayoutManager(new GridLayoutManager(getContext(), 5));
+
+        // Khởi tạo Adapter
         IconAdapter adapter = new IconAdapter(getContext(), iconList, selectedIconName, iconName -> {
             selectedIconName = iconName; // Callback khi chọn icon
         });
@@ -131,14 +133,18 @@ public class AddEditHabitFragment extends Fragment {
     }
 
     private void setupFrequencyButtons() {
+        // Helper để reset và highlight nút được chọn
         View.OnClickListener freqListener = v -> {
+            // 1. Reset tất cả (setSelected = false để XML selector đổi màu về xám)
             binding.btnFreqOnce.setSelected(false);
             binding.btnFreqDaily.setSelected(false);
             binding.btnFreqWeekly.setSelected(false);
             binding.btnFreqMonthly.setSelected(false);
 
+            // 2. Highlight nút được click
             v.setSelected(true);
 
+            // 3. Lưu giá trị chuỗi để gửi lên Firebase
             if (v == binding.btnFreqOnce) selectedFrequency = "ONCE";
             else if (v == binding.btnFreqDaily) selectedFrequency = "DAILY";
             else if (v == binding.btnFreqWeekly) selectedFrequency = "WEEKLY";
@@ -150,6 +156,7 @@ public class AddEditHabitFragment extends Fragment {
         binding.btnFreqWeekly.setOnClickListener(freqListener);
         binding.btnFreqMonthly.setOnClickListener(freqListener);
 
+        // Mặc định chọn Daily khi mở màn hình
         binding.btnFreqDaily.performClick();
     }
 
@@ -177,14 +184,17 @@ public class AddEditHabitFragment extends Fragment {
         binding.editHabitValue.setText(String.valueOf(habit.getTargetValue()));
         binding.editHabitUnit.setText(habit.getUnit());
 
+        // Time
         selectedReminderTime = habit.getReminderTime();
         binding.tvTime.setText(selectedReminderTime);
 
+        // Date
         if (habit.getStartDate() != null) {
             selectedStartDate.setTime(habit.getStartDate().toDate());
             updateStartDateText();
         }
 
+        // Frequency (Khôi phục trạng thái nút bấm)
         if (habit.getFrequency() != null) {
             String type = (String) habit.getFrequency().get("type");
             if ("ONCE".equals(type)) binding.btnFreqOnce.performClick();
@@ -193,6 +203,7 @@ public class AddEditHabitFragment extends Fragment {
             else binding.btnFreqDaily.performClick();
         }
 
+        // Icon (Khôi phục icon đã chọn)
         selectedIconName = habit.getIconName();
         if (binding.recyclerIcons.getAdapter() instanceof IconAdapter) {
             ((IconAdapter) binding.recyclerIcons.getAdapter()).setSelectedIcon(selectedIconName);
@@ -202,8 +213,10 @@ public class AddEditHabitFragment extends Fragment {
     // --- LISTENERS ---
 
     private void setupClickListeners() {
+        // Nút Back
         binding.btnBack.setOnClickListener(v -> navController.popBackStack());
 
+        // Date Picker
         binding.btnStartDate.setOnClickListener(v -> {
             new DatePickerDialog(requireContext(), (view, year, month, dayOfMonth) -> {
                 selectedStartDate.set(year, month, dayOfMonth);
@@ -211,6 +224,7 @@ public class AddEditHabitFragment extends Fragment {
             }, selectedStartDate.get(Calendar.YEAR), selectedStartDate.get(Calendar.MONTH), selectedStartDate.get(Calendar.DAY_OF_MONTH)).show();
         });
 
+        // Time Picker
         binding.btnTime.setOnClickListener(v -> {
             String[] parts = selectedReminderTime.split(":");
             int hour = 9;
@@ -246,6 +260,7 @@ public class AddEditHabitFragment extends Fragment {
                 .setTitle("Cấp quyền Báo thức")
                 .setMessage("Để nhận nhắc nhở thói quen đúng giờ, bạn cần cho phép ứng dụng đặt báo thức. Nhấn OK để mở Cài đặt.")
                 .setPositiveButton("OK", (dialog, which) -> {
+                    // Mở màn hình cài đặt quyền
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                         Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
                         intent.setData(Uri.parse("package:" + requireContext().getPackageName()));

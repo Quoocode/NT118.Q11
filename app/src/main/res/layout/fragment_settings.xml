@@ -9,11 +9,6 @@
     android:background="?android:attr/windowBackground"
     android:orientation="vertical">
 
-    <!--
-         android:background="?android:attr/windowBackground"
-         -> Tự động đổi màu nền theo Theme (Trắng / Đen xanh)
-    -->
-
     <ScrollView
         android:id="@+id/container_user_settings_scroll"
         android:layout_width="match_parent"
@@ -29,7 +24,7 @@
             android:orientation="vertical"
             android:paddingBottom="32dp">
 
-            <!-- Header: Back Button + Title -->
+            <!-- HEADER SECTION -->
             <LinearLayout
                 android:id="@+id/header_settings"
                 android:layout_width="match_parent"
@@ -65,13 +60,13 @@
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="Settings"
+                    android:text="@string/settings"
                     android:textColor="?android:attr/textColorPrimary"
                     android:textSize="18sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- SECTION: Profile -->
+            <!-- PROFILE SECTION -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -83,10 +78,10 @@
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="Profile"
+                android:text="@string/profile"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="22sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:id="@+id/btn_profile_settings"
@@ -118,32 +113,32 @@
 
                     <TextView
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="24dp"
                         android:gravity="left|center_vertical"
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Profile"
+                        android:text="@string/profile"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="16sp" />
 
                     <TextView
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="21dp"
                         android:gravity="left|center_vertical"
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Manage your profile information"
+                        android:text="@string/profile_desc"
                         android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- SECTION: Preferences -->
+            <!-- PREFERENCES SECTION -->
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="28dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="20dp"
@@ -152,10 +147,10 @@
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="Preferences"
+                android:text="@string/preferences"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="22sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <!-- Theme Settings -->
             <LinearLayout
@@ -199,23 +194,23 @@
 
                     <TextView
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="24dp"
                         android:gravity="left|center_vertical"
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Theme"
+                        android:text="@string/theme"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="16sp" />
 
                     <TextView
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="21dp"
                         android:gravity="left|center_vertical"
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Customize the app's appearance"
+                        android:text="@string/theme_desc"
                         android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -261,23 +256,23 @@
 
                     <TextView
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="24dp"
                         android:gravity="left|center_vertical"
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Language"
+                        android:text="@string/language"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="16sp" />
 
                     <TextView
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="21dp"
                         android:gravity="left|center_vertical"
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Set your preferred language"
+                        android:text="@string/choose_language"
                         android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -286,7 +281,7 @@
             <!-- SECTION: Notifications -->
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="28dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="20dp"
@@ -295,10 +290,10 @@
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="Notifications"
+                android:text="@string/notifications"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="22sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <!-- Reminders Settings -->
             <LinearLayout
@@ -340,12 +335,12 @@
 
                     <TextView
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="24dp"
                         android:gravity="left|center_vertical"
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Reminders"
+                        android:text="@string/reminders"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="16sp" />
 
@@ -356,13 +351,12 @@
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Manage reminder settings"
+                        android:text="@string/reminders_desc"
                         android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- SECTION: Data -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -374,7 +368,7 @@
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="Data"
+                android:text="@string/data"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="22sp"
                 android:textStyle="bold"/>
@@ -424,7 +418,7 @@
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Export Data"
+                        android:text="@string/export_data"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="16sp" />
 
@@ -435,13 +429,13 @@
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Export your habit data"
+                        android:text="@string/export_data_desc"
                         android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- SECTION: Account (Logout) -->
+            <!-- - NEW ACCOUNT SECTION (LOGOUT) - -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="28dp"
@@ -453,10 +447,10 @@
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="Account"
+                android:text="@string/account"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="22sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
 
             <LinearLayout
                 android:id="@+id/btn_logout"
@@ -504,7 +498,7 @@
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Log Out"
+                        android:text="@string/logout"
                         android:textColor="#FF5252"
                         android:textSize="16sp"
                         android:textStyle="bold"/>
@@ -516,7 +510,7 @@
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Sign out of your account"
+                        android:text="@string/logout_desc"
                         android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp" />
                 </LinearLayout>

@@ -24,7 +24,7 @@
             android:orientation="vertical"
             android:paddingBottom="32dp">
 
-            <!-- HEADER SECTION (Adapted from Settings Layout) -->
+            <!-- HEADER SECTION -->
             <LinearLayout
                 android:id="@+id/header_reminders"
                 android:layout_width="match_parent"
@@ -60,10 +60,9 @@
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="Reminders"
+                    android:text="@string/reminders"
                     android:textColor="?android:attr/textColorPrimary"
-                    android:textSize="18sp"/>
-                <!-- Màu chữ chính -->
+                    android:textSize="18sp" />
             </LinearLayout>
 
             <!-- MAIN TOGGLE SECTION -->
@@ -74,10 +73,10 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="12dp"
-                android:text="General"
+                android:text="@string/general"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="22sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <!-- ALLOW NOTIFICATIONS ROW -->
             <LinearLayout
@@ -111,17 +110,15 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Allow Notifications"
+                        android:text="@string/allow_notifications"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="16sp" />
-
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Enable push notifications"
+                        android:text="@string/enable_push_notifications"
                         android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp" />
-                    <!-- Màu chữ phụ -->
                 </LinearLayout>
 
                 <Switch
@@ -141,10 +138,10 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="12dp"
-                android:text="Schedule"
+                android:text="@string/schedule"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="22sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <!-- TIME PICKER ROW -->
             <LinearLayout
@@ -168,13 +165,13 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Daily Briefing"
+                        android:text="@string/daily_briefing"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="16sp" />
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Morning summary at"
+                        android:text="@string/morning_summary_at"
                         android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -184,7 +181,7 @@
                     android:id="@+id/txt_time_display"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="08:00 AM"
+                    android:text="08:00"
                     android:textColor="?android:attr/textColorPrimary"
                     android:textSize="24sp"
                     android:textStyle="bold"/>
@@ -213,13 +210,13 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Frequency"
+                        android:text="@string/frequency"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="16sp" />
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Select active days"
+                        android:text="@string/select_active_days"
                         android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -229,7 +226,7 @@
                     android:id="@+id/txt_frequency_display"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Every Day"
+                    android:text="@string/every_day"
                     android:textColor="?android:attr/textColorSecondary"
                     android:maxWidth="150dp"
                     android:gravity="end"
@@ -246,10 +243,10 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="12dp"
-                android:text="Preferences"
+                android:text="@string/preferences"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="22sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <!-- SOUND TOGGLE -->
             <LinearLayout
@@ -269,13 +266,13 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Sound"
+                        android:text="@string/sound"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="16sp" />
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Play sound with notification"
+                        android:text="@string/play_sound_notification"
                         android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -307,13 +304,13 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Vibration"
+                        android:text="@string/vibration"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="16sp" />
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Vibrate on notification"
+                        android:text="@string/vibrate_on_notification"
                         android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp" />
                 </LinearLayout>

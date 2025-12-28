@@ -67,14 +67,14 @@ public class AchievementDetailsDialogFragment extends DialogFragment {
         if (unlockedAt != null) {
             String formatted = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
                     .format(new Date(unlockedAt));
-            tvTime.setText("Unlocked: " + formatted);
+            tvTime.setText(getString(R.string.achievement_unlocked_at, formatted));
         } else {
-            tvTime.setText("Not yet unlocked");
+            tvTime.setText(getString(R.string.achievement_not_yet_unlocked));
         }
 
         return new MaterialAlertDialogBuilder(requireContext())
                 .setView(content)
-                .setPositiveButton("Close", (d, w) -> {})
+                .setPositiveButton(R.string.close, (d, w) -> {})
                 .create();
     }
 }

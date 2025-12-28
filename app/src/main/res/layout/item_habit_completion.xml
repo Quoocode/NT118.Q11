@@ -48,7 +48,7 @@
             android:id="@+id/tv_habit_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Habit name"
+            android:text="@string/habit_name_placeholder"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -57,7 +57,7 @@
             android:id="@+id/tv_habit_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Completed"
+            android:text="@string/status_completed"
             android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp" />
     </LinearLayout>

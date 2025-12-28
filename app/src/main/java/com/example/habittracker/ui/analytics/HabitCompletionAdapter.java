@@ -78,7 +78,23 @@ public class HabitCompletionAdapter extends ListAdapter<HabitCompletion, HabitCo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         HabitCompletion habit = getItem(position);
         holder.name.setText(habit.getName());
-        holder.statusText.setText(habit.getStatus().name());
+
+        // Chuyển status thành string theo ngôn ngữ
+        String statusText;
+        switch (habit.getStatus()) {
+            case COMPLETED:
+                statusText = holder.itemView.getContext().getString(R.string.status_completed);
+                break;
+            case MISSED:
+                statusText = holder.itemView.getContext().getString(R.string.status_missed);
+                break;
+            case PENDING:
+            default:
+                statusText = holder.itemView.getContext().getString(R.string.status_pending);
+                break;
+        }
+
+        holder.statusText.setText(statusText);
         bindStatusIcon(habit.getStatus(), holder.statusIcon, holder.pendingMarker);
 
         holder.itemView.setOnClickListener(v -> {
@@ -93,6 +109,7 @@ public class HabitCompletionAdapter extends ListAdapter<HabitCompletion, HabitCo
             }
         });
     }
+
 
     private void bindStatusIcon(HabitCompletion.Status status, ImageView icon, TextView pendingMarker) {
         switch (status) {

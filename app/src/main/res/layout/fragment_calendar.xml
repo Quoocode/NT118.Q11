@@ -8,11 +8,6 @@
     android:background="?android:attr/windowBackground"
     tools:context=".ui.analytics.AnalyticsFragment">
 
-    <!--
-         background="?android:attr/windowBackground"
-         -> Sáng: Trắng / Tối: Đen xanh
-    -->
-
     <!-- Calendar content (fades as the bottom sheet expands) -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/calendar_content"
@@ -30,7 +25,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
-            <!-- backgroundTint: Đổi màu nền container theo theme (Xám nhạt / Xanh đen) -->
 
             <!-- Header Title -->
             <LinearLayout
@@ -46,11 +40,10 @@
                     android:layout_marginStart="16dp"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="Calendar"
+                    android:text="@string/calendar_title"
                     android:textColor="?android:attr/textColorPrimary"
                     android:textSize="18sp"
                     android:textStyle="bold" />
-                <!-- textColorPrimary -> Sáng: Đen / Tối: Trắng -->
             </LinearLayout>
 
             <!-- Month Navigation -->
@@ -135,7 +128,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="S"
+                    android:text="@string/day_sun"
                     android:textColor="?android:attr/textColorSecondary"
                     android:textSize="12sp" />
                 <TextView
@@ -143,7 +136,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="M"
+                    android:text="@string/day_mon"
                     android:textColor="?android:attr/textColorSecondary"
                     android:textSize="12sp" />
                 <TextView
@@ -151,7 +144,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="T"
+                    android:text="@string/day_tue"
                     android:textColor="?android:attr/textColorSecondary"
                     android:textSize="12sp" />
                 <TextView
@@ -159,7 +152,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="W"
+                    android:text="@string/day_wed"
                     android:textColor="?android:attr/textColorSecondary"
                     android:textSize="12sp" />
                 <TextView
@@ -167,7 +160,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="T"
+                    android:text="@string/day_thu"
                     android:textColor="?android:attr/textColorSecondary"
                     android:textSize="12sp" />
                 <TextView
@@ -175,7 +168,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="F"
+                    android:text="@string/day_fri"
                     android:textColor="?android:attr/textColorSecondary"
                     android:textSize="12sp" />
                 <TextView
@@ -183,7 +176,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="S"
+                    android:text="@string/day_sat"
                     android:textColor="?android:attr/textColorSecondary"
                     android:textSize="12sp" />
             </LinearLayout>

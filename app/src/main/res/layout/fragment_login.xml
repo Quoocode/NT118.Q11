@@ -10,11 +10,6 @@
     android:gravity="left|top"
     android:orientation="vertical">
 
-    <!--
-         android:background="?android:attr/windowBackground"
-         -> Sáng: Trắng / Tối: Đen xanh
-    -->
-
     <LinearLayout
         android:id="@+id/container_login_2"
         android:layout_width="match_parent"
@@ -42,7 +37,7 @@
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="Habit Tracker"
+                android:text="@string/app_name"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -73,7 +68,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
-                android:hint="Email"
+                android:hint="@string/email"
                 android:inputType="textEmailAddress"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textColorHint="?android:attr/textColorHint"
@@ -105,7 +100,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
-                android:hint="Password"
+                android:hint="@string/password"
                 android:inputType="textPassword"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textColorHint="?android:attr/textColorHint"
@@ -145,7 +140,7 @@
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="Remember Me"
+                android:text="@string/remember_me"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="16sp" />
         </LinearLayout>
@@ -179,7 +174,7 @@
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="Log In"
+                android:text="@string/login"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
                 android:textSize="16sp" />
@@ -215,7 +210,7 @@
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="Sign Up"
+                android:text="@string/signup"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="16sp" />
         </LinearLayout>
@@ -233,7 +228,7 @@
             android:includeFontPadding="false"
             android:maxLines="1"
             android:singleLine="true"
-            android:text="Forgot your password"
+            android:text="@string/forgot_password"
             android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp"
             android:clickable="true"
@@ -252,7 +247,7 @@
             android:includeFontPadding="false"
             android:maxLines="1"
             android:singleLine="true"
-            android:text="Or continue with"
+            android:text="@string/or_continue_with"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="18sp" />
 
@@ -283,7 +278,6 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground">
-                <!-- Màu đỏ Google: #DB4437 -->
 
                 <TextView
                     android:id="@+id/text_google"
@@ -319,7 +313,6 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground">
-                <!-- Màu xanh Facebook: #1877F2 -->
 
                 <TextView
                     android:id="@+id/text_facebook"
@@ -350,7 +343,7 @@
             android:includeFontPadding="false"
             android:maxLines="1"
             android:singleLine="true"
-            android:text="Continue as Guest"
+            android:text="@string/continue_guest"
             android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp"
             android:clickable="true"

@@ -1,5 +1,7 @@
 package com.example.habittracker.ui.achievements;
 
+import android.content.Context;
+
 import com.example.habittracker.data.achievements.AchievementCatalog;
 import com.example.habittracker.data.achievements.AchievementDefinition;
 import com.example.habittracker.data.achievements.AchievementUiModel;
@@ -15,16 +17,20 @@ final class AchievementsUiMapper {
 
     private AchievementsUiMapper() {}
 
-    static List<AchievementUiModel> toUi(Set<String> unlockedIds, Map<String, Long> unlockedAt) {
+    static List<AchievementUiModel> toUi(Context context, Set<String> unlockedIds, Map<String, Long> unlockedAt) {
         List<AchievementUiModel> ui = new ArrayList<>();
 
         for (AchievementDefinition def : AchievementCatalog.all()) {
             boolean unlocked = unlockedIds != null && unlockedIds.contains(def.getId().name());
             Long ts = unlockedAt == null ? null : unlockedAt.get(def.getId().name());
+
+            String title = context.getString(def.getTitleRes());
+            String desc = context.getString(def.getDescriptionRes());
+
             ui.add(new AchievementUiModel(
                     def.getId(),
-                    def.getTitle(),
-                    def.getDescription(),
+                    title,
+                    desc,
                     def.getIconRes(),
                     unlocked,
                     ts
@@ -42,4 +48,3 @@ final class AchievementsUiMapper {
         return ui;
     }
 }
-

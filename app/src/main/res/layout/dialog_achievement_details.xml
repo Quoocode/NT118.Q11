@@ -7,28 +7,19 @@
     android:padding="16dp"
     android:background="?attr/colorSurface">
 
-    <!--
-         Thêm background cho root để đảm bảo hiển thị đúng trên nền dialog
-         background="?attr/colorSurface" -> Sáng: Xám nhạt / Tối: Xanh đen
-    -->
-
     <FrameLayout
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:background="@drawable/container_navi"
         android:backgroundTint="?attr/colorSurfaceContainer"
         android:layout_marginEnd="12dp">
-        <!--
-             backgroundTint="?attr/colorSurfaceContainer"
-             -> Đổi màu nền icon container
-        -->
 
         <ImageView
             android:id="@+id/achievement_detail_icon"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_gravity="center"
-            android:contentDescription="Achievement icon"
+            android:contentDescription="@string/achievement_icon_desc"
             android:scaleType="centerInside"
             android:src="@drawable/ic_cup"
             app:tint="?android:attr/textColorPrimary"/>
@@ -48,8 +39,7 @@
             android:textColor="?android:attr/textColorPrimary"
             android:textStyle="bold"
             android:textSize="16sp"
-            android:text="Title" />
-        <!-- textColorPrimary -> Sáng: Đen / Tối: Trắng -->
+            android:text="@string/achievement_title_placeholder" />
 
         <TextView
             android:id="@+id/achievement_detail_description"
@@ -58,8 +48,7 @@
             android:layout_marginTop="4dp"
             android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp"
-            android:text="Description" />
-        <!-- textColorSecondary -> Sáng: Xám / Tối: Xám xanh -->
+            android:text="@string/achievement_description_placeholder" />
 
         <TextView
             android:id="@+id/achievement_detail_time"
@@ -68,8 +57,7 @@
             android:layout_marginTop="8dp"
             android:textColor="?android:attr/textColorSecondary"
             android:textSize="12sp"
-            android:text="Not yet unlocked" />
-        <!-- Dùng màu phụ cho trạng thái unlock/thời gian -->
+            android:text="@string/achievement_not_unlocked" />
 
     </LinearLayout>
 

@@ -28,8 +28,6 @@ import java.util.List;
 public class NotificationHelper {
 
     private static final String CHANNEL_ID = "habit_tracker_reminder_channel";
-    private static final String CHANNEL_NAME = "Habit Reminders";
-    private static final String CHANNEL_DESC = "Thông báo nhắc nhở thói quen hàng ngày";
     private static final int DAILY_REMINDER_REQUEST_CODE = 1001; // Mã định danh cho báo thức này
     private static final int DAILY_BRIEFING_ID = 1001;
 
@@ -37,12 +35,15 @@ public class NotificationHelper {
     // 1. Tạo kênh thông báo
     public static void createNotificationChannel(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            String channelName = context.getString(R.string.notif_channel_habit_reminders_name);
+            String channelDesc = context.getString(R.string.notif_channel_habit_reminders_desc);
+
             NotificationChannel channel = new NotificationChannel(
                     CHANNEL_ID,
-                    CHANNEL_NAME,
+                    channelName,
                     NotificationManager.IMPORTANCE_HIGH
             );
-            channel.setDescription(CHANNEL_DESC);
+            channel.setDescription(channelDesc);
             NotificationManager manager = context.getSystemService(NotificationManager.class);
             if (manager != null) {
                 manager.createNotificationChannel(channel);
@@ -64,8 +65,8 @@ public class NotificationHelper {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_menu_thinking)
-                .setContentTitle("Daily Briefing") // Đổi tiêu đề cho hợp ngữ cảnh
-                .setContentText("Chào buổi sáng! Kiểm tra các thói quen của bạn ngay.")
+                .setContentTitle(context.getString(R.string.notif_daily_briefing_title))
+                .setContentText(context.getString(R.string.notif_daily_briefing_text))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
@@ -98,7 +99,7 @@ public class NotificationHelper {
         // --- FIX BUG LOOP: Dùng while thay vì if ---
         // Chừng nào thời gian tính ra vẫn nhỏ hơn hoặc bằng hiện tại -> Cộng tiếp
         while (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
-             calendar.add(Calendar.DAY_OF_YEAR, 1); // Code thật (Chạy thực tế dùng dòng này)
+            calendar.add(Calendar.DAY_OF_YEAR, 1); // Code thật (Chạy thực tế dùng dòng này)
 //            calendar.add(Calendar.MINUTE, 1);      // Code hack (Test lặp 1 phút)
             Log.e("ALARM_DEBUG", ">> Đã cộng thêm thời gian để đảm bảo ở tương lai!");
         }
@@ -143,10 +144,12 @@ public class NotificationHelper {
         int uniqueId = habitId.hashCode();
         PendingIntent pendingIntent = PendingIntent.getActivity(context, uniqueId, intent, PendingIntent.FLAG_IMMUTABLE);
 
+        String notifTitle = context.getString(R.string.notif_habit_reminder_title_format, title);
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_menu_thinking)
-                .setContentTitle("Nhắc nhở: " + title)
-                .setContentText("Đến giờ thực hiện mục tiêu rồi! Cố lên bạn ơi.")
+                .setContentTitle(notifTitle)
+                .setContentText(context.getString(R.string.notif_habit_reminder_text))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
@@ -560,10 +563,10 @@ public class NotificationHelper {
      */
     @SuppressLint("ScheduleExactAlarm")
     private static void scheduleAlarmSafely(Context context,
-                                           AlarmManager alarmManager,
-                                           int alarmType,
-                                           long triggerAtMillis,
-                                           PendingIntent pendingIntent) {
+                                            AlarmManager alarmManager,
+                                            int alarmType,
+                                            long triggerAtMillis,
+                                            PendingIntent pendingIntent) {
         if (alarmManager == null) return;
 
         boolean allowExact = canScheduleExactAlarms(context);
@@ -599,4 +602,3 @@ public class NotificationHelper {
     }
 
 }
-
