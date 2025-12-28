@@ -264,7 +264,7 @@
     <string name="notif_channel_habit_reminders_desc">Thông báo nhắc nhở thói quen hằng ngày</string>
 
     <string name="notif_daily_briefing_title">Tóm tắt hằng ngày</string>
-    <string name="notif_daily_briefing_text">Chào buổi sáng! Kiểm tra các thói quen của bạn ngay.</string>
+    <string name="notif_daily_briefing_text">Chào ngày mới! Kiểm tra các thói quen của bạn ngay.</string>
 
     <string name="notif_habit_reminder_title_format">Nhắc nhở: %1$s</string>
     <string name="notif_habit_reminder_text">Đến giờ thực hiện mục tiêu rồi! Cố lên bạn ơi.</string>
