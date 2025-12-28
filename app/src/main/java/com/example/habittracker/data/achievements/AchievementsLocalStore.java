@@ -21,6 +21,11 @@ public class AchievementsLocalStore {
 
     private static final String PREFS = "achievements_local";
 
+    // De-dupe window for app-open events to avoid masking "Welcome Back" when the same launch
+    // triggers recordOpen twice (e.g., lifecycle + auth listener). Two seconds is long enough to
+    // cover duplicated callbacks but short enough to not affect real opens.
+    private static final long OPEN_DEDUP_WINDOW_MS = 2_000L;
+
     public static String safeUser(String userIdOrNull) {
         String v = userIdOrNull == null ? "anon" : userIdOrNull.trim();
         return v.isEmpty() ? "anon" : v;
@@ -100,6 +105,14 @@ public class AchievementsLocalStore {
      */
     public synchronized boolean recordOpenAndCheckWelcomeBack(long nowMillis) {
         long last = sp.getLong(keyLastOpen(uid), -1L);
+
+        // If we're called twice within a short window, treat it as the same "open" event.
+        // IMPORTANT: do NOT overwrite last_open in this case, otherwise the second call would
+        // immediately erase the old timestamp and prevent Welcome Back detection.
+        if (last > 0 && (nowMillis - last) >= 0 && (nowMillis - last) <= OPEN_DEDUP_WINDOW_MS) {
+            return false;
+        }
+
         sp.edit().putLong(keyLastOpen(uid), nowMillis).apply();
         if (last <= 0) return false;
         return (nowMillis - last) >= 24L * 60L * 60L * 1000L;

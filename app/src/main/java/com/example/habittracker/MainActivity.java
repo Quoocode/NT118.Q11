@@ -34,12 +34,18 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private NavController navController;
     private HabitViewModel habitViewModel;
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(LocaleHelper.applyLocale(newBase));
-    }
 
     // [BỔ SUNG] Biến lắng nghe sự kiện đăng nhập/đăng xuất
     private FirebaseAuth.AuthStateListener authListener;
+
+    // Guard to prevent duplicate "record open" calls within the same process for the same account.
+    // On cold start, onCreate() may record and then AuthStateListener fires immediately;
+    // tracking the last recorded UID prevents masking the Welcome Back check.
+    private String lastRecordedOpenUid = null;
+
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleHelper.applyLocale(newBase));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +57,11 @@ public class MainActivity extends AppCompatActivity {
         try {
             new com.example.habittracker.data.achievements.AchievementsRepository(this)
                     .recordAppOpenAndMaybeWelcomeBack();
+
+            // If a user is already logged in on cold start, remember that we already recorded for them
+            // so the AuthStateListener's immediate callback won't record again.
+            FirebaseUser current = FirebaseAuth.getInstance().getCurrentUser();
+            lastRecordedOpenUid = (current != null) ? current.getUid() : null;
         } catch (Exception ignored) {
             // avoid crash loops if prefs are corrupted
         }
@@ -164,11 +175,16 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("ALARM_DEBUG", "AuthStateListener: Phát hiện User mới đăng nhập: " + user.getUid());
 
                 // Also record an open event scoped to this user (so Welcome Back works per-account).
-                try {
-                    new com.example.habittracker.data.achievements.AchievementsRepository(MainActivity.this)
-                            .recordAppOpenAndMaybeWelcomeBack();
-                } catch (Exception ignored) {
-                    // ignore
+                // Guard against the cold-start duplicate: onCreate() may have already recorded.
+                String uid = user.getUid();
+                if (lastRecordedOpenUid == null || !lastRecordedOpenUid.equals(uid)) {
+                    try {
+                        new com.example.habittracker.data.achievements.AchievementsRepository(MainActivity.this)
+                                .recordAppOpenAndMaybeWelcomeBack();
+                        lastRecordedOpenUid = uid;
+                    } catch (Exception ignored) {
+                        // ignore
+                    }
                 }
 
                 // Gọi ViewModel tải lại dữ liệu ngay lập tức
@@ -177,6 +193,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             } else {
                 Log.d("ALARM_DEBUG", "AuthStateListener: User đã đăng xuất.");
+                // Reset so the next login (hot swap) records again.
+                lastRecordedOpenUid = null;
             }
         };
     }
