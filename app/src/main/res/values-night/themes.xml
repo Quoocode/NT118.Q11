@@ -11,7 +11,7 @@
         <item name="android:windowBackground">@color/app_background_color</item>
 
         <!-- Nền các thẻ/card/dialog -->
-        <item name="colorSurface">@color/card_background_color</item>
+        <item name="colorSurface">@color/app_background_color</item>
         <item name="colorSurfaceContainer">@color/card_background_color</item>
 
         <!-- Màu chữ chính -->
