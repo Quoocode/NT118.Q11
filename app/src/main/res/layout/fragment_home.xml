@@ -50,7 +50,7 @@
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Dashboard"
+                        android:text="@string/home_dashboard"
                         android:textStyle="bold"
                         android:textAllCaps="false"
                         android:textColor="#FFFFFFFF"
@@ -96,7 +96,7 @@
                     android:maxLines="1"
                     android:textStyle="bold"
                     android:singleLine="true"
-                    android:text="Today"
+                    android:text="@string/home_today"
                     android:textColor="#FFFFFFFF"
                     android:textSize="22dp" />
 <!--                <include-->
@@ -118,7 +118,7 @@
                     tools:listitem="@layout/item_today_habit" />
 
                 <TextView
-                    android:id="@+id/container_depth_frame35"
+                    android:id="@+id/tvProgressLabel"
                     android:layout_width="match_parent"
                     android:layout_height="28dp"
                     android:layout_marginLeft="16dp"
@@ -129,7 +129,7 @@
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="Progress"
+                    android:text="@string/home_progress"
                     android:textColor="#FFFFFFFF"
                     android:textSize="22dp" />
 
@@ -153,7 +153,7 @@
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Daily Habits"
+                        android:text="@string/home_daily_habits"
                         android:textColor="#FFFFFFFF"
                         android:textSize="16dp" />
 
@@ -254,7 +254,7 @@
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="Streaks"
+                    android:text="@string/home_streaks"
                     android:textColor="#FFFFFFFF"
                     android:textSize="22dp" />
 
@@ -299,7 +299,7 @@
                             android:layout_height="24dp"
                             android:gravity="left|center_vertical"
                             android:includeFontPadding="false"
-                            android:text="0 days"
+                            android:text="@string/days_format"
                             android:maxLines="1"
                             android:singleLine="true"
                             android:textColor="#FFFFFFFF"
@@ -313,7 +313,7 @@
                             android:includeFontPadding="false"
                             android:maxLines="1"
                             android:singleLine="true"
-                            android:text="Current"
+                            android:text="@string/home_current"
                             android:textColor="#FF91ADC9"
                             android:textSize="14dp" />
                     </LinearLayout>
@@ -362,7 +362,7 @@
                             android:includeFontPadding="false"
                             android:maxLines="1"
                             android:singleLine="true"
-                            tools:text="0 days"
+                            tools:text="@string/days_format"
                             android:textColor="#FFFFFFFF"
                             android:textSize="16dp" />
 
@@ -374,7 +374,7 @@
                             android:includeFontPadding="false"
                             android:maxLines="1"
                             android:singleLine="true"
-                            android:text="Longest"
+                            android:text="@string/home_longest"
                             android:textColor="#FF91ADC9"
                             android:textSize="14sp" />
                     </LinearLayout>
