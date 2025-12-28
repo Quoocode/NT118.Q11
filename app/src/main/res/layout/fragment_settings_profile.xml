@@ -9,6 +9,11 @@
     android:background="?android:attr/windowBackground"
     android:orientation="vertical">
 
+    <!--
+         android:background="?android:attr/windowBackground"
+         -> Tự động đổi màu nền theo Theme (Trắng / Đen xanh)
+    -->
+
     <ScrollView
         android:id="@+id/container_profile_scroll"
         android:layout_width="match_parent"
@@ -21,9 +26,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/container_login_2"
+            android:backgroundTint="?android:attr/windowBackground"
             android:gravity="left|top"
             android:orientation="vertical"
             android:paddingBottom="32dp">
+            <!-- Dùng windowBackground để đồng bộ với nền chính -->
 
             <!-- HEADER SECTION -->
             <LinearLayout
@@ -83,7 +90,7 @@
                     android:scaleType="centerCrop"
                     android:background="@drawable/container_navi"
                     android:backgroundTint="?attr/colorSurfaceContainer"/>
-                <!-- backgroundTint: Đổi màu nền tròn của avatar -->
+                <!-- Nền tròn avatar đổi màu theo theme -->
 
                 <ImageView
                     android:layout_width="28dp"
@@ -95,7 +102,7 @@
                     android:padding="6dp"
                     android:src="@drawable/ic_menu_camera"
                     app:tint="?android:attr/textColorPrimary" />
-                <!-- Thay ic_avatar bằng ic_camera (icon chỉnh sửa) và tint màu -->
+                <!-- Icon camera chỉnh sửa -->
             </RelativeLayout>
 
             <!-- SECTION TITLE -->
