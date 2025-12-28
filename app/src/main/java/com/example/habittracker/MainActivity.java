@@ -27,12 +27,16 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
-
+import android.content.Context;
+import com.example.habittracker.utils.LocaleHelper;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private NavController navController;
     private HabitViewModel habitViewModel;
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleHelper.applyLocale(newBase));
+    }
 
     // [BỔ SUNG] Biến lắng nghe sự kiện đăng nhập/đăng xuất
     private FirebaseAuth.AuthStateListener authListener;

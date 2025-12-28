@@ -94,6 +94,8 @@ public class HabitCheckInDialogFragment extends DialogFragment {
         RadioButton radioDone = view.findViewById(R.id.radio_done);
         Button btnConfirm = view.findViewById(R.id.btn_confirm);
 
+
+
         // Lấy dữ liệu
         if (getArguments() != null) {
             String title = getArguments().getString(ARG_TITLE);
@@ -103,7 +105,10 @@ public class HabitCheckInDialogFragment extends DialogFragment {
             String status = getArguments().getString(ARG_STATUS);
 
             tvTitle.setText(title);
-            tvTarget.setText("Target: " + target);
+
+            String targetStr = (target == (long) target) ? String.valueOf((long) target) : String.valueOf(target);
+
+            tvTarget.setText(getString(R.string.target_format, targetStr, unit != null ? unit : ""));
             tvUnit.setText(unit != null ? unit : "");
 
             // Hiển thị giá trị hiện tại (nếu là số nguyên thì bỏ .0)

@@ -16,7 +16,7 @@
             android:id="@+id/tv_achievements_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Achievements"
+            android:text="@string/achievements_title"
             android:textColor="#FFFFFFFF"
             android:textSize="22sp"
             android:textStyle="bold" />
@@ -35,7 +35,7 @@
                 android:id="@+id/tv_achievement_progress_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Unlocked"
+                android:text="@string/achievement_unlocked"
                 android:textColor="#FFFFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -45,7 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="0/0"
+                android:text="@string/achievement_progress_placeholder"
                 android:textColor="#FF91ADC9"
                 android:textSize="14sp" />
 
@@ -70,7 +70,7 @@
                 android:id="@+id/tv_badges_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Badges"
+                android:text="@string/badges_title"
                 android:textColor="#FFFFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -92,7 +92,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:background="@drawable/container_navi"
-                        android:contentDescription="Expand badges"
+                        android:contentDescription="@string/expand_badges_desc"
                         android:padding="12dp"
                         android:src="@drawable/ic_chevron_down"
                         app:tint="#FFFFFFFF" />
@@ -157,7 +157,7 @@
                     android:background="@drawable/container_navi"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
-                    android:text="Show less"
+                    android:text="@string/show_less"
                     android:textColor="#FFFFFFFF" />
             </LinearLayout>
         </LinearLayout>

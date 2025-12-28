@@ -16,7 +16,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_gravity="center"
-            android:contentDescription="Badge placeholder"
+            android:contentDescription="@string/badges"
             android:padding="6dp"
             android:scaleType="centerInside"
             android:src="@drawable/ic_cup" />
@@ -29,7 +29,7 @@
         android:layout_marginTop="4dp"
         android:gravity="center"
         android:maxLines="1"
-        android:text="Badge title"
+        android:text="@string/badges_title"
         android:textColor="#FFFFFFFF"
         android:textSize="12sp" />
 
