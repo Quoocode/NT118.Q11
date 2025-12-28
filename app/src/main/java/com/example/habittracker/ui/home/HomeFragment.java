@@ -88,6 +88,8 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
+        Context localeContext = LocaleHelper.applyLocale(requireContext());
+
         binding.recyclerViewHabits.setLayoutManager(new LinearLayoutManager(getContext()));
 
         habitAdapter = new DashboardHabitAdapter(getContext(), todayHabitList,
@@ -218,17 +220,19 @@ public class HomeFragment extends Fragment {
                     }
                 }
 
-                // Set label Progress / Tiến độ
+
+                // Set label Progress / Tiến độ bằng localeContext
                 binding.tvProgressLabel.setText(localeContext.getString(R.string.home_progress));
 
-                // Set số đã hoàn thành / tổng
+                // Set số đã hoàn thành / tổng bằng localeContext
                 String progressText = localeContext.getString(
                         R.string.progress_count_format, completedHabits, totalHabits
                 );
                 binding.tvProgressCount.setText(progressText);
 
                 // Animate progressBar
-                binding.progressBarDaily.setMax(totalHabits);
+                int max = Math.max(totalHabits, 1); // tránh setMax = 0
+                binding.progressBarDaily.setMax(max);
                 ObjectAnimator.ofInt(binding.progressBarDaily, "progress", completedHabits)
                         .setDuration(500)
                         .start();
@@ -242,10 +246,12 @@ public class HomeFragment extends Fragment {
     }
 
 
+
     @Override
     public void onResume() {
         super.onResume();
         loadHabitsForToday();
+        loadDailyProgress();
     }
 
     @Override

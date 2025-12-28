@@ -60,65 +60,51 @@ public class DashboardHabitAdapter extends RecyclerView.Adapter<DashboardHabitAd
         // 1. Hiển thị Tên
         holder.tvTitle.setText(habit.getTitle());
 
-        // 2. Hiển thị Tiến độ (Thay cho thời gian)
-        // Ví dụ: "Tiến độ: 3.5 / 5.0 km"
-        String progressText = String.format("Progress: %.1f / %.1f %s",
-                habit.getCurrentValue(), habit.getTargetValue(), habit.getUnit());
+        // 2. Hiển thị Tiến độ bằng string resource để dịch được
+        Double currentValue = habit.getCurrentValue();
+        Double targetValue = habit.getTargetValue();
+
+        double current = currentValue != null ? currentValue.doubleValue() : 0.0;
+        double target = targetValue != null ? targetValue.doubleValue() : 0.0;
+        String unit = habit.getUnit() != null ? habit.getUnit() : "";
+
+        // Lấy chữ Progress theo locale
+        String progressLabel = context.getString(R.string.home_progress); // "Progress" hoặc "Tiến độ"
+        String progressText = String.format("%s: %.1f / %.1f %s", progressLabel, current, target, unit);
         holder.tvTime.setText(progressText);
 
-        // 3. Hiển thị Icon (Lấy từ tên file trong drawable)
+        // 3. Hiển thị Icon
         String iconName = habit.getIconName();
         int resId = context.getResources().getIdentifier(iconName, "drawable", context.getPackageName());
-
         if (resId != 0) {
             holder.imgIcon.setImageResource(resId);
         } else {
-            // Icon mặc định nếu không tìm thấy
             holder.imgIcon.setImageResource(android.R.drawable.ic_menu_report_image);
         }
 
-        // 4. XỬ LÝ TRẠNG THÁI HIỂN THỊ (Visual Only)
-        // Kiểm tra xem đã hoàn thành chưa để vẽ giao diện (Gạch ngang, đổi icon)
-        boolean isCompleted = habit.getCurrentValue() >= habit.getTargetValue() || "DONE".equals(habit.getStatus());
-
+        // 4. Xử lý trạng thái hoàn thành
+        boolean isCompleted = current >= target || "DONE".equals(habit.getStatus());
         if (isCompleted) {
-            // --- ĐÃ HOÀN THÀNH ---
-
-            // Đổi hình icon check thành dấu tích (ic_tick_done)
             holder.imgCheck.setImageResource(R.drawable.ic_tick_done);
-
-            // Gạch ngang chữ & làm mờ để biểu thị đã xong
             holder.tvTitle.setPaintFlags(holder.tvTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             holder.tvTitle.setAlpha(0.5f);
             holder.tvTime.setAlpha(0.5f);
         } else {
-            // --- CHƯA HOÀN THÀNH ---
-
-            // Đổi hình icon check thành dấu ba chấm hoặc ô trống (ic_ellipsis)
             holder.imgCheck.setImageResource(R.drawable.ic_ellipsis);
-
-            // Bỏ gạch ngang & trả lại độ đậm bình thường
             holder.tvTitle.setPaintFlags(holder.tvTitle.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
-            holder.tvTitle.setAlpha(1.0f);
-            holder.tvTime.setAlpha(1.0f);
+            holder.tvTitle.setAlpha(1f);
+            holder.tvTime.setAlpha(1f);
         }
 
-        // 5. SỰ KIỆN CLICK
-
-        // Click vào nút Check -> Gọi listener để mở Dialog
+        // 5. Click events
         holder.imgCheck.setOnClickListener(v -> {
-            if (checkListener != null) {
-                checkListener.onHabitCheckClick(habit);
-            }
+            if (checkListener != null) checkListener.onHabitCheckClick(habit);
         });
-
-        // Click vào Item (Layout cha) -> Gọi listener để sửa Habit
         holder.itemView.setOnClickListener(v -> {
-            if (itemClickListener != null) {
-                itemClickListener.onItemClick(habit);
-            }
+            if (itemClickListener != null) itemClickListener.onItemClick(habit);
         });
     }
+
 
     @Override
     public int getItemCount() {
