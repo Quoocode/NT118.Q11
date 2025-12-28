@@ -64,7 +64,7 @@ public class NotificationHelper {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_menu_thinking)
+                .setSmallIcon(R.mipmap.ic_launcher_1)
                 .setContentTitle(context.getString(R.string.notif_daily_briefing_title))
                 .setContentText(context.getString(R.string.notif_daily_briefing_text))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -147,7 +147,7 @@ public class NotificationHelper {
         String notifTitle = context.getString(R.string.notif_habit_reminder_title_format, title);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_menu_thinking)
+                .setSmallIcon(R.mipmap.ic_launcher_1)
                 .setContentTitle(notifTitle)
                 .setContentText(context.getString(R.string.notif_habit_reminder_text))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
