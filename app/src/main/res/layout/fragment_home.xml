@@ -8,6 +8,11 @@
     android:background="?android:attr/windowBackground"
     tools:context="com.example.habittracker.ui.home.HomeFragment">
 
+    <!--
+         android:background="?android:attr/windowBackground"
+         -> Sáng: Trắng / Tối: Đen xanh
+    -->
+
     <androidx.core.widget.NestedScrollView
         android:id="@+id/home_scroll_view"
         android:layout_width="match_parent"
@@ -18,7 +23,6 @@
             android:id="@+id/container_home_screen"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/container_login_2"
             android:gravity="left|top"
             android:orientation="vertical">
 
@@ -29,6 +33,7 @@
                 android:gravity="left|top"
                 android:orientation="vertical">
 
+                <!-- Header: Dashboard Title + Add Button -->
                 <LinearLayout
                     android:id="@+id/container_depth_frame1"
                     android:layout_width="match_parent"
@@ -85,6 +90,7 @@
                     </LinearLayout>
                 </LinearLayout>
 
+                <!-- SECTION: Today -->
                 <TextView
                     android:id="@+id/tv_today"
                     android:layout_width="match_parent"
@@ -102,12 +108,13 @@
                     android:textColor="?android:attr/textColorPrimary"
                     android:textSize="22sp" />
 
+                <!-- SECTION: Progress -->
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view_habits"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"
                     android:layout_marginTop="16dp"
+                    android:nestedScrollingEnabled="false"
                     tools:listitem="@layout/item_today_habit" />
 
                 <TextView
@@ -318,6 +325,11 @@
                             android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
+
+                <include
+                    android:id="@+id/include_achievements"
+                    layout="@layout/fragment_achievements" />
+
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

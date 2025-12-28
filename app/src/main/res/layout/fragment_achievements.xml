@@ -3,7 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:background="?android:attr/windowBackground">
+
+    <!--
+         background="?android:attr/windowBackground"
+         -> Sáng: Trắng / Tối: Đen xanh
+    -->
 
     <LinearLayout
         android:id="@+id/achievements_container"
@@ -12,14 +18,15 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-    <TextView
-        android:id="@+id/tv_achievements_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Achievements"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textSize="22sp"
-        android:textStyle="bold" />
+        <TextView
+            android:id="@+id/tv_achievements_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Achievements"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+        <!-- Màu chữ chính, dp->sp -->
 
         <!-- Progress card -->
         <LinearLayout
@@ -28,15 +35,17 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:background="@drawable/container_navi"
+            android:backgroundTint="?attr/colorSurfaceContainer"
             android:orientation="vertical"
             android:padding="16dp">
+            <!-- backgroundTint: Đổi màu nền container -->
 
             <TextView
                 android:id="@+id/tv_achievement_progress_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Unlocked"
-                android:textColor="#FFFFFFFF"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -46,8 +55,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="0/0"
-                android:textColor="#FF91ADC9"
+                android:textColor="?android:attr/textColorSecondary"
                 android:textSize="14sp" />
+            <!-- Màu chữ phụ -->
 
             <ProgressBar
                 android:id="@+id/progress_achievement_total"
@@ -71,7 +81,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Badges"
-                android:textColor="#FFFFFFFF"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -92,10 +102,12 @@
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:background="@drawable/container_navi"
+                        android:backgroundTint="?attr/colorSurfaceContainer"
                         android:contentDescription="Expand badges"
                         android:padding="12dp"
                         android:src="@drawable/ic_chevron_down"
-                        app:tint="#FFFFFFFF" />
+                        app:tint="?android:attr/textColorPrimary" />
+                    <!-- Thêm backgroundTint và tint -->
 
                     <FrameLayout
                         android:id="@+id/badge_blur_target"
@@ -138,7 +150,9 @@
                 android:layout_marginTop="12dp"
                 android:orientation="vertical"
                 android:padding="12dp"
+                android:background="?attr/colorSurface"
                 android:visibility="gone">
+                <!-- Đổi background thành màu bề mặt -->
 
                 <GridLayout
                     android:id="@+id/badges_grid"
@@ -155,10 +169,11 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="12dp"
                     android:background="@drawable/container_navi"
+                    android:backgroundTint="?attr/colorSurfaceContainer"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
                     android:text="Show less"
-                    android:textColor="#FFFFFFFF" />
+                    android:textColor="?android:attr/textColorPrimary" />
             </LinearLayout>
         </LinearLayout>
 

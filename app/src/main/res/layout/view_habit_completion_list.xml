@@ -5,9 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_bottom_sheet_rounded"
+    android:backgroundTint="?attr/colorSurfaceContainer"
     android:orientation="vertical">
 
-    <!-- Drag handle area (the whole header is touch-friendly) -->
+    <!--
+         backgroundTint="?attr/colorSurfaceContainer"
+         -> Tự động đổi màu nền sheet (Xám nhạt / Xanh đen)
+    -->
+
+    <!-- Drag handle area -->
     <LinearLayout
         android:id="@+id/habit_sheet_header"
         android:layout_width="match_parent"
@@ -21,7 +27,9 @@
             android:id="@+id/drag_handle"
             android:layout_width="40dp"
             android:layout_height="5dp"
-            android:background="@drawable/bg_drag_handle" />
+            android:background="@drawable/bg_drag_handle"
+            android:backgroundTint="?android:attr/textColorSecondary"/>
+        <!-- Tint handle màu xám để nổi trên cả 2 nền -->
     </LinearLayout>
 
     <TextView
@@ -36,6 +44,7 @@
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="18sp"
         android:textStyle="bold" />
+    <!-- textColorPrimary -> Sáng: Đen / Tối: Trắng -->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/habit_completion_recycler"
