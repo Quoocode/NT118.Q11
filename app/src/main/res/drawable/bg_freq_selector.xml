@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Trạng thái ĐƯỢC CHỌN (Selected = true) -->
+
+    <!-- 1. Trạng thái ĐƯỢC CHỌN (Selected = true) -->
     <item android:state_selected="true">
         <shape android:shape="rectangle">
-            <solid android:color="#2196F3" /> <!-- Màu xanh dương -->
+            <solid android:color="@color/selector_selected_color" />
             <corners android:radius="8dp" />
         </shape>
     </item>
 
-    <!-- Trạng thái BÌNH THƯỜNG (Mặc định) -->
+    <!-- 2. Trạng thái BÌNH THƯỜNG (Mặc định) -->
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="#2D3748" /> <!-- Màu xám đậm -->
+            <solid android:color="@color/selector_unselected_color" />
             <corners android:radius="8dp" />
         </shape>
     </item>
+
 </selector>

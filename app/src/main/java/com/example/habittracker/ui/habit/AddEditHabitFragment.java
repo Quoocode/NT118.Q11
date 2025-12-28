@@ -66,8 +66,6 @@ public class AddEditHabitFragment extends Fragment {
             "ic_menu_running", "ic_menu_gym", "ic_menu_football",
             "ic_menu_water", "ic_menu_coffee", "ic_menu_game",
             "ic_menu_hospital"
-
-            // Thêm icon của bạn vào đây (VD: ic_gym, ic_water...)
     );
 
     private AchievementService achievementService;
@@ -274,19 +272,35 @@ public class AddEditHabitFragment extends Fragment {
     }
     // --------------------------------
 
+    // --- SAVE LOGIC ---
     private void saveHabit() {
-        // 1. Validate dữ liệu (Giữ nguyên code cũ của mày)
+        // 1. Validate Tên
         String title = binding.editHabitName.getText().toString().trim();
         if (title.isEmpty()) {
             binding.editHabitName.setError("Required");
+            binding.editHabitName.requestFocus();
+            return;
+        }
+
+        // 2. Validate Target Value
+        String valueStr = binding.editHabitValue.getText().toString().trim();
+        if (valueStr.isEmpty()) {
+            binding.editHabitValue.setError("Required");
+            binding.editHabitValue.requestFocus();
             return;
         }
 
         double target = 0;
         try {
-            target = Double.parseDouble(binding.editHabitValue.getText().toString());
-        } catch (Exception e) {
-            // Mặc định 0
+            target = Double.parseDouble(valueStr);
+            if (target <= 0) { // Bắt buộc > 0
+                binding.editHabitValue.setError("Must be > 0");
+                binding.editHabitValue.requestFocus();
+                return;
+            }
+        } catch (NumberFormatException e) {
+            binding.editHabitValue.setError("Invalid number");
+            return;
         }
 
         String unit = binding.editHabitUnit.getText().toString().trim();
@@ -302,7 +316,7 @@ public class AddEditHabitFragment extends Fragment {
             if (!checkExactAlarmPermission()) {
                 Log.e("ALARM_PERMISSION", "Bị chặn quyền Exact Alarm. Đang yêu cầu user cấp quyền...");
                 showPermissionDialog();
-                return; // Dừng lại, không lưu
+                return;
             }
         }
         // -------------------------------------

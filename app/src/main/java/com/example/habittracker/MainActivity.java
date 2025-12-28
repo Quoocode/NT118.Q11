@@ -58,53 +58,56 @@ public class MainActivity extends AppCompatActivity {
         // 1. Sử dụng ViewBinding để liên kết layout "activity_main.xml"
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.content_main_container), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        // 2. Tìm NavController từ NavHostFragment trong "content_main.xml"
-        // (Chúng ta giả sử ID của NavHostFragment là 'nav_host_fragment_content_main')
+        // 2. Tìm NavController
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment_content_main);
 
         if (navHostFragment != null) {
             navController = navHostFragment.getNavController();
 
-            // --- [MỚI] LOGIC KIỂM TRA ĐĂNG NHẬP (AUTO LOGIN) ---
+            // --- THIẾT LẬP GRAPH KHI KHỞI ĐỘNG LẦN ĐẦU ---
+            // Nếu savedInstanceState != null, nghĩa là Activity đang được tạo lại (do xoay màn hình hoặc đổi theme)
+            // Lúc này NavController sẽ tự động khôi phục trạng thái cũ, ta KHÔNG NÊN set lại graph.
+            if (savedInstanceState == null) {
+                // Lấy NavGraph hiện tại
+                NavGraph navGraph = navController.getNavInflater().inflate(R.navigation.nav_graph);
 
-            // Lấy NavGraph hiện tại
-            NavGraph navGraph = navController.getNavInflater().inflate(R.navigation.nav_graph);
+                // Kiểm tra user hiện tại (Auto Login)
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-            // Kiểm tra user hiện tại
-            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                if (currentUser != null) {
+                    navGraph.setStartDestination(R.id.homeFragment);
+                } else {
+                    navGraph.setStartDestination(R.id.loginFragment);
+                }
 
-            if (currentUser != null) {
-                navGraph.setStartDestination(R.id.homeFragment);
-            } else {
-                navGraph.setStartDestination(R.id.loginFragment);
+                // Gán lại đồ thị đã chỉnh sửa cho Controller
+                navController.setGraph(navGraph);
             }
+            // -----------------------------------------------------------
 
-            // Gán lại đồ thị đã chỉnh sửa cho Controller
-            navController.setGraph(navGraph);
-            // ---------------------------------------------------
-
-            // 3. Liên kết BottomNav
+            // 3. Liên kết BottomNav (Luôn phải làm, kể cả khi recreate)
             NavigationUI.setupWithNavController(binding.bottomNavigationView, navController);
 
             // 4. Gọi hàm để quản lý ẩn/hiện thanh điều hướng
             setupBottomNavVisibility();
         }
 
-        // --- ĐOẠN DATA SEEDER (Có thể bỏ hoặc comment lại sau này) ---
+        // --- ĐOẠN DATA SEEDER ---
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             String user1_ID = FirebaseAuth.getInstance().getCurrentUser().getUid();
             // DataSeeder seeder1 = new DataSeeder(user1_ID);
             // seeder1.seedData();
         }
 
-        // 5. [QUAN TRỌNG] Kích hoạt quan sát dữ liệu để đặt báo thức
+        // 5. Kích hoạt quan sát dữ liệu
         setupHabitObserver();
 
         // [BỔ SUNG] Khởi tạo Auth Listener (Chuẩn bị cho onStart)

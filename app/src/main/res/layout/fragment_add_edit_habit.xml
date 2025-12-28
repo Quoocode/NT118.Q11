@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#111827"
+    android:background="?android:attr/windowBackground"
     android:gravity="left|top"
     android:orientation="vertical"
     tools:context="com.example.habittracker.ui.habit.AddEditHabitFragment">
@@ -30,7 +30,7 @@
                 android:src="@drawable/ic_arrow_left"
                 android:contentDescription="Back"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                app:tint="@color/white"/>
+                app:tint="?android:attr/textColorPrimary"/>
 
             <TextView
                 android:id="@+id/tv_screen_title"
@@ -39,7 +39,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="@string/title_new_habit"
-                android:textColor="#FFFFFF"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold"/>
 
@@ -67,6 +67,7 @@
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="12dp"
                 android:background="@drawable/container_navi"
+                android:backgroundTint="?attr/colorSurfaceContainer"
                 android:padding="16dp">
 
                 <EditText
@@ -75,8 +76,8 @@
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:hint="@string/hint_habit_name"
-                    android:textColor="#FFFFFF"
-                    android:textColorHint="#FF91ADC9"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textColorHint="?android:attr/textColorSecondary"
                     android:textSize="16sp"
                     android:inputType="textCapSentences"/>
             </LinearLayout>
@@ -88,6 +89,7 @@
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="12dp"
                 android:background="@drawable/container_navi"
+                android:backgroundTint="?attr/colorSurfaceContainer"
                 android:padding="16dp">
 
                 <EditText
@@ -96,8 +98,8 @@
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:hint="@string/hint_habit_desc"
-                    android:textColor="#FFFFFF"
-                    android:textColorHint="#FF91ADC9"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textColorHint="?android:attr/textColorSecondary"
                     android:textSize="14sp"
                     android:inputType="textCapSentences|textMultiLine"
                     android:minLines="2"/>
@@ -111,7 +113,7 @@
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="8dp"
                 android:text="@string/section_icon"
-                android:textColor="#FFFFFF"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold"/>
 
@@ -131,7 +133,7 @@
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="12dp"
                 android:text="@string/section_frequency"
-                android:textColor="#FFFFFF"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold"/>
 
@@ -150,7 +152,7 @@
                     android:background="@drawable/bg_freq_selector"
                     android:gravity="center"
                     android:text="@string/freq_once"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="14sp"
                     android:clickable="true"
                     android:focusable="true"/>
@@ -164,7 +166,7 @@
                     android:background="@drawable/bg_freq_selector"
                     android:gravity="center"
                     android:text="@string/freq_daily"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="14sp"
                     android:clickable="true"
                     android:focusable="true"/>
@@ -178,7 +180,7 @@
                     android:background="@drawable/bg_freq_selector"
                     android:gravity="center"
                     android:text="@string/freq_weekly"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="14sp"
                     android:clickable="true"
                     android:focusable="true"/>
@@ -191,7 +193,7 @@
                     android:background="@drawable/bg_freq_selector"
                     android:gravity="center"
                     android:text="@string/freq_monthly"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="14sp"
                     android:clickable="true"
                     android:focusable="true"/>
@@ -205,7 +207,7 @@
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="12dp"
                 android:text="@string/section_reminder_target"
-                android:textColor="#FFFFFF"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold"/>
 
@@ -229,7 +231,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/reminder_time"
-                        android:textColor="#FFFFFF"
+                        android:textColor="?android:attr/textColorPrimary"
                         android:textSize="16sp"/>
 
                     <TextView
@@ -237,7 +239,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="09:00"
-                        android:textColor="#FF91ADC9"
+                        android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp"/>
                 </LinearLayout>
 
@@ -245,7 +247,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_chevron_right"
-                    app:tint="#FF91ADC9"/>
+                    app:tint="?android:attr/textColorSecondary"/>
             </LinearLayout>
 
             <!-- Start Date -->
@@ -268,7 +270,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/start_date"
-                        android:textColor="#FFFFFF"
+                        android:textColor="?android:attr/textColorPrimary"
                         android:textSize="16sp"/>
 
                     <TextView
@@ -276,7 +278,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/today"
-                        android:textColor="#FF91ADC9"
+                        android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp"/>
                 </LinearLayout>
 
@@ -284,7 +286,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_chevron_right"
-                    app:tint="#FF91ADC9"/>
+                    app:tint="?android:attr/textColorSecondary"/>
             </LinearLayout>
 
             <!-- Target Value & Unit -->
@@ -301,6 +303,7 @@
                     android:layout_weight="2"
                     android:orientation="vertical"
                     android:background="@drawable/container_navi"
+                    android:backgroundTint="?attr/colorSurfaceContainer"
                     android:padding="12dp"
                     android:layout_marginEnd="8dp">
 
@@ -308,7 +311,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/target_value"
-                        android:textColor="#FF91ADC9"
+                        android:textColor="?android:attr/textColorSecondary"
                         android:textSize="12sp"/>
 
                     <EditText
@@ -316,10 +319,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@null"
-                        android:textColor="#FFFFFF"
+                        android:textColor="?android:attr/textColorPrimary"
                         android:inputType="numberDecimal"
                         android:hint="0"
-                        android:textColorHint="#55FFFFFF"/>
+                        android:textColorHint="?android:attr/textColorSecondary"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -328,13 +331,14 @@
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:background="@drawable/container_navi"
+                    android:backgroundTint="?attr/colorSurfaceContainer"
                     android:padding="12dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/unit"
-                        android:textColor="#FF91ADC9"
+                        android:textColor="?android:attr/textColorSecondary"
                         android:textSize="12sp"/>
 
                     <EditText
@@ -342,7 +346,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@null"
-                        android:textColor="#FFFFFF"
+                        android:textColor="?android:attr/textColorPrimary"
                         android:hint="@string/unit_km"
                         android:textColorHint="#55FFFFFF"/>
                 </LinearLayout>
@@ -357,7 +361,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp"
-        android:background="#111827">
+        android:background="?android:attr/windowBackground">
 
         <TextView
             android:id="@+id/btn_confirm_action"
@@ -366,7 +370,7 @@
             android:background="@drawable/container_blue"
             android:gravity="center"
             android:text="Create Habit"
-            android:textColor="#FFFFFF"
+            android:textColor="?attr/colorOnPrimary"
             android:textSize="16sp"
             android:textStyle="bold"
             android:clickable="true"

@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?android:attr/windowBackground"
     tools:context="com.example.habittracker.ui.home.HomeFragment">
 
     <androidx.core.widget.NestedScrollView
@@ -17,7 +18,6 @@
             android:id="@+id/container_home_screen"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/container_login_2"
             android:gravity="left|top"
             android:orientation="vertical">
 
@@ -28,6 +28,7 @@
                 android:gravity="left|top"
                 android:orientation="vertical">
 
+                <!-- Header: Dashboard Title + Add Button -->
                 <LinearLayout
                     android:id="@+id/container_depth_frame1"
                     android:layout_width="match_parent"
@@ -53,8 +54,8 @@
                         android:text="@string/home_dashboard"
                         android:textStyle="bold"
                         android:textAllCaps="false"
-                        android:textColor="#FFFFFFFF"
-                        android:textSize="24dp" />
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="24sp" />
 
                     <LinearLayout
                         android:id="@+id/container_depth_frame3"
@@ -78,11 +79,13 @@
                                 android:clickable="true"
                                 android:focusable="true"
                                 android:src="@drawable/ic_plus"
+                                app:tint="?android:attr/textColorPrimary"
                                 android:background="?attr/selectableItemBackgroundBorderless"/>
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
 
+                <!-- SECTION: Today -->
                 <TextView
                     android:id="@+id/tv_today"
                     android:layout_width="match_parent"
@@ -97,24 +100,16 @@
                     android:textStyle="bold"
                     android:singleLine="true"
                     android:text="@string/home_today"
-                    android:textColor="#FFFFFFFF"
-                    android:textSize="22dp" />
-<!--                <include-->
-<!--                    android:id="@+id/test_habit_item"-->
-<!--                    layout="@layout/item_today_habit"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginLeft="16dp"-->
-<!--                    android:layout_marginRight="16dp"/>-->
-<!--                <include-->
-<!--                    android:id="@+id/include_today_habits"-->
-<!--                    layout="@layout/view_today_habits" />-->
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="22sp" />
+
+                <!-- SECTION: Progress -->
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view_habits"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"
                     android:layout_marginTop="16dp"
+                    android:nestedScrollingEnabled="false"
                     tools:listitem="@layout/item_today_habit" />
 
                 <TextView
@@ -130,8 +125,8 @@
                     android:maxLines="1"
                     android:singleLine="true"
                     android:text="@string/home_progress"
-                    android:textColor="#FFFFFFFF"
-                    android:textSize="22dp" />
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="22sp" />
 
                 <LinearLayout
                     android:id="@+id/container_depth_frame37"
@@ -154,8 +149,8 @@
                         android:maxLines="1"
                         android:singleLine="true"
                         android:text="@string/home_daily_habits"
-                        android:textColor="#FFFFFFFF"
-                        android:textSize="16dp" />
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/tv_progress_count"
@@ -168,8 +163,8 @@
                         android:maxLines="1"
                         android:singleLine="true"
                         tools:text="3/5"
-                        android:textColor="#FFFFFFFF"
-                        android:textSize="14dp" />
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="14sp" />
                 </LinearLayout>
 
                 <ProgressBar
@@ -183,65 +178,7 @@
                     android:layout_marginBottom="16dp"
                     android:progressDrawable="@drawable/custom_progress_bar" />
 
-<!--                <LinearLayout-->
-<!--                    android:id="@+id/container_depth_frame42"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginLeft="16dp"-->
-<!--                    android:layout_marginRight="16dp"-->
-<!--                    android:layout_marginTop="16dp"-->
-<!--                    android:clipToPadding="false"-->
-<!--                    android:gravity="left|top"-->
-<!--                    android:orientation="horizontal">-->
-
-<!--                    <TextView-->
-<!--                        android:id="@+id/container_depth_frame43"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="24dp"-->
-<!--                        android:layout_weight="1"-->
-<!--                        android:gravity="left|center_vertical"-->
-<!--                        android:includeFontPadding="false"-->
-<!--                        android:maxLines="1"-->
-<!--                        android:singleLine="true"-->
-<!--                        android:text="Weekly Habits"-->
-<!--                        android:textColor="#FFFFFFFF"-->
-<!--                        android:textSize="16dp" />-->
-
-<!--                    <TextView-->
-<!--                        android:id="@+id/container_depth_frame44"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="24dp"-->
-<!--                        android:layout_marginBottom="3dp"-->
-<!--                        android:layout_weight="1"-->
-<!--                        android:gravity="left|center_vertical"-->
-<!--                        android:includeFontPadding="false"-->
-<!--                        android:maxLines="1"-->
-<!--                        android:singleLine="true"-->
-<!--                        android:text="8/10"-->
-<!--                        android:textColor="#FFFFFFFF"-->
-<!--                        android:textSize="14dp" />-->
-<!--                </LinearLayout>-->
-
-<!--                <LinearLayout-->
-<!--                    android:id="@+id/container_depth_frame45"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginLeft="16dp"-->
-<!--                    android:layout_marginRight="16dp"-->
-<!--                    android:layout_marginTop="12dp"-->
-<!--                    android:layout_marginBottom="16dp"-->
-<!--                    android:background="@drawable/container_navi"-->
-<!--                    android:gravity="left|top"-->
-<!--                    android:orientation="vertical">-->
-
-<!--                    <ImageView-->
-<!--                        android:id="@+id/image_depth_frame8"-->
-<!--                        android:layout_width="286dp"-->
-<!--                        android:layout_height="8dp"-->
-<!--                        android:background="@drawable/container_blue"-->
-<!--                        android:scaleType="centerInside" />-->
-<!--                </LinearLayout>-->
-
+                <!-- SECTION: Streaks -->
                 <TextView
                     android:id="@+id/container_depth_frame46"
                     android:layout_width="match_parent"
@@ -255,8 +192,8 @@
                     android:maxLines="1"
                     android:singleLine="true"
                     android:text="@string/home_streaks"
-                    android:textColor="#FFFFFFFF"
-                    android:textSize="22dp" />
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="22sp" />
 
                 <LinearLayout
                     android:id="@+id/container_depth_frame47"
@@ -274,6 +211,7 @@
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:background="@drawable/container_navi"
+                        android:backgroundTint="?attr/colorSurfaceContainer"
                         android:gravity="center"
                         android:orientation="horizontal">
 
@@ -282,7 +220,8 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:scaleType="centerInside"
-                            android:src="@drawable/ic_fire" />
+                            android:src="@drawable/ic_fire"
+                            app:tint="?android:attr/textColorPrimary"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -302,8 +241,8 @@
                             android:text="@string/days_format"
                             android:maxLines="1"
                             android:singleLine="true"
-                            android:textColor="#FFFFFFFF"
-                            android:textSize="16dp" />
+                            android:textColor="?android:attr/textColorPrimary"
+                            android:textSize="16sp" />
 
                         <TextView
                             android:id="@+id/container_depth_frame52"
@@ -314,8 +253,8 @@
                             android:maxLines="1"
                             android:singleLine="true"
                             android:text="@string/home_current"
-                            android:textColor="#FF91ADC9"
-                            android:textSize="14dp" />
+                            android:textColor="?android:attr/textColorSecondary"
+                            android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -335,6 +274,7 @@
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:background="@drawable/container_navi"
+                        android:backgroundTint="?attr/colorSurfaceContainer"
                         android:gravity="center"
                         android:orientation="horizontal">
 
@@ -343,7 +283,8 @@
                             android:layout_width="19dp"
                             android:layout_height="24dp"
                             android:scaleType="centerInside"
-                            android:src="@drawable/ic_cup" />
+                            android:src="@drawable/ic_cup"
+                            app:tint="?android:attr/textColorPrimary"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -363,8 +304,8 @@
                             android:maxLines="1"
                             android:singleLine="true"
                             tools:text="@string/days_format"
-                            android:textColor="#FFFFFFFF"
-                            android:textSize="16dp" />
+                            android:textColor="?android:attr/textColorPrimary"
+                            android:textSize="16sp" />
 
                         <TextView
                             android:id="@+id/container_depth_frame58"
@@ -375,7 +316,7 @@
                             android:maxLines="1"
                             android:singleLine="true"
                             android:text="@string/home_longest"
-                            android:textColor="#FF91ADC9"
+                            android:textColor="?android:attr/textColorSecondary"
                             android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>

@@ -213,7 +213,17 @@ public class HabitDetailsFragment extends Fragment {
         });
     }
 
-    // HÀM 1: Trang trí biểu đồ cho đẹp (Tắt lưới, làm mờ...)
+    // Hàm tiện ích để lấy màu từ Theme (Thêm hàm này vào Fragment của bạn nếu chưa có)
+    private int getThemeColor(int attrId) {
+        android.util.TypedValue typedValue = new android.util.TypedValue();
+        if (getContext() != null) {
+            getContext().getTheme().resolveAttribute(attrId, typedValue, true);
+            return typedValue.data;
+        }
+        return android.graphics.Color.GRAY; // Màu dự phòng
+    }
+
+    // HÀM 1: Trang trí biểu đồ (ĐÃ SỬA MÀU SẮC ĐỘNG)
     private void setupChartStyle() {
         if (lineChart == null) return;
 
@@ -221,15 +231,24 @@ public class HabitDetailsFragment extends Fragment {
         lineChart.getLegend().setEnabled(false); // Tắt chú thích
         lineChart.setTouchEnabled(false); // Không cho zoom/kéo
 
+        // Lấy màu chữ phụ từ Theme (Sáng -> Xám, Tối -> Trắng mờ)
+        int labelColor = getThemeColor(android.R.attr.textColorSecondary);
+
+        // Tạo màu lưới mờ dựa trên màu chữ (Alpha 20%)
+        int gridColor = androidx.core.graphics.ColorUtils.setAlphaComponent(labelColor, 50);
+
         // Trục X (Thời gian - Ở dưới)
         XAxis xAxis = lineChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setTextColor(android.graphics.Color.WHITE);
+        xAxis.setTextColor(labelColor); // Dùng màu động theo Theme
         xAxis.setDrawGridLines(false); // Tắt lưới dọc
+        xAxis.setGranularity(1f); // Hiện đủ nhãn
 
         // Trục Y (Giá trị - Bên trái)
-        lineChart.getAxisLeft().setTextColor(android.graphics.Color.WHITE);
-        lineChart.getAxisLeft().setGridColor(android.graphics.Color.parseColor("#33FFFFFF")); // Lưới ngang mờ
+        lineChart.getAxisLeft().setTextColor(labelColor);
+        lineChart.getAxisLeft().setGridColor(gridColor);
+        lineChart.getAxisLeft().setAxisMinimum(0f); // Bắt đầu từ 0
+
         lineChart.getAxisRight().setEnabled(false); // Tắt trục phải
 
         // Hiệu ứng

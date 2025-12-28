@@ -4,15 +4,16 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
     android:background="@drawable/bg_habit_completion_item"
+    android:backgroundTint="?attr/colorSurface"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:padding="12dp">
 
-    <!-- Left: status indicator (NOT clickable anymore) -->
     <LinearLayout
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:background="@drawable/container_navi"
+        android:backgroundTint="?attr/colorSurfaceContainer"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -22,7 +23,8 @@
             android:layout_height="24dp"
             android:contentDescription="@null"
             android:scaleType="centerInside"
-            android:src="@drawable/ic_circle_check" />
+            android:src="@drawable/ic_circle_check"
+            android:tint="?android:attr/textColorPrimary"/>
 
         <TextView
             android:id="@+id/tv_pending_marker"
@@ -30,12 +32,11 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="-"
-            android:textColor="@android:color/white"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="16sp"
             android:visibility="gone" />
     </LinearLayout>
 
-    <!-- Middle: text -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -48,7 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/habit_name_placeholder"
-            android:textColor="@android:color/white"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -57,7 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/status_completed"
-            android:textColor="#FF91ADC9"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp" />
     </LinearLayout>
 

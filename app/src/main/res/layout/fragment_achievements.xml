@@ -3,7 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:background="?android:attr/windowBackground">
+
+    <!--
+         background="?android:attr/windowBackground"
+         -> Sáng: Trắng / Tối: Đen xanh
+    -->
 
     <LinearLayout
         android:id="@+id/achievements_container"
@@ -17,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/achievements_title"
-            android:textColor="#FFFFFFFF"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="22sp"
             android:textStyle="bold" />
 
@@ -28,6 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:background="@drawable/container_navi"
+            android:backgroundTint="?attr/colorSurfaceContainer"
             android:orientation="vertical"
             android:padding="16dp">
 
@@ -36,7 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/achievement_unlocked"
-                android:textColor="#FFFFFFFF"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -46,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="@string/achievement_progress_placeholder"
-                android:textColor="#FF91ADC9"
+                android:textColor="?android:attr/textColorSecondary"
                 android:textSize="14sp" />
 
             <ProgressBar
@@ -71,7 +78,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/badges_title"
-                android:textColor="#FFFFFFFF"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -92,10 +99,12 @@
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:background="@drawable/container_navi"
+                        android:backgroundTint="?attr/colorSurfaceContainer"
                         android:contentDescription="@string/expand_badges_desc"
                         android:padding="12dp"
                         android:src="@drawable/ic_chevron_down"
-                        app:tint="#FFFFFFFF" />
+                        app:tint="?android:attr/textColorPrimary" />
+                    <!-- Thêm backgroundTint và tint -->
 
                     <FrameLayout
                         android:id="@+id/badge_blur_target"
@@ -138,6 +147,7 @@
                 android:layout_marginTop="12dp"
                 android:orientation="vertical"
                 android:padding="12dp"
+                android:background="?attr/colorSurface"
                 android:visibility="gone">
 
                 <GridLayout
@@ -155,10 +165,11 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="12dp"
                     android:background="@drawable/container_navi"
+                    android:backgroundTint="?attr/colorSurfaceContainer"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
                     android:text="@string/show_less"
-                    android:textColor="#FFFFFFFF" />
+                    android:textColor="?android:attr/textColorPrimary" />
             </LinearLayout>
         </LinearLayout>
 
