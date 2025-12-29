@@ -57,8 +57,8 @@ public class AchievementsFragment extends Fragment {
             renderBadges(list);
         });
 
-        // Optional: quick seed so the UI is not empty on a fresh install.
-        // Comment this out once you start wiring real unlock events.
+        // Tuỳ chọn: seed nhanh để UI không bị trống khi mới cài.
+        // Hãy comment/bỏ đoạn này khi bạn đã nối vào luồng mở khóa thật.
         // viewModel.debugUnlockFirstThree();
     }
 
@@ -134,7 +134,7 @@ public class AchievementsFragment extends Fragment {
         int to = unlocked;
 
         if (!hasAnimatedOnce) {
-            // First time on this tab: animate from 0.
+            // Lần đầu vào tab: animate từ 0.
             from = 0;
             bar.setProgress(0);
             hasAnimatedOnce = true;
@@ -156,7 +156,7 @@ public class AchievementsFragment extends Fragment {
         horizontal.removeAllViews();
         grid.removeAllViews();
 
-        // Split unlocked vs locked (used for the grid ordering).
+        // Tách unlocked vs locked (dùng cho thứ tự trong grid).
         List<AchievementUiModel> unlocked = new ArrayList<>();
         List<AchievementUiModel> locked = new ArrayList<>();
         for (AchievementUiModel m : list) {
@@ -166,14 +166,14 @@ public class AchievementsFragment extends Fragment {
 
         LayoutInflater inflater = LayoutInflater.from(requireContext());
 
-        // Collapsed horizontal preview: show the full ordered list (no artificial "top 3" limit).
+        // Preview dạng ngang (collapsed): hiển thị toàn bộ danh sách theo thứ tự (không giới hạn "top 3").
         for (AchievementUiModel m : list) {
             View item = inflater.inflate(R.layout.item_badge_placeholder, horizontal, false);
             bindBadgeItem(item, m);
             horizontal.addView(item);
         }
 
-        // Expanded grid: keep unlocked first then locked.
+        // Grid dạng mở rộng: giữ unlocked ở trước, sau đó mới tới locked.
         List<AchievementUiModel> gridList = new ArrayList<>();
         gridList.addAll(unlocked);
         gridList.addAll(locked);
@@ -200,7 +200,7 @@ public class AchievementsFragment extends Fragment {
         if (icon != null) icon.setImageResource(m.getIconRes());
         if (title != null) title.setText(m.getTitle());
 
-        // Locked styling: dim.
+        // Style cho locked: làm mờ.
         float alpha = m.isUnlocked() ? 1f : 0.35f;
         item.setAlpha(alpha);
 

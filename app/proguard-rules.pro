@@ -1,21 +1,20 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
+# Thêm các rule ProGuard/R8 riêng của dự án tại đây.
+# Bạn có thể điều khiển tập file cấu hình được áp dụng thông qua
+# thuộc tính proguardFiles trong build.gradle.
 #
-# For more details, see
+# Xem thêm:
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
+# Nếu dự án dùng WebView với JavaScript, hãy bỏ comment phần dưới
+# và chỉ định tên class đầy đủ (fully qualified) của JavaScript interface:
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
+# Bỏ comment phần này để giữ lại thông tin số dòng,
+# phục vụ debug stack trace.
 #-keepattributes SourceFile,LineNumberTable
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
+# Nếu bạn giữ thông tin số dòng, hãy bỏ comment phần này để
+# ẩn tên file nguồn gốc.
 #-renamesourcefileattribute SourceFile

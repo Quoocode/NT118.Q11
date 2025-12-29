@@ -12,9 +12,9 @@ import java.util.Calendar;
 import java.util.List;
 
 /**
- * Local rule engine that unlocks achievements based on app events.
+ * Bộ luật cục bộ (rule engine) dùng để mở khóa thành tựu dựa trên các sự kiện trong app.
  *
- * This intentionally uses local persistence only (DataStore) so achievements are per-install.
+ * Lưu ý: Cố tình chỉ dùng lưu trữ cục bộ để thành tựu mang tính "theo máy" (per-install).
  */
 public class AchievementService {
 
@@ -30,7 +30,7 @@ public class AchievementService {
         repo.incrementHabitsCreated();
         repo.unlock(AchievementId.FIRST_HABIT_CREATED);
 
-        // Evaluate count-based achievements (3/7 habits) opportunistically.
+        // Đánh giá các thành tựu theo số lượng (ví dụ 3/7 thói quen) một cách thuận tiện.
         AchievementsRuleEvaluator.evaluateCounters(appContext);
     }
 
@@ -41,8 +41,8 @@ public class AchievementService {
     }
 
     /**
-     * Called when today's list has been loaded.
-     * We compute all-done locally from the same models you display.
+     * Được gọi khi danh sách trong ngày đã tải xong.
+     * Ta tính "tất cả đã hoàn thành" (all-done) dựa trên chính model đang hiển thị.
      */
     public void onDaySnapshot(@NonNull Calendar date, @NonNull List<HabitDailyView> dayList) {
         if (dayList.isEmpty()) return;
@@ -60,15 +60,15 @@ public class AchievementService {
             repo.addPerfectDay(date.getTime());
         }
 
-        // Also check streak-related achievements when we’re on a day snapshot.
+        // Đồng thời kiểm tra các thành tựu liên quan streak khi đã có snapshot theo ngày.
         evaluateStreakAchievements();
 
-        // Also check counter-based achievements.
+        // Đồng thời kiểm tra các thành tựu theo bộ đếm.
         AchievementsRuleEvaluator.evaluateCounters(appContext);
     }
 
     public void evaluateStreakAchievements() {
-        // Uses existing repo calculation (based on history) as the streak source.
+        // Dùng logic tính streak sẵn có (dựa trên lịch sử) làm nguồn dữ liệu streak.
         String uid = com.google.firebase.auth.FirebaseAuth.getInstance().getUid();
         if (uid == null || uid.isEmpty()) return;
 
@@ -83,7 +83,7 @@ public class AchievementService {
 
             @Override
             public void onFailure(Exception e) {
-                // ignore
+                // Bỏ qua lỗi
             }
         });
     }
@@ -92,7 +92,7 @@ public class AchievementService {
         if (status != null) {
             if ("DONE".equalsIgnoreCase(status) || "COMPLETED".equalsIgnoreCase(status)) return true;
         }
-        // Fallback: for numeric habits treat reaching target as done.
+        // Dự phòng: với thói quen dạng số, đạt target thì xem như hoàn thành.
         return targetValue > 0 && value >= targetValue;
     }
 }

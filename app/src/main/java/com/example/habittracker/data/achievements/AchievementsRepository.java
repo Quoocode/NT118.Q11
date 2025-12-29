@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Java-only repository for unlocking + reading achievements locally.
+ * Repository (thuần Java) để mở khóa + đọc thành tựu được lưu cục bộ.
  */
 public class AchievementsRepository {
 

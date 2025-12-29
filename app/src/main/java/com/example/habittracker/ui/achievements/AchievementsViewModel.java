@@ -16,9 +16,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.List;
 
 /**
- * Java-only ViewModel for Achievements.
+ * ViewModel (thuần Java) cho màn hình Thành tựu (Achievements).
  *
- * Uses SharedPreferences-backed repository and refreshes automatically via a preference change listener.
+ * Dùng repository dựa trên SharedPreferences và tự làm mới dữ liệu thông qua
+ * listener lắng nghe thay đổi SharedPreferences.
  */
 public class AchievementsViewModel extends AndroidViewModel {
 
@@ -45,7 +46,7 @@ public class AchievementsViewModel extends AndroidViewModel {
             if (key == null) return;
             if (uid == null || uid.isEmpty()) return;
 
-            // Only react to our user-scoped keys; safe, but avoid storms.
+            // Chỉ phản ứng với các key theo phạm vi user; an toàn nhưng tránh bắn refresh quá nhiều.
             if (key.contains(uid)) {
                 refresh();
             }
@@ -53,7 +54,8 @@ public class AchievementsViewModel extends AndroidViewModel {
 
         sharedPreferences.registerOnSharedPreferenceChangeListener(listener);
 
-        // Welcome-back check is triggered from app lifecycle (MainActivity), not from this tab.
+        // Kiểm tra "welcome back" được kích hoạt từ vòng đời app (MainActivity),
+        // không nên làm tại tab này.
 
         refresh();
     }
@@ -68,7 +70,7 @@ public class AchievementsViewModel extends AndroidViewModel {
         try {
             achievements.postValue(AchievementsUiMapper.toUi(getApplication(), repo.getUnlockedIds(), repo.getUnlockedAt()));
         } catch (Exception ignored) {
-            // If prefs are corrupted (e.g., bad StringSet type), don't crash the app
+            // Nếu SharedPreferences bị lỗi (ví dụ sai kiểu StringSet), không để app crash
             achievements.postValue(java.util.Collections.emptyList());
         } finally {
             isRefreshing = false;

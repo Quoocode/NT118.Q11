@@ -12,18 +12,18 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Java-only, async-safe local persistence for achievements.
+ * Lưu trữ cục bộ cho thành tựu (thuần Java), an toàn khi truy cập đồng thời (synchronized).
  *
- * Note: This uses SharedPreferences + apply() (async) to satisfy "safer async" while keeping Java-only.
- * If you need DataStore specifically, we can keep a tiny Kotlin file for it, but you asked for Java-only.
+ * Lưu ý: File này dùng SharedPreferences + apply() (bất đồng bộ) để đảm bảo ghi an toàn
+ * mà vẫn giữ dự án thuần Java.
  */
 public class AchievementsLocalStore {
 
     private static final String PREFS = "achievements_local";
 
-    // De-dupe window for app-open events to avoid masking "Welcome Back" when the same launch
-    // triggers recordOpen twice (e.g., lifecycle + auth listener). Two seconds is long enough to
-    // cover duplicated callbacks but short enough to not affect real opens.
+    // Cửa sổ khử trùng lặp cho sự kiện "mở app" để tránh làm sai điều kiện "Welcome Back"
+    // khi cùng một lần mở app bị gọi recordOpen 2 lần (ví dụ: lifecycle + auth listener).
+    // 2 giây đủ để bao phủ các callback trùng nhưng không ảnh hưởng tới lần mở thật sự.
     private static final long OPEN_DEDUP_WINDOW_MS = 2_000L;
 
     public static String safeUser(String userIdOrNull) {
@@ -62,13 +62,13 @@ public class AchievementsLocalStore {
     }
 
     public synchronized void unlock(AchievementId id, long unlockedAtMillis) {
-        // Always copy to a mutable set (getUnlockedIds() may return Collections.emptySet()).
+        // Luôn copy sang set có thể sửa (getUnlockedIds() có thể trả về Collections.emptySet()).
         Set<String> unlocked = new HashSet<>(getUnlockedIds());
         if (unlocked.contains(id.name())) return;
 
         unlocked.add(id.name());
 
-        // Important: always write a NEW set instance to SharedPreferences.
+        // Quan trọng: luôn ghi một instance Set MỚI vào SharedPreferences.
         sp.edit()
                 .putStringSet(keyUnlocked(uid), new HashSet<>(unlocked))
                 .putLong(keyUnlockedAt(uid, id), unlockedAtMillis)
@@ -93,7 +93,7 @@ public class AchievementsLocalStore {
     }
 
     public synchronized int addPerfectDayKey(String dayKey) {
-        // Always copy to a mutable set (getPerfectDays() may return Collections.emptySet()).
+        // Luôn copy sang set có thể sửa (getPerfectDays() có thể trả về Collections.emptySet()).
         Set<String> days = new HashSet<>(getPerfectDays());
         days.add(dayKey);
         sp.edit().putStringSet(keyPerfectDays(uid), new HashSet<>(days)).apply();
@@ -101,14 +101,14 @@ public class AchievementsLocalStore {
     }
 
     /**
-     * Returns true if this open qualifies as "welcome back".
+     * Trả về true nếu lần mở app này đủ điều kiện "welcome back".
      */
     public synchronized boolean recordOpenAndCheckWelcomeBack(long nowMillis) {
         long last = sp.getLong(keyLastOpen(uid), -1L);
 
-        // If we're called twice within a short window, treat it as the same "open" event.
-        // IMPORTANT: do NOT overwrite last_open in this case, otherwise the second call would
-        // immediately erase the old timestamp and prevent Welcome Back detection.
+        // Nếu bị gọi 2 lần trong thời gian rất ngắn, xem như cùng một sự kiện "mở app".
+        // Quan trọng: KHÔNG ghi đè last_open trong trường hợp này,
+        // nếu không lần gọi thứ 2 sẽ xoá timestamp cũ và làm mất khả năng phát hiện "Welcome Back".
         if (last > 0 && (nowMillis - last) >= 0 && (nowMillis - last) <= OPEN_DEDUP_WINDOW_MS) {
             return false;
         }

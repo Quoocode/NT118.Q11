@@ -5,7 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 /**
- * Periodic/batch achievement checks that depend on stored counters.
+ * Các kiểm tra thành tựu định kỳ/theo lô (batch) dựa trên các bộ đếm đã lưu.
  */
 public final class AchievementsRuleEvaluator {
 
@@ -22,4 +22,3 @@ public final class AchievementsRuleEvaluator {
         if (perfectDays >= 3) repo.unlock(AchievementId.PERFECT_3_DAYS);
     }
 }
-

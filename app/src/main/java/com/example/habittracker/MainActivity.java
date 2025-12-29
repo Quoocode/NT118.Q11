@@ -38,9 +38,9 @@ public class MainActivity extends AppCompatActivity {
     // [BỔ SUNG] Biến lắng nghe sự kiện đăng nhập/đăng xuất
     private FirebaseAuth.AuthStateListener authListener;
 
-    // Guard to prevent duplicate "record open" calls within the same process for the same account.
-    // On cold start, onCreate() may record and then AuthStateListener fires immediately;
-    // tracking the last recorded UID prevents masking the Welcome Back check.
+    // Bộ chặn (guard) để tránh gọi "record open" bị trùng trong cùng một process cho cùng một tài khoản.
+    // Ở cold start, onCreate() có thể ghi nhận 1 lần rồi AuthStateListener lại callback ngay;
+    // lưu UID đã ghi nhận gần nhất giúp tránh ghi nhận lặp và không làm sai điều kiện "Welcome Back".
     private String lastRecordedOpenUid = null;
 
     protected void attachBaseContext(Context newBase) {
@@ -52,18 +52,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
 
-        // Local-only achievement: record app open for Welcome Back.
-        // This must run from app lifecycle, not from the Achievements screen.
+        // Thành tựu cục bộ (local): ghi nhận sự kiện mở app để xét "Welcome Back".
+        // Việc này phải chạy theo vòng đời ứng dụng, không phụ thuộc vào tab/màn hình Achievements.
         try {
             new com.example.habittracker.data.achievements.AchievementsRepository(this)
                     .recordAppOpenAndMaybeWelcomeBack();
 
-            // If a user is already logged in on cold start, remember that we already recorded for them
-            // so the AuthStateListener's immediate callback won't record again.
+            // Nếu đã đăng nhập sẵn ở cold start, lưu lại UID đã được ghi nhận,
+            // để callback tức thì của AuthStateListener không ghi nhận thêm lần nữa.
             FirebaseUser current = FirebaseAuth.getInstance().getCurrentUser();
             lastRecordedOpenUid = (current != null) ? current.getUid() : null;
         } catch (Exception ignored) {
-            // avoid crash loops if prefs are corrupted
+            // Tránh crash loop nếu SharedPreferences bị lỗi/corrupt
         }
 
         // 1. Sử dụng ViewBinding để liên kết layout "activity_main.xml"
@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
                     if (user != null && habits != null && !habits.isEmpty()) {
                         Log.d("ALARM_DEBUG", "MainActivity: Đã tải được " + habits.size() + " thói quen. Tiến hành đặt báo thức...");
 
-                        // If exact alarms are blocked (Android 12+), prompt once so reminders can be truly on-time.
+                        // Nếu bị chặn exact alarm (Android 12+), hỏi quyền 1 lần để nhắc nhở có thể đúng giờ.
                         if (!NotificationHelper.isExactAlarmAllowed(MainActivity.this)) {
                             NotificationHelper.showExactAlarmPermissionDialog(MainActivity.this);
                         }
@@ -174,8 +174,8 @@ public class MainActivity extends AppCompatActivity {
                 // Đây là "Cái Chuông" reo khi Login (kể cả Hot Swap)
                 Log.d("ALARM_DEBUG", "AuthStateListener: Phát hiện User mới đăng nhập: " + user.getUid());
 
-                // Also record an open event scoped to this user (so Welcome Back works per-account).
-                // Guard against the cold-start duplicate: onCreate() may have already recorded.
+                // Đồng thời ghi nhận sự kiện mở app theo từng user (để "Welcome Back" đúng theo tài khoản).
+                // Có guard để tránh trùng ở cold start: onCreate() có thể đã ghi nhận trước đó.
                 String uid = user.getUid();
                 if (lastRecordedOpenUid == null || !lastRecordedOpenUid.equals(uid)) {
                     try {
@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
                                 .recordAppOpenAndMaybeWelcomeBack();
                         lastRecordedOpenUid = uid;
                     } catch (Exception ignored) {
-                        // ignore
+                        // Bỏ qua lỗi
                     }
                 }
 
@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             } else {
                 Log.d("ALARM_DEBUG", "AuthStateListener: User đã đăng xuất.");
-                // Reset so the next login (hot swap) records again.
+                // Reset để lần đăng nhập tiếp theo (hot swap) vẫn ghi nhận lại.
                 lastRecordedOpenUid = null;
             }
         };

@@ -7,9 +7,9 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Static list of all achievements shown in UI.
+ * Danh sách tĩnh (static) của toàn bộ thành tựu được hiển thị trên UI.
  *
- * Titles/descriptions are hardcoded for now (can be moved to string resources later).
+ * Lưu ý: Tiêu đề/mô tả hiện đang được lấy từ string resources.
  */
 public final class AchievementCatalog {
 

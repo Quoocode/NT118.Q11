@@ -51,19 +51,19 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
     private HabitCompletionAdapter habitAdapter;
     private BottomSheetBehavior<View> sheetBehavior;
 
-    // Fade mapping bounds in parent coordinates
-    private int fadeStartTopPx = 0; // sheet top when calendar is fully visible
-    private int fadeEndTopPx = 0;   // sheet top when it reaches month_label
+    // Biên ánh xạ fade theo toạ độ của parent
+    private int fadeStartTopPx = 0; // top của sheet khi lịch hiển thị đầy đủ
+    private int fadeEndTopPx = 0;   // top của sheet khi chạm đến month_label
 
     private boolean isMonthAnimating = false;
 
-    // Overlay TextView defined in XML (stacked in a FrameLayout over monthLabel)
+    // Overlay TextView khai báo trong XML (xếp chồng trong FrameLayout lên monthLabel)
     private TextView dayIndicatorLabel;
 
     private static final String TAG_FADE = "CalendarSheetFade";
     private static final boolean DEBUG_FADE = false;
 
-    // Cache the actual view that BottomSheetBehavior controls.
+    // Cache view thật sự mà BottomSheetBehavior đang điều khiển.
     private View habitBottomSheetView;
 
     @Override
@@ -103,13 +103,13 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
     private void setupMonthLabelMorph() {
         if (binding == null) return;
 
-        // Use the overlay label from XML (no manual positioning needed)
+        // Dùng label overlay từ XML (không cần tự canh vị trí thủ công)
         dayIndicatorLabel = binding.dayIndicatorLabel;
 
         updateMonthLabelText();
         updateDayIndicatorText();
 
-        // Make sure initial state is collapsed
+        // Đảm bảo trạng thái ban đầu là collapsed
         applyMonthLabelMorph(0f);
     }
 
@@ -126,7 +126,7 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
     private void applyMonthLabelMorph(float expandedProgress) {
         if (binding == null || dayIndicatorLabel == null) return;
         float t = Math.max(0f, Math.min(1f, expandedProgress));
-        // Crossfade between month label (collapsed) and day indicator (expanded)
+        // Crossfade giữa month label (collapsed) và day indicator (expanded)
         binding.monthLabel.setAlpha(1f - t);
         dayIndicatorLabel.setAlpha(t);
     }
@@ -136,9 +136,9 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
             return;
         }
 
-        // Ensure the bottom sheet list dodges both:
-        // 1) system navigation bar (gesture bar)
-        // 2) the app's BottomNavigationView (home/calendar/achievements/settings)
+        // Đảm bảo RecyclerView trong bottom sheet không bị đè bởi:
+        // 1) thanh điều hướng hệ thống (gesture bar)
+        // 2) BottomNavigationView của app (home/calendar/achievements/settings)
         final int baseBottom = (int) (16f * requireContext().getResources().getDisplayMetrics().density);
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.habitCompletionSection.habitCompletionRecycler, (v, insets) -> {
@@ -147,7 +147,7 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
             int appBottomNavHeight = 0;
             View activityBottomNav = requireActivity().findViewById(R.id.bottom_navigation_view);
             if (activityBottomNav instanceof BottomNavigationView && activityBottomNav.getVisibility() == View.VISIBLE) {
-                // Ensure we have a measured height
+                // Đảm bảo đã đo được chiều cao (measured)
                 appBottomNavHeight = activityBottomNav.getHeight();
             }
 
@@ -158,12 +158,12 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
             return insets;
         });
 
-        // Also re-apply once after layout, because bottom nav height can be 0 before first measure.
+        // Apply lại sau khi layout xong (vì chiều cao bottom nav có thể = 0 trước lần đo đầu)
         binding.habitCompletionSection.habitCompletionRecycler.post(() ->
                 ViewCompat.requestApplyInsets(binding.habitCompletionSection.habitCompletionRecycler)
         );
 
-        // RecyclerView adapter
+        // Adapter cho RecyclerView
         habitAdapter = new HabitCompletionAdapter(
                 habit -> {
                     if (habit.getHabitId() == null) return;
@@ -174,7 +174,7 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
                 habit -> {
                     if (habit.getHabitId() == null) return;
 
-                    // Open the same check-in dialog used on Home.
+                    // Mở dialog check-in giống như ở màn Home.
                     HabitCheckInDialogFragment dialog = HabitCheckInDialogFragment.newInstance(
                             habit.getHabitId(),
                             habit.getName(),
@@ -190,25 +190,25 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         );
         binding.habitCompletionSection.habitCompletionRecycler.setAdapter(habitAdapter);
 
-        // Bottom sheet behavior
+        // Thiết lập BottomSheetBehavior
         habitBottomSheetView = binding.habitCompletionSection.getRoot();
         sheetBehavior = BottomSheetBehavior.from(habitBottomSheetView);
 
-        // We only want 2 positions: COLLAPSED (calendar bottom) and EXPANDED (month_label bottom)
+        // Chỉ muốn 2 vị trí: COLLAPSED (chạm đáy lịch) và EXPANDED (chạm đáy month_label)
         sheetBehavior.setHideable(false);
 
-        // IMPORTANT:
-        // expandedOffset is only respected when fitToContents=false.
-        // (With fitToContents=true, EXPANDED is computed from content height and may ignore expandedOffset.)
+        // Quan trọng:
+        // expandedOffset chỉ có hiệu lực khi fitToContents=false.
+        // (fitToContents=true thì trạng thái EXPANDED phụ thuộc vào content height và có thể bỏ qua expandedOffset.)
         sheetBehavior.setFitToContents(false);
 
-        // Compute expandedOffset + peekHeight after first layout.
+        // Tính expandedOffset + peekHeight sau khi layout xong.
         binding.getRoot().post(this::configureSheetHeights);
 
-        // Drag handle / header can toggle state for convenience
+        // Bấm header để toggle trạng thái cho tiện
         binding.habitCompletionSection.habitSheetHeader.setOnClickListener(v -> toggleSheet());
 
-        // Fade calendar elements as sheet expands - fade range: calendar bottom -> month_label.
+        // Fade các phần tử của lịch khi sheet được kéo lên (fade range: đáy lịch -> month_label).
         sheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             private int lastState = BottomSheetBehavior.STATE_COLLAPSED;
             private Integer dragStartTop = null;
@@ -217,21 +217,12 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 if (sheetBehavior == null) return;
 
-                // Some OEMs pass a different reference here; always use the real sheet view.
+                // Một số OEM truyền vào reference khác; luôn ưu tiên dùng view sheet thật.
                 final View sheet = habitBottomSheetView != null ? habitBottomSheetView : bottomSheet;
 
-                if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-                    cancelCalendarFadeAnimations();
-                    dragStartTop = sheet.getTop();
-
-                    if (DEBUG_FADE) {
-                        Log.d(TAG_FADE, "DRAGGING startTop=" + dragStartTop + " fadeStart=" + fadeStartTopPx + " fadeEnd=" + fadeEndTopPx);
-                    }
-                }
-
-                // Direction based toggle on release:
-                // - dragging up from collapsed => EXPANDED
-                // - dragging down from expanded => COLLAPSED
+                // Toggle theo hướng kéo khi thả tay:
+                // - kéo lên từ collapsed => EXPANDED
+                // - kéo xuống từ expanded => COLLAPSED
                 if (lastState == BottomSheetBehavior.STATE_DRAGGING
                         && newState == BottomSheetBehavior.STATE_SETTLING) {
 
@@ -249,7 +240,7 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
                     } else if (lastStateStableWasExpanded() && movedDown) {
                         sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     } else {
-                        // Fallback: if direction isn't clear, snap to nearest end.
+                        // Dự phòng: nếu không xác định rõ hướng, snap về đầu gần nhất.
                         int top = bottomSheet.getTop();
                         int mid = (fadeStartTopPx + fadeEndTopPx) / 2;
                         sheetBehavior.setState(top <= mid
@@ -260,7 +251,7 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
                     dragStartTop = null;
                 }
 
-                // If some other path still results in half-expanded, force to nearest end.
+                // Nếu vì lý do nào đó vẫn rơi vào HALF_EXPANDED, ép về đầu gần nhất.
                 if (newState == BottomSheetBehavior.STATE_HALF_EXPANDED) {
                     int top = bottomSheet.getTop();
                     int mid = (fadeStartTopPx + fadeEndTopPx) / 2;
@@ -269,14 +260,14 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
                             : BottomSheetBehavior.STATE_COLLAPSED);
                 }
 
-                // IMPORTANT: Month/day indicator switching only occurs in stable end states.
+                // Quan trọng: chuyển đổi hiển thị tháng/ngày chỉ thực hiện ở trạng thái ổn định (end states).
                 if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
                     applyMonthLabelMorph(0f);
                 } else if (newState == BottomSheetBehavior.STATE_EXPANDED) {
                     applyMonthLabelMorph(1f);
                 }
 
-                // Track last stable state for direction-based toggling.
+                // Theo dõi trạng thái ổn định gần nhất để toggle theo hướng kéo.
                 if (newState == BottomSheetBehavior.STATE_COLLAPSED || newState == BottomSheetBehavior.STATE_EXPANDED) {
                     lastStableState = newState;
                 }
@@ -300,11 +291,11 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
 
                 cancelCalendarFadeAnimations();
 
-                // Always read from the actual controlled sheet view.
+                // Luôn đọc top từ sheet thật sự đang được điều khiển.
                 final View sheet = habitBottomSheetView != null ? habitBottomSheetView : bottomSheet;
                 int top = sheet.getTop();
 
-                // If bounds got stale (rotation / month header size), recompute once.
+                // Nếu biên bị stale (xoay màn hình / đổi kích thước header), tính lại 1 lần.
                 if (fadeEndTopPx <= 0 || fadeStartTopPx <= 0 || fadeEndTopPx >= fadeStartTopPx) {
                     binding.getRoot().post(AnalyticsFragment.this::configureSheetHeights);
                 }
@@ -328,7 +319,7 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         if (binding == null) return;
         binding.calendarDaysRecycler.animate().cancel();
         binding.weekdaysRow.animate().cancel();
-        // monthLabel/dayIndicatorLabel are animated during month switch too.
+        // monthLabel/dayIndicatorLabel cũng có animation khi chuyển tháng.
         binding.monthLabel.animate().cancel();
         if (dayIndicatorLabel != null) {
             dayIndicatorLabel.animate().cancel();
@@ -349,7 +340,7 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
                 ? habitBottomSheetView
                 : binding.habitCompletionSection.getRoot();
 
-        // If we run too early, measurements can be 0 which breaks the math.
+        // Nếu chạy quá sớm, kích thước có thể = 0 làm hỏng phép tính.
         if (root.getHeight() == 0 || bottomSheet.getHeight() == 0) {
             root.post(this::configureSheetHeights);
             return;
@@ -358,24 +349,23 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         int calendarBottomInRoot = getBottomInAncestorCoords(binding.calendarContainer, root);
         int navRowBottomInRoot = getBottomInAncestorCoords(binding.monthNavigationRow, root);
 
-        // Expanded offset: sheet top should stop at bottom of month navigation row.
+        // Expanded offset: top của sheet dừng ở đáy của hàng điều hướng tháng.
         // Clamp >= 0.
         int expandedOffset = Math.max(0, navRowBottomInRoot);
         sheetBehavior.setExpandedOffset(expandedOffset);
 
-        // Collapsed (lowest) position should be exactly at the bottom of calendar.
+        // Collapsed (thấp nhất) phải đúng bằng đáy của lịch.
         int parentHeight = root.getHeight();
         int peekHeight = Math.max(0, parentHeight - calendarBottomInRoot);
         sheetBehavior.setPeekHeight(peekHeight, true);
 
-        // Save fade bounds (sheet.getTop() is in the same root coords)
+        // Lưu lại biên fade (sheet.getTop() dùng chung hệ toạ độ root)
         fadeStartTopPx = calendarBottomInRoot;
         fadeEndTopPx = expandedOffset;
 
-        // Safety: if something odd happens (layout changes, wrong ancestor), prevent inverted bounds
-        // which would lock alpha at 1.
+        // An toàn: nếu layout bất thường dẫn tới biên bị đảo, tránh bị khoá alpha.
         if (fadeEndTopPx >= fadeStartTopPx) {
-            // Try a last-resort recompute using window coordinates consistently.
+            // Thử tính lại theo toạ độ cửa sổ (window) cho nhất quán.
             int[] rootLoc = new int[2];
             int[] calLoc = new int[2];
             int[] navLoc = new int[2];
@@ -397,10 +387,10 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
             sheetBehavior.setPeekHeight(peekHeight, true);
         }
 
-        // Force to collapsed on (re)configure so visuals are deterministic.
+        // Ép về collapsed sau khi (re)configure để UI ổn định.
         sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
-        // Ensure alpha + label reflect current position after state set.
+        // Đảm bảo alpha + label phản ánh vị trí hiện tại sau khi thiết lập trạng thái.
         float t = computeFadeProgress(bottomSheet.getTop());
         float alpha = 1f - t;
         binding.weekdaysRow.setAlpha(alpha);
@@ -417,8 +407,8 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
     }
 
     /**
-     * Returns descendant's bottom Y in ancestor's coordinate system.
-     * Works even if views aren't direct parent/child.
+     * Trả về toạ độ Y (đáy) của view con theo hệ toạ độ của view ancestor.
+     * Hoạt động kể cả khi không phải quan hệ cha/con trực tiếp.
      */
     private int getBottomInAncestorCoords(@NonNull View descendant, @NonNull View ancestor) {
         int[] descLoc = new int[2];
@@ -443,18 +433,18 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
             return;
         }
 
-        // Only animate month transitions when the sheet is fully collapsed.
-        // Otherwise, our drag-fade callback owns alpha and animations will "win" over it.
+        // Chỉ animate chuyển tháng khi sheet đang ở trạng thái collapsed.
+        // Nếu không thì callback fade theo kéo sheet sẽ "giành quyền" alpha.
         if (sheetBehavior != null && sheetBehavior.getState() != BottomSheetBehavior.STATE_COLLAPSED) {
-            // Still honor the behavior rule: switching months collapses the sheet.
+            // Vẫn giữ rule UX: chuyển tháng sẽ collapse sheet.
             sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             applyMonthLabelMorph(0f);
 
-            // Cancel anything in-flight and switch immediately.
+            // Huỷ animation đang chạy và chuyển tháng ngay lập tức.
             cancelCalendarFadeAnimations();
             moveMonth(offset);
 
-            // Recompute anchors since month header height may change.
+            // Tính lại anchor vì chiều cao header có thể đổi.
             binding.getRoot().post(this::configureSheetHeights);
 
             isMonthAnimating = false;
@@ -463,36 +453,37 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
 
         isMonthAnimating = true;
 
-        // Always collapse the habit sheet when switching months to avoid header label overlap.
+        // Sheet luôn collapse khi chuyển tháng để tránh chồng label.
         if (sheetBehavior != null) {
             sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         }
-        // Force label to collapsed state immediately.
+
+        // Ép label về trạng thái collapsed ngay.
         applyMonthLabelMorph(0f);
 
-        // Ensure previous anims don't keep controlling alpha.
+        // Đảm bảo animation cũ không tiếp tục chi phối alpha.
         cancelCalendarFadeAnimations();
 
-        // Fade the calendar grid/weekday row; keep month label readable but animate it separately
+        // Fade lưới lịch/ hàng ngày; giữ label tháng vẫn đọc được nhưng animate riêng
         View fadeTarget = binding.calendarDaysRecycler;
         View fadeWeekdays = binding.weekdaysRow;
         View monthLabel = binding.monthLabel;
 
-        // Directional slide: next month slides left, prev month slides right
+        // Hướng trượt: tháng sau trượt sang trái, tháng trước trượt sang phải
         float slideDistance = monthLabel.getResources().getDisplayMetrics().density * 12f;
         float dir = offset > 0 ? -1f : 1f;
 
-        // Stop any in-flight animations to avoid stacking if the user taps quickly
+        // Dừng animation đang chạy để tránh chồng nếu user bấm liên tục
         fadeTarget.animate().cancel();
         fadeWeekdays.animate().cancel();
         monthLabel.animate().cancel();
         if (dayIndicatorLabel != null) {
             dayIndicatorLabel.animate().cancel();
-            // Ensure overlay stays hidden during month change
+            // Đảm bảo overlay bị ẩn trong lúc đổi tháng
             dayIndicatorLabel.setAlpha(0f);
         }
 
-        // Phase 1: fade/slide out current month label and fade out grid
+        // Pha 1: fade/slide out label tháng hiện tại + fade out grid
         monthLabel.animate()
                 .alpha(0f)
                 .translationX(dir * slideDistance)
@@ -512,24 +503,24 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
                         return;
                     }
 
-                    // Apply the month change once the old month is faded out.
+                    // Áp dụng thay đổi tháng sau khi tháng cũ đã fade out.
                     moveMonth(offset);
 
-                    // Recompute anchors since month header height may change.
+                    // Tính lại anchor vì chiều cao header có thể đổi.
                     binding.getRoot().post(this::configureSheetHeights);
 
-                    // Month switching always collapses the sheet, so restore to fully visible.
+                    // Chuyển tháng luôn collapse sheet, nên khôi phục alpha về hiển thị đầy đủ.
                     float targetAlpha = 1f;
 
-                    // Reset label to opposite side before sliding it in
+                    // Reset label về phía ngược lại trước khi slide vào
                     monthLabel.setTranslationX(-dir * slideDistance);
                     monthLabel.setAlpha(0f);
 
-                    // Reset grid elements to 0 before fading in
+                    // Reset grid elements về 0 trước khi fade in
                     fadeWeekdays.setAlpha(0f);
                     fadeTarget.setAlpha(0f);
 
-                    // Phase 2: fade/slide in new month label and fade in grid
+                    // Pha 2: fade/slide in label tháng mới + fade in grid
                     monthLabel.animate()
                             .alpha(1f)
                             .translationX(0f)
@@ -555,7 +546,7 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         currentMonth.set(Calendar.DAY_OF_MONTH, 1);
         selectedDate.setTime(currentMonth.getTime());
 
-        // Update day indicator too since selected day changed
+        // Cập nhật day indicator vì ngày đang chọn đã thay đổi theo tháng.
         updateDayIndicatorText();
 
         updateMonth();
@@ -637,7 +628,7 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
             if ("MISSED".equals(normalized) || "SKIPPED".equals(normalized)) {
                 return HabitCompletion.Status.MISSED;
             }
-            // If viewing a past date, treat still-pending habits as missed.
+            // Nếu đang xem ngày trong quá khứ, thói quen còn pending coi như missed.
             if ("PENDING".equals(normalized) && isSelectedDateInPast()) {
                 return HabitCompletion.Status.MISSED;
             }
@@ -645,7 +636,7 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         if (view.getTargetValue() > 0 && view.getCurrentValue() >= view.getTargetValue()) {
             return HabitCompletion.Status.COMPLETED;
         }
-        // If no explicit status, still apply the "pending in past -> missed" rule.
+        // Nếu không có status rõ ràng, vẫn áp dụng quy tắc "pending ở quá khứ -> missed".
         if (isSelectedDateInPast()) {
             return HabitCompletion.Status.MISSED;
         }
@@ -654,7 +645,7 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
 
     private boolean isSelectedDateInPast() {
         Calendar today = Calendar.getInstance();
-        // Normalize to start of day
+        // Chuẩn hoá về đầu ngày
         today.set(Calendar.HOUR_OF_DAY, 0);
         today.set(Calendar.MINUTE, 0);
         today.set(Calendar.SECOND, 0);
@@ -695,7 +686,7 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         selectedDate.setTime(date);
         calendarAdapter.setSelectedDate(date);
 
-        // Update the day indicator immediately when a new day is selected.
+        // Cập nhật day indicator ngay khi user chọn ngày mới.
         updateDayIndicatorText();
 
         loadHabitsForDate(selectedDate);

@@ -1,4 +1,4 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+// File build Gradle cấp cao nhất: nơi khai báo các cấu hình dùng chung cho toàn bộ module/dự án.
 plugins {
     alias(libs.plugins.android.application) apply false
 
@@ -6,4 +6,3 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
 
 }
-
