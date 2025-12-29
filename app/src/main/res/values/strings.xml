@@ -314,7 +314,7 @@
     <string name="notif_channel_habit_reminders_desc">Daily habit reminder notifications</string>
 
     <string name="notif_daily_briefing_title">Daily Briefing</string>
-    <string name="notif_daily_briefing_text">Good morning! Check your habits now.</string>
+    <string name="notif_daily_briefing_text">Good day! Check your habits now.</string>
 
     <string name="notif_habit_reminder_title_format">Reminder: %1$s</string>
     <string name="notif_habit_reminder_text">It\'s time to work on your goal. You\'ve got this!</string>
