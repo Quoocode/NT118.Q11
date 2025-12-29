@@ -51,7 +51,7 @@ public class NotificationHelper {
         }
     }
 
-    // 2. Hàm bắn thông báo (Đã có từ trước)
+    // 2. Hàm bắn thông báo
     @SuppressLint("MissingPermission")
     public static void showTestNotification(Context context, Class<?> targetActivity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -75,9 +75,7 @@ public class NotificationHelper {
         notificationManager.notify(1001, builder.build());
     }
 
-    // --- CÁC HÀM MỚI (SCHEDULER) ---
-    // 2. Đặt lịch hẹn giờ (BẢN HACK TEST: 1 PHÚT LẶP LẠI 1 LẦN)
-    // 2. Đặt lịch hẹn giờ (ĐÃ FIX LỖI LẶP VÔ TẬN)
+    // 2. Đặt lịch hẹn giờ
     @SuppressLint("ScheduleExactAlarm")
     public static void scheduleDailyBriefing(Context context, int hour, int minute) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -96,7 +94,6 @@ public class NotificationHelper {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0); // Quan trọng: Reset mili giây về 0
 
-        // --- FIX BUG LOOP: Dùng while thay vì if ---
         // Chừng nào thời gian tính ra vẫn nhỏ hơn hoặc bằng hiện tại -> Cộng tiếp
         while (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
             calendar.add(Calendar.DAY_OF_YEAR, 1); // Code thật (Chạy thực tế dùng dòng này)
@@ -128,9 +125,7 @@ public class NotificationHelper {
         }
     }
 
-    // =========================================================================
-    // 3. HABIT REMINDER LOGIC (LOGIC MỚI - CHO TỪNG THÓI QUEN)
-    // =========================================================================
+    // 3. HABIT REMINDER LOGIC (LOGIC CHO TỪNG THÓI QUEN)
 
     // Hàm hiển thị thông báo cho từng thói quen
     @SuppressLint("MissingPermission")
@@ -158,7 +153,7 @@ public class NotificationHelper {
         NotificationManagerCompat.from(context).notify(uniqueId, builder.build());
     }
 
-    // Đặt lịch cho Thói quen (PHIÊN BẢN HACK TEST: 1 PHÚT LẶP 1 LẦN)
+    // Đặt lịch cho Thói quen
     @SuppressLint("ScheduleExactAlarm")
     public static void scheduleHabitReminder(Context context, String habitId, String title, String timeString, String frequency, Date startDate) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -263,9 +258,7 @@ public class NotificationHelper {
         }
     }
 
-    // =========================================================================
     // 4. [MỚI] HÀM HỖ TRỢ LOGOUT/LOGIN HÀNG LOẠT
-    // =========================================================================
 
     public static void cancelAllHabitReminders(Context context, List<Habit> habitList) {
         if (habitList == null || habitList.isEmpty()) return;
@@ -324,9 +317,7 @@ public class NotificationHelper {
         Log.d("ALARM_DEBUG", "Đã đặt lại báo thức thành công cho " + count + " thói quen.");
     }
 
-    // =========================================================================
-    // 5. HELPER METHODS
-    // =========================================================================
+    // 5. HÀM TRỢ GIÚP
 
     private static boolean hasPermission(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -335,9 +326,7 @@ public class NotificationHelper {
         return true;
     }
 
-    // =========================================================================
     // 6. [MỚI] LOGIC XỬ LÝ KHI CHECK/UNCHECK COMPLETED
-    // =========================================================================
 
     public static void updateAlarmBasedOnStatus(Context context, Habit habit, boolean isCompleted) {
         if (habit == null || habit.getId() == null) return;
@@ -504,9 +493,7 @@ public class NotificationHelper {
         }
     }
 
-    // =========================================================================
-    // 0. EXACT ALARM SAFETY (Android 12+)
-    // =========================================================================
+    // 0. ĐẶT BÁO THỨC CHO PHIÊN BẢN Android 12+
 
     private static boolean canScheduleExactAlarms(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -516,16 +503,12 @@ public class NotificationHelper {
         return true;
     }
 
-    /** Public helper so UI layers can check whether exact alarms are currently allowed (Android 12+). */
+    // Hàm helper giúp người dùng kiểm tra quyền thông báo đã được cấp cho ứng dụng chưa (Android 12+)
     public static boolean isExactAlarmAllowed(Context context) {
         return canScheduleExactAlarms(context);
     }
 
-    /**
-     * Show a dialog that deep-links to the system screen to allow exact alarms (Android 12+).
-     *
-     * Safe no-op on Android < 12.
-     */
+    //Hộp thoại dialog hiển thị thông báo nhắc người dùng kiểm tra quyền đã được cấp cho ứng dụng
     public static void showExactAlarmPermissionDialog(Context context) {
         if (context == null) return;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return;
