@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/habit_options_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet_rounded"
+    android:backgroundTint="?attr/colorSurfaceContainerLow"
+    android:orientation="vertical">
+
+    <!-- Drag handle area (matches calendar habit completion bottom sheet) -->
+    <LinearLayout
+        android:id="@+id/habit_options_sheet_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingTop="12dp"
+        android:paddingBottom="8dp">
+
+        <View
+            android:id="@+id/drag_handle"
+            android:layout_width="40dp"
+            android:layout_height="5dp"
+            android:background="@drawable/bg_drag_handle"
+            android:backgroundTint="?android:attr/textColorSecondary" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_sheet_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="4dp"
+        android:text="@string/habit_options_title"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <!-- Habit name (the habit being modified) -->
+    <TextView
+        android:id="@+id/tv_habit_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="12dp"
+        android:textColor="?android:attr/textColorSecondary"
+        android:textSize="14sp"
+        tools:text="Drink water" />
+
+    <!-- Target label (same content as old dialog, but styled for sheet) -->
+    <TextView
+        android:id="@+id/tv_habit_target"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="12dp"
+        android:text="@string/target_format"
+        android:textColor="?android:attr/textColorSecondary"
+        tools:text="Target: 8 cups" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="@string/current_value"
+        android:textColorHint="?android:attr/textColorSecondary"
+        app:boxStrokeColor="?attr/colorPrimary"
+        app:hintTextColor="?attr/colorPrimary">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edt_current_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:text="@string/default_zero"
+            android:textColor="?android:attr/textColorPrimary" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/tv_unit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="end"
+        android:text="@string/unit_km"
+        android:textColor="?android:attr/textColorSecondary"
+        tools:text="cups" />
+
+    <RadioGroup
+        android:id="@+id/radio_group_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/radio_pending"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:buttonTint="?android:attr/textColorSecondary"
+            android:text="@string/status_pending"
+            android:textColor="?android:attr/textColorPrimary" />
+
+        <RadioButton
+            android:id="@+id/radio_done"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="#4CAF50"
+            android:text="@string/status_done"
+            android:textColor="#4CAF50"
+            android:textStyle="bold" />
+    </RadioGroup>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_confirm"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="12dp"
+        android:text="@string/btn_update" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_cancel"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/cancel" />
+
+</LinearLayout>
+

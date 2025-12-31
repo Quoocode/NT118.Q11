@@ -319,4 +319,8 @@
     <string name="notif_habit_reminder_title_format">Reminder: %1$s</string>
     <string name="notif_habit_reminder_text">It\'s time to work on your goal. You\'ve got this!</string>
 
+    <string name="habit_options_title" translatable="false">Habit options</string>
+    <string name="edit_habit" translatable="false">Edit habit</string>
+    <string name="check_in" translatable="false">Check-in</string>
+
 </resources>

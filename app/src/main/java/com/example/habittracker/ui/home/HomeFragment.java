@@ -93,7 +93,7 @@ public class HomeFragment extends Fragment {
         binding.recyclerViewHabits.setLayoutManager(new LinearLayoutManager(getContext()));
 
         habitAdapter = new DashboardHabitAdapter(getContext(), todayHabitList,
-                habit -> showCheckInDialog(habit),
+                habit -> showHabitOptionsSheet(habit),
                 habit -> {
                     Bundle bundle = new Bundle();
                     bundle.putString("EXTRA_HABIT_ID", habit.getHabitId());
@@ -104,27 +104,26 @@ public class HomeFragment extends Fragment {
         binding.recyclerViewHabits.setAdapter(habitAdapter);
     }
 
-    /**
-     * Hàm hiển thị DialogFragment để Check-in (Nhập số liệu)
-     */
-    private void showCheckInDialog(HabitDailyView habit) {
-        HabitCheckInDialogFragment dialog = HabitCheckInDialogFragment.newInstance(
+    private void showHabitOptionsSheet(@NonNull HabitDailyView habit) {
+        if (habit.getHabitId() == null) return;
+
+        HabitOptionsBottomSheetDialogFragment sheet = HabitOptionsBottomSheetDialogFragment.newInstance(
                 habit.getHabitId(),
-                habit.getTitle(),
+                habit.getTitle() != null ? habit.getTitle() : "",
                 habit.getTargetValue(),
                 habit.getCurrentValue(),
                 habit.getUnit(),
                 habit.getStatus()
         );
 
-        dialog.setOnCheckInListener(() -> {
+        sheet.setOnCheckInListener(() -> {
             Log.d(TAG, "Check-in hoàn tất, tải lại danh sách...");
             loadHabitsForToday();
             loadDailyProgress();
             loadStreakData();
         });
 
-        dialog.show(getChildFragmentManager(), "CheckInDialog");
+        sheet.show(getChildFragmentManager(), "HabitOptionsSheet");
     }
 
     /**

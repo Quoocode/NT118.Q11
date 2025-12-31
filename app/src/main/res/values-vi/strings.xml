@@ -276,4 +276,8 @@
     <string name="achievement_unlocked_at">Đã mở khóa: %1$s</string>
     <string name="achievement_not_yet_unlocked">Chưa mở khóa</string>
     <string name="close">Đóng</string>
+
+    <string name="habit_options_title">Tùy chọn thói quen</string>
+    <string name="edit_habit">Chỉnh sửa thói quen</string>
+    <string name="check_in">Cập nhật</string>
 </resources>

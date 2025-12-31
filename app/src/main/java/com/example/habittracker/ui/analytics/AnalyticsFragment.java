@@ -30,7 +30,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import com.example.habittracker.ui.home.HabitCheckInDialogFragment;
+import com.example.habittracker.ui.home.HabitOptionsBottomSheetDialogFragment;
+
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import android.util.Log;
@@ -174,18 +175,17 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
                 habit -> {
                     if (habit.getHabitId() == null) return;
 
-                    // Mở dialog check-in giống như ở màn Home.
-                    HabitCheckInDialogFragment dialog = HabitCheckInDialogFragment.newInstance(
+                    HabitOptionsBottomSheetDialogFragment sheet = HabitOptionsBottomSheetDialogFragment.newInstance(
                             habit.getHabitId(),
-                            habit.getName(),
+                            habit.getName() != null ? habit.getName() : "",
                             habit.getTargetValue(),
                             habit.getCurrentValue(),
                             habit.getUnit(),
                             habit.getRawStatus() != null ? habit.getRawStatus() : "PENDING"
                     );
 
-                    dialog.setOnCheckInListener(() -> loadHabitsForDate(selectedDate));
-                    dialog.show(getChildFragmentManager(), "CheckInDialog");
+                    sheet.setOnCheckInListener(() -> loadHabitsForDate(selectedDate));
+                    sheet.show(getChildFragmentManager(), "HabitOptionsSheet");
                 }
         );
         binding.habitCompletionSection.habitCompletionRecycler.setAdapter(habitAdapter);
