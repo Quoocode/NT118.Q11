@@ -3,28 +3,35 @@
     <!-- === MÀU GỐC (Copy sang để tránh lỗi reference) === -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="blue">#FF1280ED</color>
-    <color name="navi">#FF243647</color>
+
+    <!-- Same brand color in dark mode (works well on dark surfaces) -->
+    <color name="blue">#FF3B82F6</color>
+
+    <!-- Legacy support color (some drawables reference it) -->
+    <color name="navi">#FF1E293B</color>
 
     <!-- === MÀU CHỨC NĂNG (Override giá trị cho Dark Mode) === -->
 
     <!-- 1. Màu Thương Hiệu -->
     <color name="brand_blue">@color/blue</color>
 
-    <!-- 2. Nền (Backgrounds) - TỐI -->
-    <color name="app_background_color">#111827</color>       <!-- Đen xanh thẫm -->
-    <color name="card_background_color">@color/navi</color>  <!-- Xanh navi -->
+    <!-- 2. Nền (Backgrounds) - TỐI (blue-tinted surfaces) -->
+    <!-- Background: deep blue-gray (not pure black) -->
+    <color name="app_background_color">#FF0B1220</color>
+
+    <!-- Cards: slightly lighter, still blue-tinted, gives clear elevation contrast -->
+    <color name="card_background_color">#FF111C2E</color>
 
     <!-- 3. Chữ (Texts) - TỐI -->
-    <color name="text_primary_color">#FFFFFF</color>         <!-- Trắng -->
-    <color name="text_secondary_color">#91ADC9</color>       <!-- Xám xanh -->
+    <color name="text_primary_color">#FFE6EDF6</color>
+    <color name="text_secondary_color">#FFA7B6CC</color>
 
     <!-- 4. Selector & Icon (Nút chọn) - TỐI -->
     <color name="selector_selected_color">@color/brand_blue</color>
-    <color name="selector_unselected_color">#2D3748</color>  <!-- Xám đậm -->
+    <color name="selector_unselected_color">#FF223049</color>
 
     <!-- 5. Progress Bar - TỐI -->
-    <color name="progress_track_color">#37474F</color>       <!-- Nền thanh tối -->
+    <color name="progress_track_color">#FF223049</color>
     <color name="progress_indicator_color">@color/brand_blue</color>
 
 </resources>

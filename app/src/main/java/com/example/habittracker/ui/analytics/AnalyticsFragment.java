@@ -212,6 +212,12 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         sheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             private int lastState = BottomSheetBehavior.STATE_COLLAPSED;
             private Integer dragStartTop = null;
+            private Integer dragStartStableState = null;
+
+            // If the user drags even a little from a stable end state, we want to
+            // "commit" in that drag direction (collapsed -> expanded, expanded -> collapsed).
+            // This is expressed as a tiny % of the total travel between our two anchors.
+            private static final float COMMIT_FRACTION = 0.02f; // 2% travel
 
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -220,40 +226,68 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
                 // Một số OEM truyền vào reference khác; luôn ưu tiên dùng view sheet thật.
                 final View sheet = habitBottomSheetView != null ? habitBottomSheetView : bottomSheet;
 
-                // Toggle theo hướng kéo khi thả tay:
-                // - kéo lên từ collapsed => EXPANDED
-                // - kéo xuống từ expanded => COLLAPSED
+                // Capture start position when drag begins.
+                if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+                    dragStartTop = sheet.getTop();
+                    dragStartStableState = lastStableState;
+                }
+
+                // Decide snap target when the user releases (DRAGGING -> SETTLING).
                 if (lastState == BottomSheetBehavior.STATE_DRAGGING
                         && newState == BottomSheetBehavior.STATE_SETTLING) {
 
-                    int endTop = sheet.getTop();
-                    int startTop = dragStartTop != null ? dragStartTop : endTop;
-                    boolean movedUp = endTop < startTop;
-                    boolean movedDown = endTop > startTop;
+                    final int endTop = sheet.getTop();
+                    final int startTop = dragStartTop != null ? dragStartTop : endTop;
+
+                    // Our anchors (in root coords):
+                    // - fadeStartTopPx == collapsed top (calendar bottom)
+                    // - fadeEndTopPx   == expanded top  (month nav bottom)
+                    final int anchorCollapsedTop = fadeStartTopPx;
+                    final int anchorExpandedTop = fadeEndTopPx;
+                    final int travel = Math.max(1, anchorCollapsedTop - anchorExpandedTop);
+
+                    final int delta = startTop - endTop; // + = moved up, - = moved down
+                    final float absDeltaFraction = Math.abs(delta) / (float) travel;
+
+                    final boolean movedUp = delta > 0;
+                    final boolean movedDown = delta < 0;
 
                     if (DEBUG_FADE) {
-                        Log.d(TAG_FADE, "SETTLING startTop=" + startTop + " endTop=" + endTop + " movedUp=" + movedUp + " movedDown=" + movedDown);
+                        Log.d(TAG_FADE, "SETTLING startTop=" + startTop + " endTop=" + endTop
+                                + " delta=" + delta + " frac=" + absDeltaFraction
+                                + " anchors(expanded=" + anchorExpandedTop + ", collapsed=" + anchorCollapsedTop + ")"
+                                + " stableStart=" + dragStartStableState);
                     }
 
-                    if (lastStateStableWasCollapsed() && movedUp) {
-                        sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                    } else if (lastStateStableWasExpanded() && movedDown) {
-                        sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    // If user moved even a little from a stable state, snap in that direction.
+                    // (Otherwise fall back to nearest anchor.)
+                    if (absDeltaFraction >= COMMIT_FRACTION && dragStartStableState != null) {
+                        if (dragStartStableState == BottomSheetBehavior.STATE_COLLAPSED && movedUp) {
+                            sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                        } else if (dragStartStableState == BottomSheetBehavior.STATE_EXPANDED && movedDown) {
+                            sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        } else {
+                            // Dragged "the wrong way" for the starting state; snap to nearest.
+                            int mid = (anchorCollapsedTop + anchorExpandedTop) / 2;
+                            sheetBehavior.setState(endTop <= mid
+                                    ? BottomSheetBehavior.STATE_EXPANDED
+                                    : BottomSheetBehavior.STATE_COLLAPSED);
+                        }
                     } else {
-                        // Dự phòng: nếu không xác định rõ hướng, snap về đầu gần nhất.
-                        int top = bottomSheet.getTop();
-                        int mid = (fadeStartTopPx + fadeEndTopPx) / 2;
-                        sheetBehavior.setState(top <= mid
+                        // Very tiny/no movement: snap to nearest anchor.
+                        int mid = (anchorCollapsedTop + anchorExpandedTop) / 2;
+                        sheetBehavior.setState(endTop <= mid
                                 ? BottomSheetBehavior.STATE_EXPANDED
                                 : BottomSheetBehavior.STATE_COLLAPSED);
                     }
 
                     dragStartTop = null;
+                    dragStartStableState = null;
                 }
 
                 // Nếu vì lý do nào đó vẫn rơi vào HALF_EXPANDED, ép về đầu gần nhất.
                 if (newState == BottomSheetBehavior.STATE_HALF_EXPANDED) {
-                    int top = bottomSheet.getTop();
+                    int top = sheet.getTop();
                     int mid = (fadeStartTopPx + fadeEndTopPx) / 2;
                     sheetBehavior.setState(top <= mid
                             ? BottomSheetBehavior.STATE_EXPANDED
