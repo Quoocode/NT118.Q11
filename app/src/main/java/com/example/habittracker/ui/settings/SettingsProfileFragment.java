@@ -175,7 +175,7 @@ public class SettingsProfileFragment extends Fragment {
         roundedDrawable.setCircular(true);
         roundedDrawable.setAntiAlias(true);
 
-        // [FIX LỖI] Xóa background cũ đi để không bị lòi viền hình chữ nhật ở 4 góc
+        // Xóa background cũ đi để không bị lòi viền hình chữ nhật ở 4 góc
         binding.imgProfileAvatar.setBackground(null);
 
         binding.imgProfileAvatar.setImageDrawable(roundedDrawable);

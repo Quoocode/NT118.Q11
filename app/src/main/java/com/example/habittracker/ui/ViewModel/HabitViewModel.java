@@ -33,7 +33,7 @@ public class HabitViewModel extends AndroidViewModel {
         return habitsLiveData;
     }
 
-    // --- HÀM QUAN TRỌNG: Kích hoạt tải dữ liệu ---
+    // Kích hoạt tải dữ liệu ---
     public void loadActiveHabits() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -67,9 +67,8 @@ public class HabitViewModel extends AndroidViewModel {
         });
     }
 
-    // =========================================================================
-    // [MỚI] HÀM XỬ LÝ CHECK/UNCHECK THÓI QUEN -> KÍCH HOẠT SỬA BÁO THỨC
-    // =========================================================================
+    // HÀM XỬ LÝ CHECK/UNCHECK THÓI QUEN -> KÍCH HOẠT SỬA BÁO THỨC
+
     public void updateHabitStatus(Habit habit, boolean isCompleted) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) return;
@@ -84,6 +83,7 @@ public class HabitViewModel extends AndroidViewModel {
         // Gọi Repository để update trạng thái lên Firestore
         // LƯU Ý: Giả định HabitRepository của bạn có hàm updateHabitHistory hoặc tương tự.
         // Bạn cần đảm bảo hàm này tồn tại trong Repository.
+
         repository.updateHabitHistory(habit, isCompleted, new DataCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
@@ -102,9 +102,8 @@ public class HabitViewModel extends AndroidViewModel {
         });
     }
 
-    // =========================================================================
-    // [MỚI] HÀM DÙNG CHO CHECK-IN DIALOG (Xử lý cả DB và Báo thức)
-    // =========================================================================
+    // HÀM DÙNG CHO CHECK-IN DIALOG (Xử lý cả DB và Báo thức)
+
     public void performCheckIn(String habitId, double newValue, String newStatus, final DataCallback<Boolean> uiCallback) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) return;
@@ -141,7 +140,6 @@ public class HabitViewModel extends AndroidViewModel {
         });
     }
 
-    // =========================================================================
     // SOFT DELETE + HỦY BÁO THỨC
 
     public void archiveHabit(String habitId, final DataCallback<Boolean> callback) {
@@ -152,16 +150,13 @@ public class HabitViewModel extends AndroidViewModel {
             repository = new HabitRepository(currentUser.getUid());
         }
 
-        // 1. Gọi Repository để đánh dấu archived = true
-        // (Lưu ý: HabitRepository cần có hàm archiveHabit, tôi thấy file bạn gửi đã có hàm này dùng SimpleCallback)
-        // Chúng ta sẽ bọc nó lại để dùng DataCallback cho đồng bộ hoặc dùng trực tiếp SimpleCallback nếu muốn.
-        // Ở đây tôi viết giả định Repository dùng SimpleCallback như bạn đã có.
+        // Gọi Repository để đánh dấu archived = true
 
         repository.archiveHabit(habitId, (success, error) -> {
             if (success) {
                 Log.d("ALARM_DEBUG", "Archive DB thành công -> Tiến hành hủy báo thức.");
 
-                // 2. QUAN TRỌNG: Hủy báo thức ngay lập tức
+                // Hủy báo thức ngay lập tức
                 NotificationHelper.cancelHabitReminder(getApplication(), habitId);
 
                 if (callback != null) callback.onSuccess(true);

@@ -20,7 +20,7 @@ public class HabitAlarmReceiver extends BroadcastReceiver {
         String habitId = intent.getStringExtra("HABIT_ID");
         String frequencyType = intent.getStringExtra("HABIT_FREQ_TYPE");
         long startDateMillis = intent.getLongExtra("HABIT_START_DATE", 0);
-        // [QUAN TRỌNG] Lấy thêm timeString để đặt lại lịch
+        // Lấy thêm timeString để đặt lại lịch
         String timeString = intent.getStringExtra("HABIT_TIME_STRING");
 
         Log.d(TAG, "⏰ Báo thức đã nổ cho: " + habitTitle);

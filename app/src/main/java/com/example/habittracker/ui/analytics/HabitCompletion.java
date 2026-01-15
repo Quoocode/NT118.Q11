@@ -14,7 +14,6 @@ public class HabitCompletion {
     private final String name;
     private final Status status;
 
-    // Optional check-in metadata (for opening HabitCheckInDialogFragment)
     private final double targetValue;
     private final double currentValue;
     @Nullable

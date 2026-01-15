@@ -42,7 +42,6 @@ public class ForgotPasswordNewFragment extends Fragment {
             Toast.makeText(getContext(), "Đổi mật khẩu thành công", Toast.LENGTH_SHORT).show();
 
             // Quay về màn hình Login
-            // (Chúng ta điều hướng về loginFragment, popUpTo để xóa hết các màn hình Quên mật khẩu)
             navController.popBackStack(R.id.loginFragment, false);
         });
     }

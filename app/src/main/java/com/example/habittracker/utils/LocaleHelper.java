@@ -13,7 +13,6 @@ public class LocaleHelper {
 
     public static void setLocale(Context context, String lang) {
         saveLanguage(context, lang);
-        // Ensure the app also updates the application resources too, not only a returned context.
         updateResources(context.getApplicationContext(), lang);
     }
 
@@ -33,7 +32,6 @@ public class LocaleHelper {
 
         Context localizedContext = context.createConfigurationContext(config);
 
-        // Also update the base resources so components still using the original context (e.g. some ViewModels / singletons) see the right locale.
         context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
 
         return localizedContext;

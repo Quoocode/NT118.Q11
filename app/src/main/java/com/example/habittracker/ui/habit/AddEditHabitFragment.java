@@ -457,7 +457,6 @@ public class AddEditHabitFragment extends Fragment {
         }
         Log.d("TEST_REMINDER", "--------------------------");
 
-        // NOTE: Don't pop here; we already pop in the branches above.
     }
 
     private void updateStartDateText() {

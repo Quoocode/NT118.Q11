@@ -83,10 +83,6 @@ public class CalendarDayAdapter extends RecyclerView.Adapter<CalendarDayAdapter.
             cal.setTime(calendarDay.getDate());
             dayNumber.setText(String.valueOf(cal.get(Calendar.DAY_OF_MONTH)));
 
-            // - default: dark background
-            // - selected: blue background
-            // - today: border only
-            // - today + selected: blue background + border
             if (isToday && isSelected) {
                 dayContainer.setBackgroundResource(R.drawable.calendar_day_selected_today);
             } else if (isSelected) {

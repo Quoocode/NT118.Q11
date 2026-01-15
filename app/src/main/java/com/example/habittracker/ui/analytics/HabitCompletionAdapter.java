@@ -48,11 +48,9 @@ public class HabitCompletionAdapter extends ListAdapter<HabitCompletion, HabitCo
     private static final DiffUtil.ItemCallback<HabitCompletion> DIFF = new DiffUtil.ItemCallback<HabitCompletion>() {
         @Override
         public boolean areItemsTheSame(@NonNull HabitCompletion oldItem, @NonNull HabitCompletion newItem) {
-            // Prefer stable habitId when available.
             if (oldItem.getHabitId() != null && newItem.getHabitId() != null) {
                 return oldItem.getHabitId().equals(newItem.getHabitId());
             }
-            // Fallback to name+status.
             return oldItem.getName().equals(newItem.getName()) && oldItem.getStatus().equals(newItem.getStatus());
         }
 

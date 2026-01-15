@@ -64,10 +64,10 @@ public class SettingsFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
 
         // --- LOGIC THEME ---
-        // 1. Cập nhật icon ban đầu (Sun/Moon)
+        // Cập nhật icon ban đầu
         updateThemeIcon();
 
-        // 2. Xử lý click nút Theme
+        // Xử lý click nút Theme
         binding.btnThemeSettings.setOnClickListener(v -> {
             if (getContext() != null) {
                 // Lấy trạng thái hiện tại
@@ -127,9 +127,7 @@ public class SettingsFragment extends Fragment {
         updateThemeIcon();
     }
 
-    // =================================================================================
-    // PHẦN 1: LOGIC HIỂN THỊ PROFILE (GIỮ NGUYÊN)
-    // =================================================================================
+    // LOGIC HIỂN THỊ PROFILE
 
     private void loadUserProfile() {
         if (binding == null) return;
@@ -222,9 +220,7 @@ public class SettingsFragment extends Fragment {
         avatarView.setScaleType(ImageView.ScaleType.FIT_CENTER);
     }
 
-    // =================================================================================
-    // PHẦN 2: LOGIC LOGOUT (GIỮ NGUYÊN)
-    // =================================================================================
+    // PHẦN 2: LOGIC LOGOUT
 
     private void showLogoutConfirmationDialog() {
         if (getContext() == null) return;

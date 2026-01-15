@@ -40,8 +40,7 @@ public class ReminderReceiver extends BroadcastReceiver {
 
         Log.d("ALARM_DEBUG", ">> Đang Reschedule cho lần tiếp theo...");
 
-        // Gọi lại hàm đặt lịch. Vì giờ này (ví dụ 14:52) đã qua so với hiện tại (14:52:01),
-        // nên logic bên trong NotificationHelper sẽ tự động cộng thêm 1 ngày (hoặc 1 phút hack).
+        // Gọi lại hàm đặt lịch.
         NotificationHelper.scheduleDailyBriefing(context, hour, minute);
     }
 
