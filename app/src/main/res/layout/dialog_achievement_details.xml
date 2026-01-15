@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:baselineAligned="false"
     android:padding="16dp"
     android:background="?attr/colorSurface">
 
@@ -49,6 +50,33 @@
             android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp"
             android:text="@string/achievement_description_placeholder" />
+
+        <!-- Progress (only shown while locked) -->
+        <LinearLayout
+            android:id="@+id/achievement_detail_progress_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/achievement_detail_progress_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="12sp"
+                android:text="@string/achievement_progress_label" />
+
+            <ProgressBar
+                android:id="@+id/achievement_detail_progress_bar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="12dp"
+                android:layout_marginTop="6dp"
+                android:indeterminate="true"
+                android:progressDrawable="@drawable/custom_progress_bar" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/achievement_detail_time"

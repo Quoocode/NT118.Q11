@@ -210,6 +210,7 @@ public class AchievementsFragment extends Fragment {
 
         item.setOnClickListener(v -> {
             AchievementDetailsDialogFragment dialog = AchievementDetailsDialogFragment.newInstance(
+                    m.getId(),
                     m.getIconRes(),
                     m.getTitle(),
                     m.getDescription(),

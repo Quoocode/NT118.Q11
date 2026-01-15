@@ -323,4 +323,7 @@
     <string name="edit_habit" translatable="false">Edit habit</string>
     <string name="check_in" translatable="false">Check-in</string>
 
+    <string name="achievement_progress_loading">Loading progress…</string>
+    <string name="achievement_progress_format">Progress: %1$d/%2$d</string>
+    <string name="achievement_progress_label">Progress</string>
 </resources>
