@@ -505,7 +505,7 @@ public class NotificationHelper {
     }
 
     // =========================================================================
-    // 0. EXACT ALARM SAFETY (Android 12+)
+    // 0. AN TOÀN VỚI EXACT ALARM (Android 12+)
     // =========================================================================
 
     private static boolean canScheduleExactAlarms(Context context) {
@@ -516,21 +516,23 @@ public class NotificationHelper {
         return true;
     }
 
-    /** Public helper so UI layers can check whether exact alarms are currently allowed (Android 12+). */
+    /**
+     * Hàm public để tầng UI có thể kiểm tra hiện tại thiết bị có cho phép đặt exact alarm hay không (Android 12+).
+     */
     public static boolean isExactAlarmAllowed(Context context) {
         return canScheduleExactAlarms(context);
     }
 
     /**
-     * Show a dialog that deep-links to the system screen to allow exact alarms (Android 12+).
+     * Hiển thị dialog dẫn thẳng đến màn hình hệ thống để cấp quyền đặt exact alarm (Android 12+).
      *
-     * Safe no-op on Android < 12.
+     * An toàn (không làm gì) trên Android < 12.
      */
     public static void showExactAlarmPermissionDialog(Context context) {
         if (context == null) return;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return;
 
-        // If already allowed, no need to interrupt.
+        // Nếu đã được cấp quyền thì không cần làm gián đoạn người dùng.
         if (canScheduleExactAlarms(context)) return;
 
         try {
@@ -550,16 +552,16 @@ public class NotificationHelper {
                     .setNegativeButton("Để sau", null)
                     .show();
         } catch (Throwable t) {
-            // If context isn't an Activity-themed context, AlertDialog can fail.
+            // Nếu context không phải Activity-themed context thì AlertDialog có thể bị lỗi.
             Log.e("ALARM_DEBUG", "Failed to show exact alarm permission dialog", t);
         }
     }
 
     /**
-     * Schedules an alarm without crashing on Android 12+ when exact-alarm permission is denied.
+     * Đặt báo thức theo cách an toàn để tránh crash trên Android 12+ khi bị từ chối quyền exact alarm.
      *
-     * If exact alarms are allowed -> uses setExactAndAllowWhileIdle/setExact.
-     * Otherwise -> uses an inexact fallback (setAndAllowWhileIdle/set).
+     * Nếu exact alarm được cho phép -> dùng setExactAndAllowWhileIdle/setExact.
+     * Ngược lại -> dùng phương án dự phòng không-chính-xác (setAndAllowWhileIdle/set).
      */
     @SuppressLint("ScheduleExactAlarm")
     private static void scheduleAlarmSafely(Context context,
@@ -578,7 +580,7 @@ public class NotificationHelper {
                     alarmManager.setExact(alarmType, triggerAtMillis, pendingIntent);
                 }
             } else {
-                // Fallback: still schedule a reminder, but not exact.
+                // Dự phòng: vẫn đặt nhắc nhở, nhưng không đảm bảo đúng tuyệt đối.
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     alarmManager.setAndAllowWhileIdle(alarmType, triggerAtMillis, pendingIntent);
                 } else {
@@ -587,7 +589,7 @@ public class NotificationHelper {
                 Log.w("ALARM_DEBUG", "Exact alarm permission denied; scheduled inexact alarm instead.");
             }
         } catch (SecurityException se) {
-            // Double safety: some OEMs/devices can still throw even if canScheduleExactAlarms() returns true.
+            // An toàn kép: một số OEM/thiết bị vẫn có thể throw dù canScheduleExactAlarms() trả về true.
             Log.e("ALARM_DEBUG", "SecurityException while scheduling alarm; falling back to inexact.", se);
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

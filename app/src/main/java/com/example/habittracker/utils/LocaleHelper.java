@@ -13,7 +13,7 @@ public class LocaleHelper {
 
     public static void setLocale(Context context, String lang) {
         saveLanguage(context, lang);
-        // Ensure the app also updates the application resources too, not only a returned context.
+        // Đảm bảo app cũng cập nhật resource ở cấp Application, không chỉ Context trả về.
         updateResources(context.getApplicationContext(), lang);
     }
 
@@ -33,7 +33,8 @@ public class LocaleHelper {
 
         Context localizedContext = context.createConfigurationContext(config);
 
-        // Also update the base resources so components still using the original context (e.g. some ViewModels / singletons) see the right locale.
+        // Đồng thời cập nhật resource gốc để các thành phần vẫn dùng context ban đầu
+        // (vd: một số ViewModel/singleton) cũng nhận đúng locale.
         context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
 
         return localizedContext;
@@ -46,6 +47,6 @@ public class LocaleHelper {
 
     private static String getSavedLanguage(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        return prefs.getString(KEY_LANG, "en"); // default English
+        return prefs.getString(KEY_LANG, "en"); // mặc định tiếng Anh
     }
 }

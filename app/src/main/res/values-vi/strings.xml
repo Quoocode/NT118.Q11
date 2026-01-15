@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">HabitTracker</string>
-    <string name="action_settings">Settings</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
+    <string name="action_settings">Cài đặt</string>
+    <!-- Các chuỗi dùng cho fragment trong điều hướng -->
+    <string name="first_fragment_label">Fragment 1</string>
+    <string name="second_fragment_label">Fragment 2</string>
+    <string name="next">Tiếp theo</string>
+    <string name="previous">Quay lại</string>
     <string name="default_web_client_id">392391623569-dootefjgroer4isdof8hk6u760upkbcb.apps.googleusercontent.com</string>
     <string name="cancel">Hủy</string>
 
-    <!--calendar-->
+    <!-- Lịch -->
 
     <string name="day_sun">CN</string>
     <string name="day_mon">T2</string>
@@ -20,13 +20,13 @@
     <string name="day_fri">T6</string>
     <string name="day_sat">T7</string>
 
-    <!--dialog_achievement-->
+    <!-- Dialog thành tích -->
     <string name="achievement_icon_desc">Biểu tượng thành tích</string>
     <string name="achievement_title_placeholder">Tiêu đề</string>
     <string name="achievement_description_placeholder">Mô tả</string>
     <string name="achievement_not_unlocked">Chưa mở khóa</string>
 
-    <!--fragment_achievements-->
+    <!-- Fragment thành tích -->
     <string name="achievements_title">Thành tích</string>
     <string name="achievement_unlocked">Đã mở khóa</string>
     <string name="achievement_progress_placeholder">0/0</string>
@@ -34,7 +34,7 @@
     <string name="expand_badges_desc">Mở rộng huy hiệu</string>
     <!--    <string name="show_less">Thu gọn</string>-->
 
-    <!--fragment_calendar-->
+    <!-- Fragment lịch -->
     <string name="calendar_title">Lịch</string>
 
     <string name="calendar_month_placeholder">Tháng 10 2024</string>
@@ -49,7 +49,7 @@
     <string name="weekday_sat">T7</string>
 
 
-    <!-- Login -->
+    <!-- Đăng nhập -->
 
     <string name="login">Đăng nhập</string>
     <string name="signup">Đăng ký</string>
@@ -57,9 +57,9 @@
     <string name="password">Mật khẩu</string>
     <string name="forgot_password">Quên mật khẩu?</string>
     <string name="continue_guest">Tiếp tục với tư cách khách</string>
-    <string name="habit_completion_title">Hoàn thành Habit</string>
-    <string name="error_auth_required">Please sign in to view your calendar.</string>
-    <string name="error_load_habits">Unable to load habits: %1$s</string>
+    <string name="habit_completion_title">Hoàn thành thói quen</string>
+    <string name="error_auth_required">Vui lòng đăng nhập để xem lịch của bạn.</string>
+    <string name="error_load_habits">Không thể tải thói quen: %1$s</string>
     <string name="remember_me">Ghi nhớ đăng nhập</string>
     <string name="or_continue_with">Hoặc tiếp tục với</string>
 
@@ -68,13 +68,13 @@
     <string name="login_failed">Sai email hoặc mật khẩu!</string>
     <string name="guest_login">Đăng nhập với tư cách khách</string>
 
-    <!-- register -->
+    <!-- Đăng ký -->
     <string name="register">Đăng ký</string>
     <string name="confirm_password">Xác nhận mật khẩu</string>
     <string name="sign_up">Đăng ký</string>
 
 
-    <!--reset password-->
+    <!-- Đặt lại mật khẩu -->
     <string name="reset_password_title">Đặt lại mật khẩu</string>
     <string name="send_verification_code">Gửi mã xác nhận</string>
 
@@ -105,7 +105,7 @@
     <string name="hint_target_value">0</string>
     <string name="hint_unit_km">km</string>
 
-
+    <string name="calendar">Lịch</string>
 
     <!-- Thành tích -->
     <string name="achievements">Thành tích</string>
@@ -115,8 +115,6 @@
     <string name="badges">Huy hiệu</string>
     <string name="expand_badges">Mở rộng huy hiệu</string>
     <string name="show_less">Thu gọn</string>
-
-    <string name="calendar">Lịch</string>
 
     <!-- Cập nhật tiến độ -->
     <string name="update_progress">Cập nhật tiến độ</string>
@@ -133,7 +131,7 @@
     <string name="status_done">Hoàn thành</string>
     <string name="btn_update">Cập nhật</string>
 
-    <!-- Habit Detail / Summary -->
+    <!-- Chi tiết / tóm tắt thói quen -->
     <string name="habit_detail_title">Chi tiết thói quen</string>
 
     <string name="label_this_week">Tuần\nnày</string>
@@ -178,7 +176,7 @@
     <string name="hint_bio">Giới thiệu đôi chút về bạn</string>
 
     <string name="save_changes">Lưu thay đổi</string>
-    <!--Reminders-->
+    <!--Nhắc nhở-->
     <!--    <string name="reminders">Nhắc nhở</string>-->
     <string name="general">Chung</string>
 
@@ -201,15 +199,15 @@
     <string name="vibration">Rung</string>
     <string name="vibrate_on_notification">Rung khi có thông báo</string>
 
-    <!--habit completion-->
+    <!-- Hoàn thành thói quen -->
     <string name="habit_name_placeholder">Tên Habit</string>
     <string name="bottom_nav_dashboard">Bảng điều khiển</string>
 
-    <!--view today habit-->
+    <!-- Xem thói quen hôm nay -->
     <string name="show_more">Xem thêm</string>
 
 
-    <!-- Settings -->
+    <!-- Cài đặt -->
     <string name="language">Ngôn ngữ</string>
     <string name="choose_language">Chọn ngôn ngữ</string>
     <string name="english">Tiếng Anh</string>
@@ -235,7 +233,7 @@
     <string name="logout_desc">Đăng xuất khỏi tài khoản</string>
 
 
-    <!-- Achievement titles -->
+    <!-- Tiêu đề thành tích -->
     <string name="ach_first_step_title">Bước đầu tiên</string>
     <string name="ach_first_checkin_title">Check-in đầu tiên</string>
     <string name="ach_perfect_day_title">Ngày hoàn hảo</string>
@@ -247,7 +245,7 @@
     <string name="ach_three_perfect_days_title">3 Ngày Hoàn Hảo</string>
     <string name="ach_welcome_back_title">Chào mừng trở lại</string>
 
-    <!-- Achievement descriptions -->
+    <!-- Mô tả thành tích -->
     <string name="ach_first_step_desc">Tạo thói quen đầu tiên của bạn.</string>
     <string name="ach_first_checkin_desc">Hoàn thành (hoặc đạt mục tiêu) một thói quen lần đầu tiên.</string>
     <string name="ach_perfect_day_desc">Hoàn thành tất cả thói quen trong một ngày.</string>
@@ -259,7 +257,7 @@
     <string name="ach_three_perfect_days_desc">Hoàn thành tất cả thói quen trong 3 ngày khác nhau.</string>
     <string name="ach_welcome_back_desc">Mở ứng dụng sau khi vắng một ngày.</string>
 
-    <!-- Notifications / Badges (channel + content) -->
+    <!-- Thông báo / Huy hiệu (kênh + nội dung) -->
     <string name="notif_channel_habit_reminders_name">Nhắc nhở thói quen</string>
     <string name="notif_channel_habit_reminders_desc">Thông báo nhắc nhở thói quen hằng ngày</string>
 
@@ -269,7 +267,7 @@
     <string name="notif_habit_reminder_title_format">Nhắc nhở: %1$s</string>
     <string name="notif_habit_reminder_text">Đến giờ thực hiện mục tiêu rồi! Cố lên bạn ơi.</string>
 
-    <!-- Achievements (UI strings) -->
+    <!-- Thành tích (chuỗi UI) -->
     <string name="achievements_progress_count">%1$d/%2$d</string>
     <string name="achievement_tooltip_unlocked">Đã mở khóa</string>
     <string name="achievement_tooltip_locked">Chưa mở khóa</string>

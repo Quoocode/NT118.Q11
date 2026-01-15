@@ -356,7 +356,7 @@ public class AddEditHabitFragment extends Fragment {
             habitRepository.addHabit(habit, new DataCallback<String>() {
                 @Override
                 public void onSuccess(String newHabitId) {
-                    // Unlock achievements locally (per-install) on first creation.
+                    // Mở khóa thành tích cục bộ (theo từng lần cài đặt) ở lần tạo thói quen đầu tiên.
                     if (achievementService != null) {
                         achievementService.onHabitCreated();
                     }
@@ -385,7 +385,7 @@ public class AddEditHabitFragment extends Fragment {
             NotificationHelper.debugAlarmPermission(requireContext());
             Log.d("TEST_REMINDER", ">> ID OK: " + habitId);
 
-            // Build a Habit instance for alarm helpers that require the whole object.
+            // Tạo đối tượng Habit để truyền cho các hàm đặt alarm (một số hàm cần đủ thông tin từ object).
             Map<String, Object> freqMap = new HashMap<>();
             freqMap.put("type", selectedFrequency);
             Habit habitForAlarm = new Habit(
@@ -457,7 +457,7 @@ public class AddEditHabitFragment extends Fragment {
         }
         Log.d("TEST_REMINDER", "--------------------------");
 
-        // NOTE: Don't pop here; we already pop in the branches above.
+        // LƯU Ý: Không pop ở đây vì đã pop ở các nhánh phía trên.
     }
 
     private void updateStartDateText() {

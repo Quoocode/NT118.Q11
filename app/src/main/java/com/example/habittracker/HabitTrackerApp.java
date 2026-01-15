@@ -6,10 +6,10 @@ import android.content.Context;
 import com.example.habittracker.utils.LocaleHelper;
 
 /**
- * Application class to ensure saved locale is applied on cold start.
+ * Lớp Application nhằm đảm bảo locale (ngôn ngữ) đã lưu được áp dụng khi khởi động lạnh.
  *
- * This prevents strings (e.g., achievements) from reverting to English after the app is killed
- * and opened again.
+ * Việc này giúp tránh tình trạng các chuỗi (vd: thành tích) bị quay về tiếng Anh sau khi ứng dụng
+ * bị hệ thống kill và mở lại.
  */
 public class HabitTrackerApp extends Application {
 
@@ -21,7 +21,7 @@ public class HabitTrackerApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        // Force-apply to application resources too (covers components using app context/resources).
+        // Ép áp dụng locale cho cả tài nguyên cấp ứng dụng (bao phủ các thành phần dùng app context/resources).
         LocaleHelper.applyLocale(this);
 
         // Lấy trạng thái Dark Mode đã lưu và áp dụng ngay lập tức
@@ -29,4 +29,3 @@ public class HabitTrackerApp extends Application {
         ThemeHelper.applyTheme(isDark);
     }
 }
-
