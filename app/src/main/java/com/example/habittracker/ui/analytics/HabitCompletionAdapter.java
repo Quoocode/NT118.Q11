@@ -47,6 +47,12 @@ public class HabitCompletionAdapter extends ListAdapter<HabitCompletion, HabitCo
 
     private static final DiffUtil.ItemCallback<HabitCompletion> DIFF = new DiffUtil.ItemCallback<HabitCompletion>() {
         @Override
+        // Xác định xem hai mục (trong danh sách) có phải là cùng một mục hay không.
+        // Sử dụng habitId nếu có, nếu không thì dùng name và status.
+        // Điều này giúp xử lý các mục chưa đồng bộ với ID ổn định.
+        // Ví dụ: khi một thói quen mới được tạo và chưa có ID từ backend.
+        // Điều này giúp tối ưu hóa việc cập nhật RecyclerView.
+        // Ví dụ: nếu chỉ thay đổi trạng thái của thói quen, không cần tải lại toàn bộ mục.
         public boolean areItemsTheSame(@NonNull HabitCompletion oldItem, @NonNull HabitCompletion newItem) {
             // Prefer stable habitId when available.
             if (oldItem.getHabitId() != null && newItem.getHabitId() != null) {

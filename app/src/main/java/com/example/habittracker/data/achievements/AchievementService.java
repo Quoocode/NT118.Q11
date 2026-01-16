@@ -18,6 +18,11 @@ import java.util.List;
  */
 public class AchievementService {
 
+    // Context ứng dụng để tránh rò rỉ memory leak. Memory leak có thể xảy ra nếu giữ tham chiếu
+    // đến context của Activity hoặc Fragment.
+    // Context ứng dụng có vòng đời dài hơn và an toàn để giữ tham chiếu lâu dài.
+    // Điều này đặc biệt quan trọng đối với các dịch vụ hoặc thành phần có vòng đời dài hơn
+    // so với Activity hoặc Fragment.
     private final Context appContext;
     private final AchievementsRepository repo;
 
@@ -35,6 +40,7 @@ public class AchievementService {
     }
 
     public void onCheckInCommitted(@NonNull String newStatus, double value, double targetValue) {
+        // Mở khóa thành tựu "First Check-in" nếu thói quen vừa được đánh dấu hoàn thành.
         if (isDone(newStatus, value, targetValue)) {
             repo.unlock(AchievementId.FIRST_CHECKIN);
         }
@@ -45,8 +51,11 @@ public class AchievementService {
      * Ta tính "tất cả đã hoàn thành" (all-done) dựa trên chính model đang hiển thị.
      */
     public void onDaySnapshot(@NonNull Calendar date, @NonNull List<HabitDailyView> dayList) {
+        // Nếu không có thói quen nào trong ngày, không cần đánh giá.
         if (dayList.isEmpty()) return;
 
+        // Kiểm tra tất cả thói quen trong ngày đã hoàn thành chưa.
+        // Nếu tất cả đều hoàn thành, mở khóa thành tựu "Perfect Day".
         boolean allDone = true;
         for (HabitDailyView h : dayList) {
             if (!isDone(h.getStatus(), h.getCurrentValue(), h.getTargetValue())) {
@@ -69,9 +78,13 @@ public class AchievementService {
 
     public void evaluateStreakAchievements() {
         // Dùng logic tính streak sẵn có (dựa trên lịch sử) làm nguồn dữ liệu streak.
+        // Lấy UID người dùng hiện tại từ Firebase Auth.
         String uid = com.google.firebase.auth.FirebaseAuth.getInstance().getUid();
         if (uid == null || uid.isEmpty()) return;
 
+        // Tạo HabitRepository để tính streak.
+        // Sử dụng callback để nhận kết quả tính toán.
+        // Khi có kết quả, mở khóa các thành tựu tương ứng.
         HabitRepository habitRepository = new HabitRepository(uid);
         habitRepository.calculateUserStreaks(new StreakCallback() {
             @Override

@@ -46,17 +46,13 @@ public class AchievementsViewModel extends AndroidViewModel {
             if (key == null) return;
             if (uid == null || uid.isEmpty()) return;
 
-            // Chỉ phản ứng với các key theo phạm vi user; an toàn nhưng tránh bắn refresh quá nhiều.
+            // Chỉ phản ứng với các key theo phạm vi user; an toàn nếu có nhiều user dùng chung app.
             if (key.contains(uid)) {
                 refresh();
             }
         };
 
         sharedPreferences.registerOnSharedPreferenceChangeListener(listener);
-
-        // Kiểm tra "welcome back" được kích hoạt từ vòng đời app (MainActivity),
-        // không nên làm tại tab này.
-
         refresh();
     }
 
@@ -80,6 +76,7 @@ public class AchievementsViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
+        // Hủy đăng ký listener khi ViewModel bị hủy để tránh rò rỉ memory leak.
         if (sharedPreferences != null) {
             sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener);
         }

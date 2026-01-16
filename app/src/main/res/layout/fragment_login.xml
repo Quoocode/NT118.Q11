@@ -293,41 +293,6 @@
                     android:textStyle="bold"
                     android:textSize="14sp" />
             </LinearLayout>
-
-            <View
-                android:layout_width="16dp"
-                android:layout_height="40dp" />
-
-            <!-- FACEBOOK (BLUE) -->
-            <LinearLayout
-                android:id="@+id/container_login_32_38"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:background="@drawable/container_navi"
-                android:backgroundTint="#1877F2"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground">
-
-                <TextView
-                    android:id="@+id/text_facebook"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:gravity="center"
-                    android:includeFontPadding="false"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:text="Facebook"
-                    android:textColor="#FFFFFF"
-                    android:textStyle="bold"
-                    android:textSize="14sp" />
-            </LinearLayout>
         </LinearLayout>
 
         <!-- GUEST -->

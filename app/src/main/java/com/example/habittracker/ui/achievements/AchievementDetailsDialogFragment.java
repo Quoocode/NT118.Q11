@@ -53,7 +53,7 @@ public class AchievementDetailsDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        // Prefer fragment inflater.
+        // Dùng layoutInflater để inflate custom view cho dialog.
         LayoutInflater inflater = getLayoutInflater();
         View content = inflater.inflate(R.layout.dialog_achievement_details, null, false);
 
@@ -78,7 +78,7 @@ public class AchievementDetailsDialogFragment extends DialogFragment {
                 try {
                     id = AchievementId.valueOf(idStr);
                 } catch (Exception ignored) {
-                    // Keep null; we'll just hide progress.
+                    // giữ nguyên id = null
                 }
             }
         }
@@ -90,6 +90,7 @@ public class AchievementDetailsDialogFragment extends DialogFragment {
         tvTitle.setText(title);
         tvDesc.setText(desc);
 
+        // Hiển thị thời gian mở khóa hoặc thông báo chưa mở khóa.
         if (unlockedAt != null) {
             String formatted = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
                     .format(new Date(unlockedAt));
@@ -98,12 +99,13 @@ public class AchievementDetailsDialogFragment extends DialogFragment {
             tvTime.setText(getString(R.string.achievement_not_yet_unlocked));
         }
 
-        // Requirement: hide progress UI once unlocked.
+        // Giấu progress nếu đã mở khóa.
         if (progressContainer != null) {
             progressContainer.setVisibility(unlockedAt != null ? View.GONE : View.VISIBLE);
         }
 
-        // Async fetch progress on dialog open (only for locked achievements).
+        // Dùng fetch bất đồng bộ để tải tiến độ nếu chưa mở khóa.
+        // Bất đồng bộ để tránh chặn UI thread.
         if (unlockedAt == null && id != null && progressContainer != null && progressLabel != null && progressBar != null) {
             progressBar.setIndeterminate(true);
             progressLabel.setText(R.string.achievement_progress_loading);
@@ -150,8 +152,9 @@ public class AchievementDetailsDialogFragment extends DialogFragment {
             case CHECKIN_STREAK_3:
             case CHECKIN_STREAK_7:
             case LONGEST_STREAK_7: {
-                // These depend on repo computation that currently hits Firestore.
-                // Fetch async and update UI when done.
+                // Dựa trên streaks của người dùng để tính tiến độ.
+                // Streak được tính bất đồng bộ trong HabitRepository.
+                // Fetch bất đồng bộ và cập nhật UI khi có kết quả.
                 String uid = FirebaseAuth.getInstance().getUid();
                 if (uid == null || uid.isEmpty()) {
                     container.setVisibility(View.GONE);
@@ -194,6 +197,7 @@ public class AchievementDetailsDialogFragment extends DialogFragment {
         }
     }
 
+    // bindProgress để cập nhật UI tiến độ.
     private void bindProgress(int current, int target, @NonNull TextView label, @NonNull ProgressBar bar, @NonNull View container) {
         if (target <= 0) {
             container.setVisibility(View.GONE);

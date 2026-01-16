@@ -46,20 +46,18 @@ public class AchievementsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Thiết lập ViewModel: sử dụng ViewModelProvider để giữ trạng thái khi chuyển hướng.
         viewModel = new ViewModelProvider(this).get(AchievementsViewModel.class);
 
         setupExpandCollapse();
 
+        // Quan sát dữ liệu thành tựu: cập nhật UI khi có thay đổi.
         viewModel.getAchievements().observe(getViewLifecycleOwner(), list -> {
             if (binding == null) return;
 
             renderProgress(list);
             renderBadges(list);
         });
-
-        // Tuỳ chọn: seed nhanh để UI không bị trống khi mới cài.
-        // Hãy comment/bỏ đoạn này khi bạn đã nối vào luồng mở khóa thật.
-        // viewModel.debugUnlockFirstThree();
     }
 
     @Override
@@ -88,6 +86,11 @@ public class AchievementsFragment extends Fragment {
     private void expandBadges(View horizontalContainer, View gridContainer, ImageButton expandButton) {
         if (isExpanded) return;
         isExpanded = true;
+        // Animate chuyển từ horizontal sang grid.
+        // 1. Ẩn horizontal với alpha animation.
+        // 2. Hiện grid với alpha + translationY animation.
+        // 3. Xoay chevron.
+        // Lưu ý: sử dụng withEndAction để đảm bảo thứ tự animation.
         horizontalContainer.animate().alpha(0f).setDuration(150).withEndAction(() -> {
             horizontalContainer.setVisibility(View.GONE);
             gridContainer.setAlpha(0f);
@@ -120,6 +123,7 @@ public class AchievementsFragment extends Fragment {
         ProgressBar bar = binding.getRoot().findViewById(R.id.progress_achievement_total);
         if (count == null || bar == null) return;
 
+        // Tính tổng và số đã mở khóa.
         int total = list.size();
         int unlocked = 0;
         for (AchievementUiModel m : list) {
@@ -153,6 +157,7 @@ public class AchievementsFragment extends Fragment {
         GridLayout grid = root.findViewById(R.id.badges_grid);
         if (horizontal == null || grid == null || getContext() == null) return;
 
+        // Xóa hết item cũ: để tái sử dụng ViewGroup.
         horizontal.removeAllViews();
         grid.removeAllViews();
 
@@ -166,7 +171,7 @@ public class AchievementsFragment extends Fragment {
 
         LayoutInflater inflater = LayoutInflater.from(requireContext());
 
-        // Preview dạng ngang (collapsed): hiển thị toàn bộ danh sách theo thứ tự (không giới hạn "top 3").
+        // Preview dạng ngang (collapsed): hiển thị toàn bộ danh sách theo thứ tự
         for (AchievementUiModel m : list) {
             View item = inflater.inflate(R.layout.item_badge_placeholder, horizontal, false);
             bindBadgeItem(item, m);
@@ -193,6 +198,7 @@ public class AchievementsFragment extends Fragment {
         }
     }
 
+    // bindBadgeItem để gán dữ liệu vào item badge.
     private void bindBadgeItem(View item, AchievementUiModel m) {
         ImageView icon = item.findViewById(R.id.badge_icon);
         TextView title = item.findViewById(R.id.badge_title);

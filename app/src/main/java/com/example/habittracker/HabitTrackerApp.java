@@ -7,6 +7,7 @@ import com.example.habittracker.utils.LocaleHelper;
 
 /**
  * Lớp Application nhằm đảm bảo locale (ngôn ngữ) đã lưu được áp dụng khi khởi động lạnh.
+ * Coldstart là khi ứng dụng được mở lại sau khi bị hệ thống kill để giải phóng bộ nhớ.
  *
  * Việc này giúp tránh tình trạng các chuỗi (vd: thành tích) bị quay về tiếng Anh sau khi ứng dụng
  * bị hệ thống kill và mở lại.

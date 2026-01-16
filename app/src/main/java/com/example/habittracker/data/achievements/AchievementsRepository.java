@@ -20,6 +20,7 @@ public class AchievementsRepository {
     private final Context appContext;
 
     public AchievementsRepository(@NonNull Context context) {
+        // AchievementsRepository giữ tham chiếu đến context ứng dụng để tránh rò rỉ memory leak.
         this.appContext = context.getApplicationContext();
     }
 
@@ -29,6 +30,7 @@ public class AchievementsRepository {
     }
 
     private AchievementsLocalStore store() {
+        // Tạo instance AchievementsLocalStore cho user hiện tại.
         return new AchievementsLocalStore(appContext, userId());
     }
 
@@ -61,11 +63,13 @@ public class AchievementsRepository {
     }
 
     public int addPerfectDay(Date date) {
+        // Định dạng ngày theo chuẩn yyyy-MM-dd để lưu.
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         return store().addPerfectDayKey(sdf.format(date));
     }
 
     public void recordAppOpenAndMaybeWelcomeBack() {
+        // Ghi nhận thời điểm mở app và kiểm tra có cần mở khóa thành tựu "Welcome Back" không.
         long now = System.currentTimeMillis();
         boolean welcomeBack = store().recordOpenAndCheckWelcomeBack(now);
         if (welcomeBack) {

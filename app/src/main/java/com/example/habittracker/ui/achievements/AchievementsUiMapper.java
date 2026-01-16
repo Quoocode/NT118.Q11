@@ -17,6 +17,9 @@ final class AchievementsUiMapper {
 
     private AchievementsUiMapper() {}
 
+    // Chuyển đổi dữ liệu thành tựu sang mô hình UI.
+    // Sắp xếp sao cho thành tựu đã mở khóa hiển thị trước.
+    // Tiêu đề được sắp xếp theo thứ tự bảng chữ cái.
     static List<AchievementUiModel> toUi(Context context, Set<String> unlockedIds, Map<String, Long> unlockedAt) {
         List<AchievementUiModel> ui = new ArrayList<>();
 
@@ -37,6 +40,7 @@ final class AchievementsUiMapper {
             ));
         }
 
+        // Sắp xếp: Thành tựu đã mở khóa lên trước, sau đó theo tiêu đề bảng chữ cái.
         Collections.sort(ui, new Comparator<AchievementUiModel>() {
             @Override
             public int compare(AchievementUiModel a, AchievementUiModel b) {

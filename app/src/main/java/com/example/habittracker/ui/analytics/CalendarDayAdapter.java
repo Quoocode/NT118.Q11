@@ -51,6 +51,7 @@ public class CalendarDayAdapter extends RecyclerView.Adapter<CalendarDayAdapter.
     }
 
     @Override
+    // bind dữ liệu vào ViewHolder
     public void onBindViewHolder(@NonNull DayViewHolder holder, int position) {
         CalendarDay calendarDay = days.get(position);
         boolean isToday = isSameDay(calendarDay.getDate(), today);

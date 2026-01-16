@@ -15,6 +15,7 @@ public final class CalendarFadeMath {
     private CalendarFadeMath() {
     }
 
+    // tính toán tiến trình mờ dần của lịch dựa trên vị trí hiện tại của bảng dưới cùng và các điểm bắt đầu/kết thúc mờ dần
     public static float computeProgress(int sheetTopPx, int fadeStartTopPx, int fadeEndTopPx) {
         // Guard against bad/unmeasured bounds to avoid divide-by-zero or inverted ranges.
         if (fadeEndTopPx <= 0 || fadeStartTopPx <= 0 || fadeEndTopPx >= fadeStartTopPx) {

@@ -127,7 +127,6 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
     private void applyMonthLabelMorph(float expandedProgress) {
         if (binding == null || dayIndicatorLabel == null) return;
         float t = Math.max(0f, Math.min(1f, expandedProgress));
-        // Crossfade giữa month label (collapsed) và day indicator (expanded)
         binding.monthLabel.setAlpha(1f - t);
         dayIndicatorLabel.setAlpha(t);
     }
@@ -421,7 +420,7 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
             sheetBehavior.setPeekHeight(peekHeight, true);
         }
 
-        // Ép về collapsed sau khi (re)configure để UI ổn định.
+        // Ép về collapsed sau khi reconfigure để UI ổn định.
         sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
         // Đảm bảo alpha + label phản ánh vị trí hiện tại sau khi thiết lập trạng thái.
@@ -595,6 +594,9 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         calendarAdapter.setSelectedDate(selectedDate.getTime());
     }
 
+    // Xây dựng danh sách 42 ngày để hiển thị trong lưới lịch (6 hàng x 7 cột)
+    // Bao gồm cả ngày của tháng trước và sau để lấp đầy.
+    // Mỗi CalendarDay đánh dấu xem có thuộc tháng hiện tại hay không.
     private List<CalendarDay> buildMonthDays() {
         List<CalendarDay> days = new ArrayList<>();
         Calendar temp = (Calendar) currentMonth.clone();
@@ -611,6 +613,8 @@ public class AnalyticsFragment extends Fragment implements CalendarDayAdapter.Li
         return days;
     }
 
+    // Tải thói quen và trạng thái hoàn thành cho ngày đã chọn
+    // Áp dụng callback bất đồng bộ để tránh chặn UI
     private void loadHabitsForDate(Calendar date) {
         if (habitRepository == null) {
             seedSampleHabits();

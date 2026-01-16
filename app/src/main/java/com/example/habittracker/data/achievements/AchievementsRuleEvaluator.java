@@ -14,6 +14,7 @@ public final class AchievementsRuleEvaluator {
     public static void evaluateCounters(@NonNull Context context) {
         AchievementsRepository repo = new AchievementsRepository(context.getApplicationContext());
 
+        // Đánh giá thành tựu dựa trên số thói quen đã tạo.
         int created = repo.getHabitsCreated();
         if (created >= 3) repo.unlock(AchievementId.THREE_HABITS_CREATED);
         if (created >= 7) repo.unlock(AchievementId.SEVEN_HABITS_CREATED);

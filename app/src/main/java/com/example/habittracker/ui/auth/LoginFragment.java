@@ -129,12 +129,6 @@ public class LoginFragment extends Fragment {
             signInWithGoogle();
         });
 
-        // Nút "Facebook" (ID: container_login_32_38)
-        binding.containerLogin3238.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Chức năng đăng nhập Facebook", Toast.LENGTH_SHORT).show();
-            // TODO: Xử lý logic đăng nhập Facebook
-        });
-
         // === ĐÂY LÀ PHẦN SỬA LỖI CỦA BẠN ===
         // Chữ "Continue as Guest" (ID: container_login_40)
         binding.containerLogin40.setOnClickListener(v -> {

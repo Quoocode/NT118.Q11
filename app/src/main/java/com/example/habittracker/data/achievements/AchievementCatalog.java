@@ -10,6 +10,11 @@ import java.util.List;
  * Danh sách tĩnh (static) của toàn bộ thành tựu được hiển thị trên UI.
  *
  * Lưu ý: Tiêu đề/mô tả hiện đang được lấy từ string resources.
+ *      Điều này giúp việc dịch thuật (localization) dễ dàng hơn.
+ *      Tuy nhiên, nó cũng có nghĩa là ta không thể dùng lớp này trong các lớp thuần Java
+ *      vì không có context để truy cập resources.
+ *      Do đó, lớp này chỉ nên được dùng trong các lớp Android (có context).
+ *      Ngoài ra, nếu muốn thêm thành tựu mới, hãy nhớ cập nhật cả AchievementId và AchievementService nữa.
  */
 public final class AchievementCatalog {
 
@@ -88,6 +93,9 @@ public final class AchievementCatalog {
                 R.drawable.ic_sun
         ));
 
+        // Trả về danh sách không thể thay đổi (unmodifiable).
+        // Giúp tránh việc vô tình thay đổi danh sách gốc.
+        // Điều này là quan trọng vì danh sách này được dùng làm nguồn dữ liệu tĩnh.
         return Collections.unmodifiableList(list);
     }
 }
